@@ -1,2 +1,26 @@
 node_modules
 .env
+dist
+*.tsbuildinfo
+note.txt
+todotasks.txt
+detailformat.json
+.codex-logs
+adminDashboard.md
+adminDocs.md
+FOLDER_STRUCTURE.md
+UML.md
+
+# Editor configurations
+.vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

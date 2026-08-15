@@ -1,5 +1,5 @@
-import type { ModuleManifest } from '../module.types.js';
-import { adminRouter } from './admin.routes.js';
+import type { ModuleManifest } from "../module.types.js";
+import { adminRouter } from "./admin.routes.js";
 
 /**
  * Admin module manifest.
@@ -8,8 +8,6 @@ import { adminRouter } from './admin.routes.js';
  * Every route is gated by the requireAdmin middleware.
  */
 export const adminModule: ModuleManifest = {
-  name: 'Admin',
-  routes: [
-    { prefix: '/api/admin', router: adminRouter },
-  ],
+  name: "Admin",
+  routes: [{ prefix: "/api/admin", router: adminRouter }],
 };

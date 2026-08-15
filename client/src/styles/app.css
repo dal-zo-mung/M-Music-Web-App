@@ -1,16 +1,16 @@
 @font-face {
-  font-family: 'ScienceGothic';
-  src: url('/fonts/ScienceGothic-VariableFont_CTRS,slnt,wdth,wght.ttf');
+  font-family: "ScienceGothic";
+  src: url("/fonts/ScienceGothic-VariableFont_CTRS,slnt,wdth,wght.ttf");
 }
 
 @font-face {
-  font-family: 'Nunito';
-  src: url('/fonts/Nunito-VariableFont_wght.ttf');
+  font-family: "Nunito";
+  src: url("/fonts/Nunito-VariableFont_wght.ttf");
 }
 
 @font-face {
-  font-family: 'Sriracha';
-  src: url('/fonts/Sriracha-Regular.ttf');
+  font-family: "Sriracha";
+  src: url("/fonts/Sriracha-Regular.ttf");
 }
 
 :root {
@@ -47,7 +47,7 @@
   --chat-input-bd: rgba(29, 56, 73, 0.18);
   --chat-input-fg: #0d2030;
   --chat-scrollbar-thumb: rgba(0, 0, 0, 0.18);
-  --chat-scrollbar-hover: rgba(0, 0, 0, 0.30);
+  --chat-scrollbar-hover: rgba(0, 0, 0, 0.3);
 }
 
 /* ── Dark mode: body.dark-mode overrides ─────────────────────── */
@@ -66,7 +66,7 @@ body.dark-mode {
 
   /* Support chat dark tokens */
   --chat-panel-bg: rgba(14, 28, 44, 0.97);
-  --chat-feed-bg: rgba(8, 18, 28, 0.60);
+  --chat-feed-bg: rgba(8, 18, 28, 0.6);
   --chat-feed-border: rgba(255, 255, 255, 0.05);
   --chat-feed-shadow: none;
   --chat-bubble-user-bg: rgba(20, 184, 166, 0.22);
@@ -74,10 +74,10 @@ body.dark-mode {
   --chat-bubble-user-fg: rgba(255, 255, 255, 0.95);
   --chat-bubble-asst-bg: rgba(30, 52, 72, 0.75);
   --chat-bubble-asst-bd: rgba(255, 255, 255, 0.07);
-  --chat-bubble-asst-fg: rgba(255, 255, 255, 0.90);
+  --chat-bubble-asst-fg: rgba(255, 255, 255, 0.9);
   --chat-input-bg: rgba(255, 255, 255, 0.04);
-  --chat-input-bd: rgba(255, 255, 255, 0.10);
-  --chat-input-fg: rgba(255, 255, 255, 0.90);
+  --chat-input-bd: rgba(255, 255, 255, 0.1);
+  --chat-input-fg: rgba(255, 255, 255, 0.9);
   --chat-scrollbar-thumb: rgba(255, 255, 255, 0.15);
   --chat-scrollbar-hover: rgba(255, 255, 255, 0.28);
 }
@@ -117,10 +117,14 @@ body,
 body {
   margin: 0;
   background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.65), transparent 32%),
+    radial-gradient(
+      circle at top left,
+      rgba(255, 255, 255, 0.65),
+      transparent 32%
+    ),
     linear-gradient(135deg, var(--hero-start), var(--hero-end));
   color: var(--base-900);
-  font-family: 'Nunito', sans-serif;
+  font-family: "Nunito", sans-serif;
 }
 
 img {
@@ -161,7 +165,7 @@ input {
 }
 
 .brand-link__title {
-  font-family: 'ScienceGothic', 'Nunito', sans-serif;
+  font-family: "ScienceGothic", "Nunito", sans-serif;
   font-size: 1.55rem;
   color: var(--base-900);
   letter-spacing: 0.04em;
@@ -563,7 +567,7 @@ input {
 }
 
 .loading-overlay::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -610,7 +614,11 @@ input {
   overflow: auto;
   border-radius: 20px;
   padding: 16px;
-  background: linear-gradient(180deg, rgba(131, 222, 215, 0.3), rgba(255, 255, 255, 0.75));
+  background: linear-gradient(
+    180deg,
+    rgba(131, 222, 215, 0.3),
+    rgba(255, 255, 255, 0.75)
+  );
   border: 1px solid rgba(29, 56, 73, 0.08);
 }
 
@@ -639,7 +647,7 @@ input {
 }
 
 .auth-card h1 {
-  font-family: 'Sriracha', 'Nunito', sans-serif;
+  font-family: "Sriracha", "Nunito", sans-serif;
   font-weight: 400;
   font-size: 2rem;
 }
@@ -957,7 +965,11 @@ input {
   line-height: 1.75;
   padding: 14px 16px;
   border-radius: 16px;
-  background: linear-gradient(180deg, rgba(131, 222, 215, 0.22), rgba(255, 255, 255, 0.8));
+  background: linear-gradient(
+    180deg,
+    rgba(131, 222, 215, 0.22),
+    rgba(255, 255, 255, 0.8)
+  );
   border: 1px solid rgba(29, 56, 73, 0.08);
 }
 
@@ -1032,7 +1044,11 @@ input {
   color: var(--base-900);
   font-weight: 700;
   font-size: 0.78rem;
-  background: linear-gradient(135deg, rgba(123, 225, 208, 0.95), rgba(131, 167, 217, 0.95));
+  background: linear-gradient(
+    135deg,
+    rgba(123, 225, 208, 0.95),
+    rgba(131, 167, 217, 0.95)
+  );
   border: 1px solid rgba(255, 255, 255, 0.55);
   box-shadow: var(--shadow-soft);
   transition:
@@ -1075,7 +1091,7 @@ input {
 
 .session-status-chip__dot {
   width: 7px;
-   height: 7px;
+  height: 7px;
 }
 
 .support-chat {
@@ -1097,7 +1113,9 @@ input {
   cursor: pointer;
   color: var(--base-900);
   animation: floatVertical 2.4s ease-in-out infinite;
-  transition: transform 160ms ease, box-shadow 160ms ease;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .support-chat__launcher:hover {
@@ -1106,7 +1124,8 @@ input {
 }
 
 @keyframes floatVertical {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -1185,7 +1204,6 @@ input {
 .support-chat__messages:hover::-webkit-scrollbar-thumb {
   background: var(--chat-scrollbar-hover);
 }
-
 
 .support-chat__input {
   min-height: 44px;
@@ -1274,7 +1292,9 @@ input {
   background: linear-gradient(135deg, #3b82f6, #14b8a6);
   color: #fff;
   cursor: pointer;
-  transition: opacity 0.15s, transform 0.15s;
+  transition:
+    opacity 0.15s,
+    transform 0.15s;
   padding: 0;
   line-height: 0;
   font-size: 0;
@@ -1293,7 +1313,6 @@ input {
   opacity: 0.85;
   transform: scale(1.08);
 }
-
 
 .support-chat__sr-only {
   position: absolute;
@@ -1445,26 +1464,41 @@ input {
 
 .profile-page--accent-aurora .profile-card--preview {
   border-color: rgba(59, 130, 246, 0.35);
-  background: linear-gradient(135deg, rgba(219, 234, 254, 0.65), rgba(255, 255, 255, 0.92));
+  background: linear-gradient(
+    135deg,
+    rgba(219, 234, 254, 0.65),
+    rgba(255, 255, 255, 0.92)
+  );
 }
 
 .profile-page--accent-ember .profile-card--preview {
   border-color: rgba(249, 115, 22, 0.35);
-  background: linear-gradient(135deg, rgba(255, 237, 213, 0.75), rgba(255, 255, 255, 0.92));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 237, 213, 0.75),
+    rgba(255, 255, 255, 0.92)
+  );
 }
 
 .profile-page--accent-meadow .profile-card--preview {
   border-color: rgba(34, 197, 94, 0.35);
-  background: linear-gradient(135deg, rgba(220, 252, 231, 0.75), rgba(255, 255, 255, 0.92));
+  background: linear-gradient(
+    135deg,
+    rgba(220, 252, 231, 0.75),
+    rgba(255, 255, 255, 0.92)
+  );
 }
 
 .profile-page--accent-slate .profile-card--preview {
   border-color: rgba(71, 85, 105, 0.35);
-  background: linear-gradient(135deg, rgba(226, 232, 240, 0.85), rgba(255, 255, 255, 0.92));
+  background: linear-gradient(
+    135deg,
+    rgba(226, 232, 240, 0.85),
+    rgba(255, 255, 255, 0.92)
+  );
 }
 
 @keyframes hero-bounce {
-
   0%,
   100% {
     transform: translateY(0);
@@ -1502,7 +1536,11 @@ body.dark-mode {
 
 body.dark-mode {
   background:
-    radial-gradient(circle at top left, rgba(44, 75, 104, 0.4), transparent 32%),
+    radial-gradient(
+      circle at top left,
+      rgba(44, 75, 104, 0.4),
+      transparent 32%
+    ),
     linear-gradient(135deg, var(--hero-start), var(--hero-end));
   color: var(--base-900);
 }
@@ -1563,7 +1601,11 @@ body.dark-mode .empty-panel {
 }
 
 body.dark-mode .lyrics-card__body {
-  background: linear-gradient(180deg, rgba(29, 52, 69, 0.75), rgba(11, 19, 31, 0.9));
+  background: linear-gradient(
+    180deg,
+    rgba(29, 52, 69, 0.75),
+    rgba(11, 19, 31, 0.9)
+  );
   border-color: rgba(103, 232, 249, 0.12);
 }
 
@@ -1581,7 +1623,11 @@ body.dark-mode .community-textarea {
 }
 
 body.dark-mode .community-thread__lyrics-text {
-  background: linear-gradient(180deg, rgba(29, 52, 69, 0.75), rgba(11, 19, 31, 0.9));
+  background: linear-gradient(
+    180deg,
+    rgba(29, 52, 69, 0.75),
+    rgba(11, 19, 31, 0.9)
+  );
   border-color: rgba(103, 232, 249, 0.12);
 }
 
@@ -1666,7 +1712,6 @@ body.dark-mode .site-footer {
 }
 
 @media (max-width: 560px) {
-
   .hero-card,
   .search-summary-card,
   .song-card,
@@ -1886,7 +1931,11 @@ body.dark-mode .site-footer {
   position: absolute;
   inset: -1px;
   border-radius: 28px;
-  background: linear-gradient(135deg, rgba(24, 195, 200, 0.18), rgba(59, 130, 246, 0.12));
+  background: linear-gradient(
+    135deg,
+    rgba(24, 195, 200, 0.18),
+    rgba(59, 130, 246, 0.12)
+  );
   pointer-events: none;
   z-index: 0;
 }
@@ -2272,7 +2321,9 @@ body.dark-mode .download-btn {
   display: flex;
   align-items: center;
   gap: 16px;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .admin-stat-card:hover {

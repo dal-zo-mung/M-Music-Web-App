@@ -1,5 +1,5 @@
-import type { ModuleManifest } from '../module.types.js';
-import { songsRouter } from './song.routes.js';
+import type { ModuleManifest } from "../module.types.js";
+import { songsRouter } from "./song.routes.js";
 
 /**
  * Songs module manifest.
@@ -10,8 +10,6 @@ import { songsRouter } from './song.routes.js';
  * The underlying song.routes.ts is NOT modified by this file.
  */
 export const songsModule: ModuleManifest = {
-  name: 'Songs',
-  routes: [
-    { prefix: '/api/songs', router: songsRouter },
-  ],
+  name: "Songs",
+  routes: [{ prefix: "/api/songs", router: songsRouter }],
 };

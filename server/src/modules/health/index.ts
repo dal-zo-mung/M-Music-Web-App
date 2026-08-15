@@ -1,5 +1,5 @@
-import type { ModuleManifest } from '../module.types.js';
-import { healthRouter } from './health.routes.js';
+import type { ModuleManifest } from "../module.types.js";
+import { healthRouter } from "./health.routes.js";
 
 /**
  * Health module manifest.
@@ -11,8 +11,6 @@ import { healthRouter } from './health.routes.js';
  * zero existing files were modified.
  */
 export const healthModule: ModuleManifest = {
-  name: 'Health',
-  routes: [
-    { prefix: '/api/health', router: healthRouter },
-  ],
+  name: "Health",
+  routes: [{ prefix: "/api/health", router: healthRouter }],
 };

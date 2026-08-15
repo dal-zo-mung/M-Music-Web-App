@@ -1,11 +1,11 @@
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation } from "react-router-dom";
 
-import { CommunityFab } from './CommunityFab';
-import { Header } from './Header';
-import { SupportChat } from './SupportChat';
+import { CommunityFab } from "./CommunityFab";
+import { Header } from "./Header";
+import { SupportChat } from "./SupportChat";
 
 function isBareAuthPath(pathname: string): boolean {
-  return pathname === '/login' || pathname === '/register';
+  return pathname === "/login" || pathname === "/register";
 }
 
 export function SiteLayout(): React.JSX.Element {

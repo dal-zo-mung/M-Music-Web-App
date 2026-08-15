@@ -1,18 +1,18 @@
 const PLATFORMS = [
   {
-    icon: '🪟',
-    label: 'Windows',
-    note: 'Windows 10 / 11',
+    icon: "🪟",
+    label: "Windows",
+    note: "Windows 10 / 11",
   },
   {
-    icon: '🍎',
-    label: 'macOS',
-    note: 'macOS 12+',
+    icon: "🍎",
+    label: "macOS",
+    note: "macOS 12+",
   },
   {
-    icon: '🐧',
-    label: 'Linux',
-    note: 'Ubuntu · Debian · Arch',
+    icon: "🐧",
+    label: "Linux",
+    note: "Ubuntu · Debian · Arch",
   },
 ] as const;
 
@@ -56,13 +56,19 @@ export function DownloadPage(): React.JSX.Element {
               href="#"
               aria-label="Download M-Music desktop app"
             >
-              <span className="download-btn__icon" aria-hidden="true">⬇</span>
+              <span className="download-btn__icon" aria-hidden="true">
+                ⬇
+              </span>
               <span className="download-btn__text">Download Now</span>
               <span className="download-btn__version">v1.0.0</span>
             </a>
 
             {/* ── Platform chips ── */}
-            <div className="platform-row" role="list" aria-label="Supported platforms">
+            <div
+              className="platform-row"
+              role="list"
+              aria-label="Supported platforms"
+            >
               {PLATFORMS.map(({ icon, label, note }) => (
                 <div className="platform-chip" key={label} role="listitem">
                   <span className="platform-chip__icon" aria-hidden="true">
@@ -84,23 +90,57 @@ export function DownloadPage(): React.JSX.Element {
         </section>
 
         {/* ── Feature highlights ── */}
-        <section className="download-features" aria-labelledby="features-heading">
+        <section
+          className="download-features"
+          aria-labelledby="features-heading"
+        >
           <h2 id="features-heading" className="download-features__heading">
             Everything in the app
           </h2>
           <ul className="download-feature-list">
             {[
-              { icon: '🔍', title: 'Full Lyrics Search', body: 'Instant search across the entire curated catalogue.' },
-              { icon: '❤️', title: 'Favourites Sync', body: 'Save songs and access them offline or across devices.' },
-              { icon: '🌐', title: 'Community Lyrics', body: 'Submit and discuss lyrics directly from your desktop.' },
-              { icon: '🤖', title: 'AI Support Chat', body: 'Get help or discover new songs with the built-in AI assistant.' },
-              { icon: '🎨', title: 'Themes & Accents', body: 'Dark mode, accent colours, and reading preferences all work natively.' },
-              { icon: '🔒', title: 'Secure Session', body: 'Google OAuth and local accounts — session backed by the same server security.' },
+              {
+                icon: "🔍",
+                title: "Full Lyrics Search",
+                body: "Instant search across the entire curated catalogue.",
+              },
+              {
+                icon: "❤️",
+                title: "Favourites Sync",
+                body: "Save songs and access them offline or across devices.",
+              },
+              {
+                icon: "🌐",
+                title: "Community Lyrics",
+                body: "Submit and discuss lyrics directly from your desktop.",
+              },
+              {
+                icon: "🤖",
+                title: "AI Support Chat",
+                body: "Get help or discover new songs with the built-in AI assistant.",
+              },
+              {
+                icon: "🎨",
+                title: "Themes & Accents",
+                body: "Dark mode, accent colours, and reading preferences all work natively.",
+              },
+              {
+                icon: "🔒",
+                title: "Secure Session",
+                body: "Google OAuth and local accounts — session backed by the same server security.",
+              },
             ].map(({ icon, title, body }) => (
               <li className="download-feature-item" key={title}>
-                <span className="download-feature-item__icon" aria-hidden="true">{icon}</span>
+                <span
+                  className="download-feature-item__icon"
+                  aria-hidden="true"
+                >
+                  {icon}
+                </span>
                 <div>
-                  <strong className="download-feature-item__title">{title}</strong>
+                  <strong className="download-feature-item__title">
+                    {title}
+                  </strong>
                   <p className="download-feature-item__body">{body}</p>
                 </div>
               </li>

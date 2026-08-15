@@ -1,6 +1,6 @@
-import type { RequestHandler } from 'express';
+import type { RequestHandler } from "express";
 
-import { resolveCurrentUser } from '../auth/auth.guard.js';
+import { resolveCurrentUser } from "../auth/auth.guard.js";
 
 export const requireAdmin: RequestHandler = async (req, res, next) => {
   try {
@@ -8,18 +8,18 @@ export const requireAdmin: RequestHandler = async (req, res, next) => {
 
     if (!user) {
       res.status(401).json({
-        error: 'Authentication is required.',
+        error: "Authentication is required.",
         status: 401,
-        success: false
+        success: false,
       });
       return;
     }
 
-    if (user.role !== 'admin') {
+    if (user.role !== "admin") {
       res.status(403).json({
-        error: 'Admin access required.',
+        error: "Admin access required.",
         status: 403,
-        success: false
+        success: false,
       });
       return;
     }

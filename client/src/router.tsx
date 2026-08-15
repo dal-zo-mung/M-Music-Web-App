@@ -1,8 +1,8 @@
-import { Suspense } from 'react';
-import { createBrowserRouter } from 'react-router-dom';
+import { Suspense } from "react";
+import { createBrowserRouter } from "react-router-dom";
 
-import { SiteLayout } from './components/SiteLayout';
-import { pageRegistry } from './pages/registry';
+import { SiteLayout } from "./components/SiteLayout";
+import { pageRegistry } from "./pages/registry";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ROUTER

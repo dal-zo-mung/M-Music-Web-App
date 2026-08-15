@@ -1,15 +1,19 @@
-import type { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from "express";
 import {
   registerGuest,
   getDesktopUser,
   initGoogleAuth,
   pollGoogleAuth,
   completeGoogleAuth,
-  linkGoogleToGuest
-} from './desktop-auth.service.js';
-import { env } from '../../config/env.js';
+  linkGoogleToGuest,
+} from "./desktop-auth.service.js";
+import { env } from "../../config/env.js";
 
-type AsyncHandler = (req: Request, res: Response, next: NextFunction) => Promise<void>;
+type AsyncHandler = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => Promise<void>;
 
 function asyncHandler(fn: AsyncHandler) {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -61,41 +65,44 @@ export const googlePollHandler = asyncHandler(async (req, res) => {
 export const googleCallbackHandler = asyncHandler(async (req, res) => {
   const { code, state } = req.query;
 
-  if (typeof code !== 'string' || typeof state !== 'string') {
-    res.status(400).send('Missing code or state parameter.');
+  if (typeof code !== "string" || typeof state !== "string") {
+    res.status(400).send("Missing code or state parameter.");
     return;
   }
 
   // Exchange the authorization code for tokens
-  const callbackUrl = env.googleCallbackUrl || '/auth/google/callback';
-  const redirectUri = `${callbackUrl.replace('/auth/google/callback', '')}/api/desktop/auth/google/callback`;
+  const callbackUrl = env.googleCallbackUrl || "/auth/google/callback";
+  const redirectUri = `${callbackUrl.replace("/auth/google/callback", "")}/api/desktop/auth/google/callback`;
 
-  const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
       code,
       client_id: env.googleClientId,
       client_secret: env.googleClientSecret,
       redirect_uri: redirectUri,
-      grant_type: 'authorization_code'
-    })
+      grant_type: "authorization_code",
+    }),
   });
 
   if (!tokenResponse.ok) {
-    res.status(502).send('Failed to exchange authorization code.');
+    res.status(502).send("Failed to exchange authorization code.");
     return;
   }
 
   const tokenData = (await tokenResponse.json()) as { access_token: string };
 
   // Fetch user info from Google
-  const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-    headers: { Authorization: `Bearer ${tokenData.access_token}` }
-  });
+  const userInfoResponse = await fetch(
+    "https://www.googleapis.com/oauth2/v2/userinfo",
+    {
+      headers: { Authorization: `Bearer ${tokenData.access_token}` },
+    },
+  );
 
   if (!userInfoResponse.ok) {
-    res.status(502).send('Failed to fetch user information from Google.');
+    res.status(502).send("Failed to fetch user information from Google.");
     return;
   }
 
@@ -111,7 +118,7 @@ export const googleCallbackHandler = asyncHandler(async (req, res) => {
     googleId: userInfo.id,
     email: userInfo.email,
     displayName: userInfo.name,
-    profileImage: userInfo.picture
+    profileImage: userInfo.picture,
   });
 
   // Show a success page that the user can close

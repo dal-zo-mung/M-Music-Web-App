@@ -1,8 +1,8 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from "react-router-dom";
 
-import type { PublicUser } from '@shared/types';
+import type { PublicUser } from "@shared/types";
 
-import { buildReturnTo } from '../lib/auth';
+import { buildReturnTo } from "../lib/auth";
 
 interface UserMenuProps {
   currentUser: PublicUser | null;
@@ -10,11 +10,17 @@ interface UserMenuProps {
 }
 
 function getUserLabel(user: PublicUser): string {
-  const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ').trim();
-  return user.username || user.displayName || fullName || 'User';
+  const fullName = [user.firstName, user.lastName]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+  return user.username || user.displayName || fullName || "User";
 }
 
-export function UserMenu({ currentUser, isLoading }: UserMenuProps): React.JSX.Element {
+export function UserMenu({
+  currentUser,
+  isLoading,
+}: UserMenuProps): React.JSX.Element {
   const location = useLocation();
 
   if (!currentUser) {
@@ -23,7 +29,7 @@ export function UserMenu({ currentUser, isLoading }: UserMenuProps): React.JSX.E
         className="pill-link"
         to={`/login?returnTo=${encodeURIComponent(buildReturnTo(location))}`}
       >
-        {isLoading ? 'Checking...' : 'Login / Sign up'}
+        {isLoading ? "Checking..." : "Login / Sign up"}
       </Link>
     );
   }

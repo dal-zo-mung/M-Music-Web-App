@@ -1,10 +1,14 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext } from "react";
 
-import useSWR from 'swr'; 
+import useSWR from "swr";
 
-import type { AuthMutationResponse, AuthStatusResponse, PublicUser } from '@shared/types';
+import type {
+  AuthMutationResponse,
+  AuthStatusResponse,
+  PublicUser,
+} from "@shared/types";
 
-import { fetchJson, postJson } from '../lib/api';
+import { fetchJson, postJson } from "../lib/api";
 
 interface AuthContextValue {
   currentUser: PublicUser | null;
@@ -19,12 +23,18 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-export function AuthProvider({ children }: AuthProviderProps): React.JSX.Element {
-  const { data, isLoading, mutate } = useSWR<AuthStatusResponse>('/api/me', fetchJson, {
-    revalidateOnFocus: true
-  });
+export function AuthProvider({
+  children,
+}: AuthProviderProps): React.JSX.Element {
+  const { data, isLoading, mutate } = useSWR<AuthStatusResponse>(
+    "/api/me",
+    fetchJson,
+    {
+      revalidateOnFocus: true,
+    },
+  );
 
-  const currentUser = data?.authenticated ? data.user ?? null : null;
+  const currentUser = data?.authenticated ? (data.user ?? null) : null;
 
   async function refreshAuth(): Promise<void> {
     await mutate();
@@ -32,11 +42,11 @@ export function AuthProvider({ children }: AuthProviderProps): React.JSX.Element
 
   async function logout(): Promise<void> {
     try {
-      await postJson<AuthMutationResponse>('/api/logout');
+      await postJson<AuthMutationResponse>("/api/logout");
       await mutate({ authenticated: false }, { revalidate: false });
     } catch {
       await mutate(undefined, { revalidate: true });
-      throw new Error('Logout failed');
+      throw new Error("Logout failed");
     }
   }
 
@@ -46,7 +56,7 @@ export function AuthProvider({ children }: AuthProviderProps): React.JSX.Element
         currentUser,
         isLoading,
         logout,
-        refreshAuth
+        refreshAuth,
       }}
     >
       {children}
@@ -58,7 +68,7 @@ export function useAuth(): AuthContextValue {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider.');
+    throw new Error("useAuth must be used within an AuthProvider.");
   }
 
   return context;

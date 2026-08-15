@@ -1,82 +1,103 @@
-import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
-import type { AuthMutationResponse, ApiErrorResponse } from '@shared/types';
+import type { AuthMutationResponse, ApiErrorResponse } from "@shared/types";
 
-import { useAuth } from '../context/AuthContext';
-import { getReturnToParam, safeRedirectPath, validatePassword } from '../lib/auth';
-import { ApiError, getErrorMessage, postJson } from '../lib/api';
+import { useAuth } from "../context/AuthContext";
+import {
+  getReturnToParam,
+  safeRedirectPath,
+  validatePassword,
+} from "../lib/auth";
+import { ApiError, getErrorMessage, postJson } from "../lib/api";
 
 export function RegisterPage(): React.JSX.Element {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [message, setMessage] = useState('');
-  const [messageTone, setMessageTone] = useState<'error' | 'info' | 'success'>('info');
+  const [message, setMessage] = useState("");
+  const [messageTone, setMessageTone] = useState<"error" | "info" | "success">(
+    "info",
+  );
   const passwordValidation = validatePassword(password);
   const { refreshAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const returnTo = safeRedirectPath(getReturnToParam(location.search));
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
+  async function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> {
     event.preventDefault();
 
-    if (!firstName.trim() || !lastName.trim() || !username.trim() || !email.trim() || !password || !confirmPassword) {
-      setMessage('Please complete every field.');
-      setMessageTone('error');
+    if (
+      !firstName.trim() ||
+      !lastName.trim() ||
+      !username.trim() ||
+      !email.trim() ||
+      !password ||
+      !confirmPassword
+    ) {
+      setMessage("Please complete every field.");
+      setMessageTone("error");
       return;
     }
 
     if (!passwordValidation.valid) {
-      setMessage(`Password validation failed: ${passwordValidation.errors.join(', ')}`);
-      setMessageTone('error');
+      setMessage(
+        `Password validation failed: ${passwordValidation.errors.join(", ")}`,
+      );
+      setMessageTone("error");
       return;
     }
 
     if (password !== confirmPassword) {
-      setMessage('Passwords do not match.');
-      setMessageTone('error');
+      setMessage("Passwords do not match.");
+      setMessageTone("error");
       return;
     }
 
     if (!acceptedTerms) {
-      setMessage('You must agree to the terms before registering.');
-      setMessageTone('error');
+      setMessage("You must agree to the terms before registering.");
+      setMessageTone("error");
       return;
     }
 
-    setMessage('Creating your account...');
-    setMessageTone('info');
+    setMessage("Creating your account...");
+    setMessageTone("info");
 
     try {
-      await postJson<AuthMutationResponse>('/api/register', {
+      await postJson<AuthMutationResponse>("/api/register", {
         email,
         firstName,
         lastName,
         password,
-        username
+        username,
       });
 
       await refreshAuth();
-      setMessage('Account created. Redirecting...');
-      setMessageTone('success');
+      setMessage("Account created. Redirecting...");
+      setMessageTone("success");
 
       window.setTimeout(() => {
         navigate(returnTo, { replace: true });
       }, 600);
     } catch (error) {
       const normalizedError =
-        error instanceof ApiError ? (error as ApiError<ApiErrorResponse>) : new ApiError('Registration failed.', 500, null);
+        error instanceof ApiError
+          ? (error as ApiError<ApiErrorResponse>)
+          : new ApiError("Registration failed.", 500, null);
 
-      setMessage(getErrorMessage(normalizedError.payload, normalizedError.message));
-      setMessageTone('error');
+      setMessage(
+        getErrorMessage(normalizedError.payload, normalizedError.message),
+      );
+      setMessageTone("error");
     }
   }
 
@@ -133,8 +154,8 @@ export function RegisterPage(): React.JSX.Element {
           </label>
 
           <p className="auth-hint">
-            Your password must include uppercase and lowercase letters, a number, and
-            a special character.
+            Your password must include uppercase and lowercase letters, a
+            number, and a special character.
           </p>
 
           <label className="field">
@@ -143,17 +164,26 @@ export function RegisterPage(): React.JSX.Element {
               <input
                 autoComplete="new-password"
                 placeholder="Enter new password"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(event) => setPassword(event.currentTarget.value)}
               />
               <button
-                aria-label={showPassword ? 'Hide new password' : 'Show new password'}
+                aria-label={
+                  showPassword ? "Hide new password" : "Show new password"
+                }
                 className="field__toggle"
                 type="button"
                 onClick={() => setShowPassword((currentValue) => !currentValue)}
               >
-                <img alt="" src={showPassword ? '/icons/visibility_off.svg' : '/icons/visibility.svg'} />
+                <img
+                  alt=""
+                  src={
+                    showPassword
+                      ? "/icons/visibility_off.svg"
+                      : "/icons/visibility.svg"
+                  }
+                />
               </button>
             </div>
           </label>
@@ -164,31 +194,50 @@ export function RegisterPage(): React.JSX.Element {
               <input
                 autoComplete="new-password"
                 placeholder="Confirm your password"
-                type={showConfirmPassword ? 'text' : 'password'}
+                type={showConfirmPassword ? "text" : "password"}
                 value={confirmPassword}
-                onChange={(event) => setConfirmPassword(event.currentTarget.value)}
+                onChange={(event) =>
+                  setConfirmPassword(event.currentTarget.value)
+                }
               />
               <button
-                aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+                aria-label={
+                  showConfirmPassword
+                    ? "Hide confirm password"
+                    : "Show confirm password"
+                }
                 className="field__toggle"
                 type="button"
-                onClick={() => setShowConfirmPassword((currentValue) => !currentValue)}
+                onClick={() =>
+                  setShowConfirmPassword((currentValue) => !currentValue)
+                }
               >
-                <img alt="" src={showConfirmPassword ? '/icons/visibility_off.svg' : '/icons/visibility.svg'} />
+                <img
+                  alt=""
+                  src={
+                    showConfirmPassword
+                      ? "/icons/visibility_off.svg"
+                      : "/icons/visibility.svg"
+                  }
+                />
               </button>
             </div>
           </label>
 
           <ul className="password-rules">
             {[
-              'At least 8 characters',
-              'At least one uppercase letter',
-              'At least one lowercase letter',
-              'At least one number',
-              'At least one special character'
+              "At least 8 characters",
+              "At least one uppercase letter",
+              "At least one lowercase letter",
+              "At least one number",
+              "At least one special character",
             ].map((rule) => (
               <li
-                className={passwordValidation.errors.includes(rule) ? 'password-rules__item--invalid' : 'password-rules__item--valid'}
+                className={
+                  passwordValidation.errors.includes(rule)
+                    ? "password-rules__item--invalid"
+                    : "password-rules__item--valid"
+                }
                 key={rule}
               >
                 {rule}
@@ -196,9 +245,14 @@ export function RegisterPage(): React.JSX.Element {
             ))}
           </ul>
 
-          <p className={`form-message form-message--${messageTone}`}>{message}</p>
+          <p className={`form-message form-message--${messageTone}`}>
+            {message}
+          </p>
 
-          <a className="oauth-link" href={`/auth/google?returnTo=${encodeURIComponent(returnTo)}`}>
+          <a
+            className="oauth-link"
+            href={`/auth/google?returnTo=${encodeURIComponent(returnTo)}`}
+          >
             <img alt="" src="/images/Google1.png" />
             <span>Continue with Google</span>
           </a>
@@ -207,15 +261,22 @@ export function RegisterPage(): React.JSX.Element {
             <input
               checked={acceptedTerms}
               type="checkbox"
-              onChange={(event) => setAcceptedTerms(event.currentTarget.checked)}
+              onChange={(event) =>
+                setAcceptedTerms(event.currentTarget.checked)
+              }
             />
             <span>
-              I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+              I agree to the <a href="#">Terms of Service</a> and{" "}
+              <a href="#">Privacy Policy</a>.
             </span>
           </label>
 
           <div className="auth-form__actions">
-            <button className="button button--secondary" type="reset" onClick={() => setMessage('')}>
+            <button
+              className="button button--secondary"
+              type="reset"
+              onClick={() => setMessage("")}
+            >
               Reset
             </button>
             <button className="button" type="submit">
@@ -225,8 +286,10 @@ export function RegisterPage(): React.JSX.Element {
         </form>
 
         <p className="auth-card__switch">
-          Already have an account?{' '}
-          <Link to={`/login?returnTo=${encodeURIComponent(returnTo)}`}>Login here</Link>
+          Already have an account?{" "}
+          <Link to={`/login?returnTo=${encodeURIComponent(returnTo)}`}>
+            Login here
+          </Link>
         </p>
       </section>
     </main>

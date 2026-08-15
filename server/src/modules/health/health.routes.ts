@@ -1,4 +1,4 @@
-import express from 'express';
+import express from "express";
 
 export const healthRouter = express.Router();
 
@@ -9,10 +9,10 @@ export const healthRouter = express.Router();
  * Returns 200 when the server is running.
  * Useful for deployment health probes and monitoring.
  */
-healthRouter.get('/', (_req, res) => {
+healthRouter.get("/", (_req, res) => {
   res.json({
     ok: true,
-    service: 'M-Music API',
+    service: "M-Music API",
     timestamp: new Date().toISOString(),
   });
 });

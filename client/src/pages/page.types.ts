@@ -1,4 +1,4 @@
-import type React from 'react';
+import type React from "react";
 
 /**
  * The manifest every page must have an entry for in pages/registry.ts.

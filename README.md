@@ -92,7 +92,7 @@ M-Music lets users browse curated song lyrics, search across a music catalogue, 
 ## 📁 Project Structure
 
 ```
-M-Music-12/
+M-Music-Web-App/
 ├── client/                      ← React frontend root
 │   └── src/
 │       ├── main.tsx             ← React entry point
@@ -216,10 +216,10 @@ The Vite dev server proxies `/api` and `/auth` requests to the Express backend d
 
 ## 🔀 Two Servers Explained
 
-When you run `npm run dev`, **two separate servers** start at the same time:
+When you run `bun run dev`, **two separate servers** start at the same time:
 
 ```
-npm run dev
+bun run dev
     │
     ├──► Vite Dev Server      →  http://localhost:5173
     │    Serves: React app (HTML, JS, CSS)
@@ -288,7 +288,7 @@ Postman  →  http://localhost:8888/api/me
 |---|---|---|
 | 🌐 Browser | `5173` | Vite proxies `/api/*` to Express automatically |
 | 📮 Postman / curl / Thunder Client | `8000` / `8888` | Talk directly to Express — skip Vite entirely (use the PORT configured in your `.env` file) |
-| 🖥️ Backend-only dev | `8000` / `8888` | Run `npm run dev:server` then test at port 8000 or 8888 |
+| 🖥️ Backend-only dev | `8000` / `8888` | Run `bun run dev:server` then test at port 8000 or 8888 |
 
 ---
 
@@ -804,7 +804,7 @@ Body:
 | `"Authentication is required"` | 401 | Login first with `POST /api/login` |
 | `"Invalid resource identifier"` | 400 | The ID in the URL is not a valid MongoDB ObjectId |
 | `"Too Many Requests"` | 429 | Wait a few minutes — you hit a rate limit |
-| `ECONNREFUSED` | — | Express server not running — run `npm run dev:server` |
+| `ECONNREFUSED` | — | Express server not running — run `bun run dev:server` |
 
 ---
 
@@ -864,16 +864,16 @@ SUPPORT_CHAT_RATE_LIMIT_WINDOW_MS=900000
 
 ```bash
 # Clone or enter the project
-cd "M-Music-12"
+cd "M-Music-Web-App"
 
 # Install all dependencies
-npm install
+bun install
 ```
 
 ### Development
 
 ```bash
-npm run dev
+bun run dev
 ```
 
 This starts two concurrent processes:
@@ -885,7 +885,7 @@ Vite proxies `/api` and `/auth` requests to the Express server automatically.
 ### Production Build
 
 ```bash
-npm run build
+bun run build
 ```
 
 Builds both client (`dist/client/`) and server (`dist/server/`).
@@ -893,7 +893,7 @@ Builds both client (`dist/client/`) and server (`dist/server/`).
 ### Run Production Build
 
 ```bash
-npm start
+bun start
 ```
 
 Express serves the React SPA from `dist/client/` and handles API routes.
@@ -904,19 +904,21 @@ Express serves the React SPA from `dist/client/` and handles API routes.
 
 | Script | Command | Description |
 |---|---|---|
-| `npm run dev` | `concurrently "npm:dev:server" "npm:dev:client"` | Start full-stack dev server |
-| `npm run dev:server` | `tsx watch server/src/server.ts` | Watch-mode backend only |
-| `npm run dev:client` | `vite --configLoader runner` | Vite frontend only |
-| `npm run build` | `npm run build:client && npm run build:server` | Full production build |
-| `npm run build:client` | `vite build --configLoader runner` | Build React app to `dist/client/` |
-| `npm run build:server` | `tsc -p tsconfig.server.json` | Compile TypeScript server |
-| `npm run typecheck` | `npm run typecheck:client && npm run typecheck:server` | Run both TypeScript checks |
-| `npm run typecheck:client` | `tsc -p tsconfig.client.json --noEmit` | Client type check |
-| `npm run typecheck:server` | `tsc -p tsconfig.server.json --noEmit` | Server type check |
-| `npm start` | `node dist/server/server/src/server.js` | Run production build |
+| `bun run dev` | `concurrently "bun:dev:server" "bun:dev:client"` | Start full-stack dev server |
+| `bun run dev:server` | `tsx watch server/src/server.ts` | Watch-mode backend only |
+| `bun run dev:client` | `vite --configLoader runner` | Vite frontend only |
+| `bun run build` | `bun run build:client && bun run build:server` | Full production build |
+| `bun run build:client` | `vite build --configLoader runner` | Build React app to `dist/client/` |
+| `bun run build:server` | `tsc -p tsconfig.server.json` | Compile TypeScript server |
+| `bun run typecheck` | `bun run typecheck:client && bun run typecheck:server` | Run both TypeScript checks |
+| `bun run typecheck:client` | `tsc -p tsconfig.client.json --noEmit` | Client type check |
+| `bun run typecheck:server` | `tsc -p tsconfig.server.json --noEmit` | Server type check |
+| `bun run format` | `prettier --write ...` | Format all source files |
+| `bun run format:check` | `prettier --check ...` | Check formatting without writing |
+| `bun start` | `node dist/server/server/src/server.js` | Run production build |
 
 > [!TIP]
-> For a detailed guide on how each script works and what it compiles/targets under the hood, check out the dedicated [npmRunCommand.md](./npmRunCommand.md) reference.
+> For a detailed guide on how each script works and what it compiles/targets under the hood, check out the dedicated [bunRunCommand.md](./bunRunCommand.md) reference.
 
 ---
 
@@ -1013,3 +1015,16 @@ A comprehensive UML reference is available in **[UML.md](./UML.md)**, covering:
 ## 📄 License
 
 LOM — Private project license.
+
+
+The Song payload is 
+
+{ 
+"Song Title": "",
+"Artist": "",
+"Released Date": "",
+"About Song": "",
+"Direct to YT": "",
+"Lyric": [
+]
+}

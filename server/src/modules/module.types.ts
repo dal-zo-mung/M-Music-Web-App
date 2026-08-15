@@ -1,4 +1,4 @@
-import type { Router } from 'express';
+import type { Router } from "express";
 
 /**
  * A single route entry — one prefix mounted to one Express Router.

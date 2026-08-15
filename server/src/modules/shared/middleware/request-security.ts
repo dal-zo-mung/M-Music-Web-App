@@ -1,8 +1,8 @@
-import crypto from 'node:crypto';
-import type { RequestHandler } from 'express';
+import crypto from "node:crypto";
+import type { RequestHandler } from "express";
 
-import { env } from '../../../config/env.js';
-import { assertNoDangerousKeys } from '../security/input.js';
+import { env } from "../../../config/env.js";
+import { assertNoDangerousKeys } from "../security/input.js";
 
 function getExpectedOrigins(host: string, protocol: string): Set<string> {
   return new Set([`${protocol}://${host}`, ...env.corsAllowedOrigins]);
@@ -10,14 +10,14 @@ function getExpectedOrigins(host: string, protocol: string): Set<string> {
 
 export const ensureCsrfTokenCookie: RequestHandler = (req, res, next) => {
   if (!req.session.csrfToken) {
-    req.session.csrfToken = crypto.randomBytes(32).toString('hex');
+    req.session.csrfToken = crypto.randomBytes(32).toString("hex");
   }
 
   res.cookie(env.csrfCookieName, req.session.csrfToken, {
     httpOnly: false,
-    path: '/',
-    sameSite: 'strict',
-    secure: env.isProduction
+    path: "/",
+    sameSite: "strict",
+    secure: env.isProduction,
   });
 
   next();
@@ -25,8 +25,8 @@ export const ensureCsrfTokenCookie: RequestHandler = (req, res, next) => {
 
 export const rejectDangerousRequestKeys: RequestHandler = (req, _res, next) => {
   try {
-    assertNoDangerousKeys(req.body, 'body');
-    assertNoDangerousKeys(req.query, 'query');
+    assertNoDangerousKeys(req.body, "body");
+    assertNoDangerousKeys(req.query, "query");
     next();
   } catch (error) {
     next(error);
@@ -34,16 +34,19 @@ export const rejectDangerousRequestKeys: RequestHandler = (req, _res, next) => {
 };
 
 export const requireTrustedOrigin: RequestHandler = (req, res, next) => {
-  const origin = req.get('origin');
-  const referer = req.get('referer');
-  const expectedOrigins = getExpectedOrigins(req.get('host') ?? '', req.protocol);
+  const origin = req.get("origin");
+  const referer = req.get("referer");
+  const expectedOrigins = getExpectedOrigins(
+    req.get("host") ?? "",
+    req.protocol,
+  );
 
   if (origin) {
     if (!expectedOrigins.has(origin)) {
       res.status(403).json({
-        error: 'Request origin is not allowed.',
+        error: "Request origin is not allowed.",
         status: 403,
-        success: false
+        success: false,
       });
       return;
     }
@@ -58,17 +61,17 @@ export const requireTrustedOrigin: RequestHandler = (req, res, next) => {
 
       if (!expectedOrigins.has(refererOrigin)) {
         res.status(403).json({
-          error: 'Request origin is not allowed.',
+          error: "Request origin is not allowed.",
           status: 403,
-          success: false
+          success: false,
         });
         return;
       }
     } catch {
       res.status(403).json({
-        error: 'Request origin is not allowed.',
+        error: "Request origin is not allowed.",
         status: 403,
-        success: false
+        success: false,
       });
       return;
     }
@@ -78,13 +81,17 @@ export const requireTrustedOrigin: RequestHandler = (req, res, next) => {
 };
 
 export const requireCsrfToken: RequestHandler = (req, res, next) => {
-  const csrfToken = req.get('x-csrf-token');
+  const csrfToken = req.get("x-csrf-token");
 
-  if (!csrfToken || !req.session.csrfToken || csrfToken !== req.session.csrfToken) {
+  if (
+    !csrfToken ||
+    !req.session.csrfToken ||
+    csrfToken !== req.session.csrfToken
+  ) {
     res.status(403).json({
-      error: 'CSRF validation failed.',
+      error: "CSRF validation failed.",
       status: 403,
-      success: false
+      success: false,
     });
     return;
   }

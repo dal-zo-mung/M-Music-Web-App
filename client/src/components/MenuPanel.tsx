@@ -1,4 +1,4 @@
-import type { ThemeMode } from '../context/PreferencesContext';
+import type { ThemeMode } from "../context/PreferencesContext";
 
 interface MenuPanelProps {
   fontSize: number;
@@ -19,7 +19,7 @@ export function MenuPanel({
   setScrollSpeed,
   setTheme,
   showSongControls,
-  theme
+  theme,
 }: MenuPanelProps): React.JSX.Element | null {
   if (!isOpen) {
     return null;
@@ -29,17 +29,17 @@ export function MenuPanel({
     <div className="menu-panel" role="dialog" aria-label="Display settings">
       <div className="menu-panel__group">
         <button
-          className={`theme-button ${theme === 'light' ? 'theme-button--active' : ''}`}
+          className={`theme-button ${theme === "light" ? "theme-button--active" : ""}`}
           type="button"
-          onClick={() => setTheme('light')}
+          onClick={() => setTheme("light")}
         >
           <span>Light Mode</span>
           <img alt="" src="/icons/light-mode1.png" />
         </button>
         <button
-          className={`theme-button ${theme === 'dark' ? 'theme-button--active' : ''}`}
+          className={`theme-button ${theme === "dark" ? "theme-button--active" : ""}`}
           type="button"
-          onClick={() => setTheme('dark')}
+          onClick={() => setTheme("dark")}
         >
           <span>Dark Mode</span>
           <img alt="" src="/icons/dark-mode.png" />
@@ -57,7 +57,9 @@ export function MenuPanel({
               min="10"
               type="range"
               value={fontSize}
-              onChange={(event) => setFontSize(Number.parseInt(event.currentTarget.value, 10))}
+              onChange={(event) =>
+                setFontSize(Number.parseInt(event.currentTarget.value, 10))
+              }
             />
           </label>
 
@@ -70,7 +72,9 @@ export function MenuPanel({
               min="10"
               type="range"
               value={scrollSpeed}
-              onChange={(event) => setScrollSpeed(Number.parseInt(event.currentTarget.value, 10))}
+              onChange={(event) =>
+                setScrollSpeed(Number.parseInt(event.currentTarget.value, 10))
+              }
             />
           </label>
         </>

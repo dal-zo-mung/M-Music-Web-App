@@ -1,34 +1,44 @@
-import express from 'express';
+import express from "express";
 
-import { requireAuthenticatedUser } from '../auth/auth.guard.js';
-import { communityCommentLimiter, communitySubmissionLimiter } from '../shared/middleware/rate-limit.js';
-import { requireCsrfToken, requireTrustedOrigin } from '../shared/middleware/request-security.js';
-import { validateObjectIdParam } from '../shared/middleware/validation.js';
+import { requireAuthenticatedUser } from "../auth/auth.guard.js";
+import {
+  communityCommentLimiter,
+  communitySubmissionLimiter,
+} from "../shared/middleware/rate-limit.js";
+import {
+  requireCsrfToken,
+  requireTrustedOrigin,
+} from "../shared/middleware/request-security.js";
+import { validateObjectIdParam } from "../shared/middleware/validation.js";
 import {
   createCommunityCommentHandler,
   createCommunitySubmissionHandler,
   getCommunitySubmissionDetailsHandler,
-  listCommunityFeedHandler
-} from './community.controller.js';
+  listCommunityFeedHandler,
+} from "./community.controller.js";
 
 export const communityRouter = express.Router();
 
-communityRouter.get('/submissions', listCommunityFeedHandler);
-communityRouter.get('/submissions/:submissionId', validateObjectIdParam('submissionId'), getCommunitySubmissionDetailsHandler);
+communityRouter.get("/submissions", listCommunityFeedHandler);
+communityRouter.get(
+  "/submissions/:submissionId",
+  validateObjectIdParam("submissionId"),
+  getCommunitySubmissionDetailsHandler,
+);
 communityRouter.post(
-  '/submissions',
+  "/submissions",
   requireTrustedOrigin,
   requireCsrfToken,
   requireAuthenticatedUser,
   communitySubmissionLimiter,
-  createCommunitySubmissionHandler
+  createCommunitySubmissionHandler,
 );
 communityRouter.post(
-  '/submissions/:submissionId/comments',
-  validateObjectIdParam('submissionId'),
+  "/submissions/:submissionId/comments",
+  validateObjectIdParam("submissionId"),
   requireTrustedOrigin,
   requireCsrfToken,
   requireAuthenticatedUser,
   communityCommentLimiter,
-  createCommunityCommentHandler
+  createCommunityCommentHandler,
 );

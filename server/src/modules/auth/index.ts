@@ -1,5 +1,5 @@
-import type { ModuleManifest } from '../module.types.js';
-import { authApiRouter, authOauthRouter } from './auth.routes.js';
+import type { ModuleManifest } from "../module.types.js";
+import { authApiRouter, authOauthRouter } from "./auth.routes.js";
 
 /**
  * Auth module manifest.
@@ -11,9 +11,9 @@ import { authApiRouter, authOauthRouter } from './auth.routes.js';
  * The underlying auth.routes.ts is NOT modified by this file.
  */
 export const authModule: ModuleManifest = {
-  name: 'Auth',
+  name: "Auth",
   routes: [
-    { prefix: '/api',  router: authApiRouter  },
-    { prefix: '/auth', router: authOauthRouter },
+    { prefix: "/api", router: authApiRouter },
+    { prefix: "/auth", router: authOauthRouter },
   ],
 };

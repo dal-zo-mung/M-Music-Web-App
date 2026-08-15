@@ -1,5 +1,5 @@
-import type { ModuleManifest } from '../module.types.js';
-import { supportRouter } from './support.routes.js';
+import type { ModuleManifest } from "../module.types.js";
+import { supportRouter } from "./support.routes.js";
 
 /**
  * Support module manifest.
@@ -9,8 +9,6 @@ import { supportRouter } from './support.routes.js';
  * The underlying support.routes.ts is NOT modified by this file.
  */
 export const supportModule: ModuleManifest = {
-  name: 'Support',
-  routes: [
-    { prefix: '/api/support', router: supportRouter },
-  ],
+  name: "Support",
+  routes: [{ prefix: "/api/support", router: supportRouter }],
 };

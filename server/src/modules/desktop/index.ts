@@ -1,10 +1,10 @@
-import type { ModuleManifest } from '../module.types.js';
-import { desktopPublicRouter, desktopAdminRouter } from './desktop.routes.js';
-import { seedLegalDocuments } from './legal.model.js';
+import type { ModuleManifest } from "../module.types.js";
+import { desktopPublicRouter, desktopAdminRouter } from "./desktop.routes.js";
+import { seedLegalDocuments } from "./legal.model.js";
 
 // Seed default legal documents on startup (no-op if already seeded)
 seedLegalDocuments().catch((err: unknown) => {
-  console.error('[Desktop module] Failed to seed legal documents:', err);
+  console.error("[Desktop module] Failed to seed legal documents:", err);
 });
 
 /**
@@ -14,9 +14,9 @@ seedLegalDocuments().catch((err: unknown) => {
  * Admin routes   → /api/admin/desktop/* (Admin Dashboard calls these)
  */
 export const desktopModule: ModuleManifest = {
-  name: 'Desktop',
+  name: "Desktop",
   routes: [
-    { prefix: '/api/desktop', router: desktopPublicRouter },
-    { prefix: '/api/admin/desktop', router: desktopAdminRouter }
-  ]
+    { prefix: "/api/desktop", router: desktopPublicRouter },
+    { prefix: "/api/admin/desktop", router: desktopAdminRouter },
+  ],
 };

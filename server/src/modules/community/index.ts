@@ -1,5 +1,5 @@
-import type { ModuleManifest } from '../module.types.js';
-import { communityRouter } from './community.routes.js';
+import type { ModuleManifest } from "../module.types.js";
+import { communityRouter } from "./community.routes.js";
 
 /**
  * Community module manifest.
@@ -11,8 +11,6 @@ import { communityRouter } from './community.routes.js';
  * The underlying community.routes.ts is NOT modified by this file.
  */
 export const communityModule: ModuleManifest = {
-  name: 'Community',
-  routes: [
-    { prefix: '/api/community', router: communityRouter },
-  ],
+  name: "Community",
+  routes: [{ prefix: "/api/community", router: communityRouter }],
 };

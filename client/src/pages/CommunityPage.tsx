@@ -1,13 +1,17 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
-import useSWR from 'swr';
+import useSWR from "swr";
 
-import type { ApiErrorResponse, CommunityFeedResponse, CommunitySubmissionPayload } from '@shared/types';
+import type {
+  ApiErrorResponse,
+  CommunityFeedResponse,
+  CommunitySubmissionPayload,
+} from "@shared/types";
 
-import { useAuth } from '../context/AuthContext';
-import { buildReturnTo } from '../lib/auth';
-import { ApiError, fetchJson, getErrorMessage, postJson } from '../lib/api';
+import { useAuth } from "../context/AuthContext";
+import { buildReturnTo } from "../lib/auth";
+import { ApiError, fetchJson, getErrorMessage, postJson } from "../lib/api";
 
 function isObjectId(value: string): boolean {
   return /^[a-f\d]{24}$/i.test(value);
@@ -15,30 +19,40 @@ function isObjectId(value: string): boolean {
 
 function formatWhen(iso: string): string {
   try {
-    return new Date(iso).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+    return new Date(iso).toLocaleString(undefined, {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
   } catch {
     return iso;
   }
 }
 
 const emptyForm: CommunitySubmissionPayload = {
-  artist: '',
-  description: '',
-  lyrics: '',
-  releasedDate: '',
-  title: '',
-  youtubeUrl: ''
+  artist: "",
+  description: "",
+  lyrics: "",
+  releasedDate: "",
+  title: "",
+  youtubeUrl: "",
 };
 
 export function CommunityPage(): React.JSX.Element {
   const { currentUser } = useAuth();
-  const { data, error, isLoading, mutate } = useSWR<CommunityFeedResponse>('/api/community/submissions', fetchJson);
+  const { data, error, isLoading, mutate } = useSWR<CommunityFeedResponse>(
+    "/api/community/submissions",
+    fetchJson,
+  );
   const [form, setForm] = useState<CommunitySubmissionPayload>(emptyForm);
-  const [formMessage, setFormMessage] = useState('');
-  const [formTone, setFormTone] = useState<'error' | 'info' | 'success'>('info');
+  const [formMessage, setFormMessage] = useState("");
+  const [formTone, setFormTone] = useState<"error" | "info" | "success">(
+    "info",
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
+  async function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> {
     event.preventDefault();
 
     if (!currentUser) {
@@ -46,23 +60,23 @@ export function CommunityPage(): React.JSX.Element {
     }
 
     setIsSubmitting(true);
-    setFormMessage('Publishing…');
-    setFormTone('info');
+    setFormMessage("Publishing…");
+    setFormTone("info");
 
     try {
-      await postJson('/api/community/submissions', form);
+      await postJson("/api/community/submissions", form);
       setForm(emptyForm);
-      setFormMessage('Your lyric post is live.');
-      setFormTone('success');
+      setFormMessage("Your lyric post is live.");
+      setFormTone("success");
       await mutate();
     } catch (submitError) {
       const normalized =
         submitError instanceof ApiError
           ? (submitError as ApiError<ApiErrorResponse>)
-          : new ApiError('Could not publish.', 500, null);
+          : new ApiError("Could not publish.", 500, null);
 
       setFormMessage(getErrorMessage(normalized.payload, normalized.message));
-      setFormTone('error');
+      setFormTone("error");
     } finally {
       setIsSubmitting(false);
     }
@@ -75,18 +89,23 @@ export function CommunityPage(): React.JSX.Element {
           <p className="section-eyebrow">User community</p>
           <h1>Share lyrics and discuss tracks together</h1>
           <p className="muted-copy">
-            Posts and comments are rate-limited, checked for unsafe patterns on the server, and require a signed-in
-            account with CSRF protection on every write—similar in spirit to collaborative lyric sites, with discussion
-            attached to each submission.
+            Posts and comments are rate-limited, checked for unsafe patterns on
+            the server, and require a signed-in account with CSRF protection on
+            every write—similar in spirit to collaborative lyric sites, with
+            discussion attached to each submission.
           </p>
         </header>
 
         {currentUser ? (
-          <section className="community-card community-card--compose" aria-labelledby="compose-heading">
+          <section
+            className="community-card community-card--compose"
+            aria-labelledby="compose-heading"
+          >
             <h2 id="compose-heading">Add a lyric contribution</h2>
             <p className="muted-copy community-card__hint">
-              Paste lyrics line-by-line in the box (one verse per line is fine). Optional YouTube links are restricted
-              to known YouTube hostnames on the server.
+              Paste lyrics line-by-line in the box (one verse per line is fine).
+              Optional YouTube links are restricted to known YouTube hostnames
+              on the server.
             </p>
 
             <form className="community-compose-form" onSubmit={handleSubmit}>
@@ -99,7 +118,12 @@ export function CommunityPage(): React.JSX.Element {
                     required
                     type="text"
                     value={form.title}
-                    onChange={(event) => setForm((previous) => ({ ...previous, title: event.target.value }))}
+                    onChange={(event) =>
+                      setForm((previous) => ({
+                        ...previous,
+                        title: event.target.value,
+                      }))
+                    }
                   />
                 </label>
                 <label className="field">
@@ -110,7 +134,12 @@ export function CommunityPage(): React.JSX.Element {
                     required
                     type="text"
                     value={form.artist}
-                    onChange={(event) => setForm((previous) => ({ ...previous, artist: event.target.value }))}
+                    onChange={(event) =>
+                      setForm((previous) => ({
+                        ...previous,
+                        artist: event.target.value,
+                      }))
+                    }
                   />
                 </label>
               </div>
@@ -122,7 +151,12 @@ export function CommunityPage(): React.JSX.Element {
                   maxLength={40}
                   type="text"
                   value={form.releasedDate}
-                  onChange={(event) => setForm((previous) => ({ ...previous, releasedDate: event.target.value }))}
+                  onChange={(event) =>
+                    setForm((previous) => ({
+                      ...previous,
+                      releasedDate: event.target.value,
+                    }))
+                  }
                 />
               </label>
 
@@ -133,7 +167,12 @@ export function CommunityPage(): React.JSX.Element {
                   maxLength={500}
                   rows={3}
                   value={form.description}
-                  onChange={(event) => setForm((previous) => ({ ...previous, description: event.target.value }))}
+                  onChange={(event) =>
+                    setForm((previous) => ({
+                      ...previous,
+                      description: event.target.value,
+                    }))
+                  }
                 />
               </label>
 
@@ -144,7 +183,12 @@ export function CommunityPage(): React.JSX.Element {
                   required
                   rows={12}
                   value={form.lyrics}
-                  onChange={(event) => setForm((previous) => ({ ...previous, lyrics: event.target.value }))}
+                  onChange={(event) =>
+                    setForm((previous) => ({
+                      ...previous,
+                      lyrics: event.target.value,
+                    }))
+                  }
                 />
               </label>
 
@@ -155,18 +199,34 @@ export function CommunityPage(): React.JSX.Element {
                   placeholder="https://www.youtube.com/watch?v=…"
                   type="url"
                   value={form.youtubeUrl}
-                  onChange={(event) => setForm((previous) => ({ ...previous, youtubeUrl: event.target.value }))}
+                  onChange={(event) =>
+                    setForm((previous) => ({
+                      ...previous,
+                      youtubeUrl: event.target.value,
+                    }))
+                  }
                 />
               </label>
 
-              <p className={`form-message form-message--${formTone}`}>{formMessage}</p>
+              <p className={`form-message form-message--${formTone}`}>
+                {formMessage}
+              </p>
 
               <div className="community-compose-actions">
-                <button className="button button--secondary" disabled={isSubmitting} type="reset" onClick={() => setForm(emptyForm)}>
+                <button
+                  className="button button--secondary"
+                  disabled={isSubmitting}
+                  type="reset"
+                  onClick={() => setForm(emptyForm)}
+                >
                   Clear
                 </button>
-                <button className="button" disabled={isSubmitting} type="submit">
-                  {isSubmitting ? 'Publishing…' : 'Publish post'}
+                <button
+                  className="button"
+                  disabled={isSubmitting}
+                  type="submit"
+                >
+                  {isSubmitting ? "Publishing…" : "Publish post"}
                 </button>
               </div>
             </form>
@@ -175,10 +235,14 @@ export function CommunityPage(): React.JSX.Element {
           <section className="community-card community-card--notice">
             <h2>Sign in to contribute</h2>
             <p className="muted-copy">
-              Reading the feed is open to everyone. Adding lyrics or comments requires an account so activity can be
-              attributed and rate-limited fairly.
+              Reading the feed is open to everyone. Adding lyrics or comments
+              requires an account so activity can be attributed and rate-limited
+              fairly.
             </p>
-            <Link className="button" to={`/login?returnTo=${encodeURIComponent(buildReturnTo({ pathname: '/community', search: '' }))}`}>
+            <Link
+              className="button"
+              to={`/login?returnTo=${encodeURIComponent(buildReturnTo({ pathname: "/community", search: "" }))}`}
+            >
               Log in to post
             </Link>
           </section>
@@ -190,11 +254,16 @@ export function CommunityPage(): React.JSX.Element {
             <ul className="community-feed">
               {data.mine.map((item) => (
                 <li key={item._id}>
-                  <Link className="community-feed-card" to={isObjectId(item._id) ? `/community/${item._id}` : '#'}>
-                    <div className="community-feed-card__title">{item.title}</div>
+                  <Link
+                    className="community-feed-card"
+                    to={isObjectId(item._id) ? `/community/${item._id}` : "#"}
+                  >
+                    <div className="community-feed-card__title">
+                      {item.title}
+                    </div>
                     <div className="community-feed-card__meta">
                       {item.artist} · {formatWhen(item.createdAt)}
-                      {item.status === 'published' ? (
+                      {item.status === "published" ? (
                         <span> · {item.commentCount} comments</span>
                       ) : (
                         <span> · {item.status}</span>
@@ -210,24 +279,42 @@ export function CommunityPage(): React.JSX.Element {
         <section className="community-section" aria-labelledby="feed-heading">
           <h2 id="feed-heading">Latest community posts</h2>
 
-          {isLoading ? <p className="muted-copy">Loading community feed…</p> : null}
-          {error ? <p className="form-message form-message--error">Could not load the community feed.</p> : null}
+          {isLoading ? (
+            <p className="muted-copy">Loading community feed…</p>
+          ) : null}
+          {error ? (
+            <p className="form-message form-message--error">
+              Could not load the community feed.
+            </p>
+          ) : null}
 
           {!isLoading && data?.items.length === 0 ? (
-            <p className="empty-panel">No community posts yet. Be the first to share lyrics.</p>
+            <p className="empty-panel">
+              No community posts yet. Be the first to share lyrics.
+            </p>
           ) : null}
 
           {data?.items.length ? (
             <ul className="community-feed">
               {data.items.map((item) => (
                 <li key={item._id}>
-                  <Link className="community-feed-card" to={isObjectId(item._id) ? `/community/${item._id}` : '#'}>
-                    <div className="community-feed-card__title">{item.title}</div>
+                  <Link
+                    className="community-feed-card"
+                    to={isObjectId(item._id) ? `/community/${item._id}` : "#"}
+                  >
+                    <div className="community-feed-card__title">
+                      {item.title}
+                    </div>
                     <div className="community-feed-card__meta">
-                      {item.artist} · by {item.author.label} · {formatWhen(item.createdAt)} · {item.commentCount}{' '}
+                      {item.artist} · by {item.author.label} ·{" "}
+                      {formatWhen(item.createdAt)} · {item.commentCount}{" "}
                       comments
                     </div>
-                    {item.description ? <p className="community-feed-card__snippet">{item.description}</p> : null}
+                    {item.description ? (
+                      <p className="community-feed-card__snippet">
+                        {item.description}
+                      </p>
+                    ) : null}
                   </Link>
                 </li>
               ))}

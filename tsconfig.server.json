@@ -4,19 +4,12 @@
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "lib": [
-      "ES2022"
-    ],
+    "lib": ["ES2022"],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "outDir": "dist/server",
     "rootDir": ".",
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
-  "include": [
-    "server/src/**/*",
-    "shared/**/*"
-  ]
+  "include": ["server/src/**/*", "shared/**/*"]
 }

@@ -1,7 +1,7 @@
-import rateLimit from 'express-rate-limit';
-import type { Request } from 'express';
+import rateLimit from "express-rate-limit";
+import type { Request } from "express";
 
-import { env } from '../../config/env.js';
+import { env } from "../../config/env.js";
 
 interface RateLimitedRequest extends Request {
   rateLimit?: {
@@ -26,7 +26,7 @@ function formatRetryMessage(retryAfterSeconds: number): string {
 
   const retryAfterMinutes = Math.ceil(retryAfterSeconds / 60);
 
-  return `Too many attempts. Please wait ${retryAfterMinutes} minute${retryAfterMinutes === 1 ? '' : 's'} before trying again.`;
+  return `Too many attempts. Please wait ${retryAfterMinutes} minute${retryAfterMinutes === 1 ? "" : "s"} before trying again.`;
 }
 
 export const authWriteLimiter = rateLimit({
@@ -34,18 +34,18 @@ export const authWriteLimiter = rateLimit({
     const retryAfterSeconds = getRetryAfterSeconds(req);
     const retryMessage = formatRetryMessage(retryAfterSeconds);
 
-    res.set('Retry-After', String(retryAfterSeconds));
+    res.set("Retry-After", String(retryAfterSeconds));
     res.status(429).json({
       error: retryMessage,
       message: retryMessage,
       retryAfterSeconds,
       status: 429,
-      success: false
+      success: false,
     });
   },
   legacyHeaders: false,
   max: env.authRateLimitMax,
   skipSuccessfulRequests: false,
-  standardHeaders: 'draft-8',
-  windowMs: env.authRateLimitWindowMs
+  standardHeaders: "draft-8",
+  windowMs: env.authRateLimitWindowMs,
 });

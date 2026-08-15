@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 /**
  * Lightweight reassurance that a server-side session exists for signed-in users.

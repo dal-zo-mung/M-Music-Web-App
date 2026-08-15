@@ -1,4 +1,10 @@
-export const PROFILE_ACCENTS = ['default', 'aurora', 'ember', 'meadow', 'slate'] as const;
+export const PROFILE_ACCENTS = [
+  "default",
+  "aurora",
+  "ember",
+  "meadow",
+  "slate",
+] as const;
 export type ProfileAccent = (typeof PROFILE_ACCENTS)[number];
 
 export interface PublicUser {
@@ -8,8 +14,8 @@ export interface PublicUser {
   firstName: string | null;
   lastName: string | null;
   profileImage: string | null;
-  authProvider: 'google' | 'local';
-  role: 'admin' | 'member' | 'moderator' | 'user';
+  authProvider: "google" | "local";
+  role: "admin" | "member" | "moderator" | "user";
   createdAt: string;
   about: string | null;
   accentKey: ProfileAccent;
@@ -33,11 +39,11 @@ export interface AuthMutationResponse {
 
 export interface SongRecord {
   _id: string;
-  'Song Title': string;
+  "Song Title": string;
   Artist: string;
-  'Released Date': string;
-  'About Song': string;
-  'Direct to YT': string;
+  "Released Date": string;
+  "About Song": string;
+  "Direct to YT": string;
   Lyric: string[];
   albumCover: string;
   /** Category slug, e.g. "myanmar-worship", "english-hymns" */
@@ -52,7 +58,7 @@ export interface CommunityAuthor {
   id: string;
   label: string;
   profileImage: string | null;
-  role: 'admin' | 'member' | 'moderator' | 'user';
+  role: "admin" | "member" | "moderator" | "user";
 }
 
 export interface CommunityCommentRecord {
@@ -71,7 +77,7 @@ export interface CommunitySubmissionRecord {
   description: string;
   lyrics: string[];
   releasedDate: string;
-  status: 'published' | 'removed';
+  status: "published" | "removed";
   title: string;
   artist: string;
   youtubeUrl: string;
@@ -118,7 +124,7 @@ export interface ProfileUpdateRequest {
 }
 
 export interface SupportChatRequest {
-  messages: Array<{ content: string; role: 'assistant' | 'user' }>;
+  messages: Array<{ content: string; role: "assistant" | "user" }>;
 }
 
 export interface SupportChatResponse {
@@ -152,9 +158,9 @@ export interface AdminUserRecord {
   displayName: string | null;
   firstName: string | null;
   lastName: string | null;
-  role: 'admin' | 'member' | 'moderator' | 'user';
-  authProvider: 'google' | 'guest' | 'local';
-  source: 'desktop' | 'web';
+  role: "admin" | "member" | "moderator" | "user";
+  authProvider: "google" | "guest" | "local";
+  source: "desktop" | "web";
   deviceId: string | null;
   profileImage: string | null;
   about: string | null;
@@ -188,7 +194,7 @@ export interface AdminUserDetailResponse {
 }
 
 export interface AdminRoleUpdateRequest {
-  role: 'admin' | 'member' | 'moderator' | 'user';
+  role: "admin" | "member" | "moderator" | "user";
 }
 
 export interface AdminPasswordResetRequest {
@@ -196,7 +202,7 @@ export interface AdminPasswordResetRequest {
 }
 
 export interface AdminSongRecord extends SongRecord {
-  status: 'published' | 'removed';
+  status: "published" | "removed";
   lyricLineCount: number;
   favoriteCount: number;
 }
@@ -208,11 +214,11 @@ export interface AdminSongsResponse {
 }
 
 export interface AdminSongCreateRequest {
-  'Song Title': string;
+  "Song Title": string;
   Artist: string;
-  'Released Date'?: string;
-  'About Song'?: string;
-  'Direct to YT'?: string;
+  "Released Date"?: string;
+  "About Song"?: string;
+  "Direct to YT"?: string;
   Lyric?: string[];
   albumCover?: string;
   /** Category slug, e.g. "myanmar-worship", "english-hymns" */
@@ -226,14 +232,14 @@ export interface AdminCommunitySubmissionsResponse {
 }
 
 export interface AdminStatusUpdateRequest {
-  status: 'published' | 'removed';
+  status: "published" | "removed";
 }
 
 // ── Desktop Module Types ──────────────────────────────────────
 
 export interface LyricSlideBlock {
   id: string;
-  type: 'verse' | 'chorus' | 'bridge' | 'blank';
+  type: "verse" | "chorus" | "bridge" | "blank";
   label: string;
   lines: string[];
 }
@@ -263,7 +269,7 @@ export interface DesktopCategory {
   song_count: number;
 }
 
-export type ReleasePlatform = 'win' | 'mac' | 'linux' | 'all';
+export type ReleasePlatform = "win" | "mac" | "linux" | "all";
 
 export interface Release {
   id: string;
@@ -275,7 +281,7 @@ export interface Release {
   created_at: string;
 }
 
-export type LegalDocType = 'terms' | 'privacy' | 'copyright';
+export type LegalDocType = "terms" | "privacy" | "copyright";
 
 export interface LegalDocument {
   id: string;
@@ -366,7 +372,7 @@ export interface AdminLegalUpsertRequest {
 
 export interface DesktopUserProfile {
   id: string;
-  authMethod: 'google' | 'guest';
+  authMethod: "google" | "guest";
   email: string | null;
   displayName: string | null;
   profileImage: string | null;
@@ -388,7 +394,7 @@ export interface DesktopAuthGoogleInitResponse {
 }
 
 export interface DesktopAuthGooglePollResponse {
-  status: 'pending' | 'complete';
+  status: "pending" | "complete";
   user?: DesktopUserProfile;
 }
 
@@ -400,4 +406,3 @@ export interface DesktopAuthMeResponse {
   success: true;
   user: DesktopUserProfile | null;
 }
-

@@ -1,8 +1,12 @@
-import type { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, Response } from "express";
 
-import { runSupportChat } from './support.service.js';
+import { runSupportChat } from "./support.service.js";
 
-export async function supportChatHandler(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function supportChatHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const body = req.body as { messages?: unknown };
     const result = await runSupportChat(body?.messages);

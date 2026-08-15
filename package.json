@@ -7,17 +7,19 @@
   "type": "module",
   "main": "dist/server/server/src/server.js",
   "scripts": {
-    "dev": "concurrently \"npm:dev:server\" \"npm:dev:client\"",
+    "dev": "concurrently \"bun:dev:server\" \"bun:dev:client\"",
     "dev:server": "tsx watch server/src/server.ts",
     "dev:client": "vite --configLoader runner",
-    "build": "npm run build:client && npm run build:server",
+    "build": "bun run build:client && bun run build:server",
     "build:client": "vite build --configLoader runner",
     "build:server": "tsc -p tsconfig.server.json",
-    "typecheck": "npm run typecheck:client && npm run typecheck:server",
+    "typecheck": "bun run typecheck:client && bun run typecheck:server",
     "typecheck:client": "tsc -p tsconfig.client.json --noEmit",
     "typecheck:server": "tsc -p tsconfig.server.json --noEmit",
     "make-admin": "tsx scripts/make-admin.ts",
-    "start": "node dist/server/server/src/server.js"
+    "start": "node dist/server/server/src/server.js",
+    "format": "prettier --write \"client/**/*.{ts,tsx,css,json}\" \"server/**/*.ts\" \"shared/**/*.ts\" \"*.json\" \"*.mjs\"",
+    "format:check": "prettier --check \"client/**/*.{ts,tsx,css,json}\" \"server/**/*.ts\" \"shared/**/*.ts\" \"*.json\" \"*.mjs\""
   },
   "dependencies": {
     "@dotenvx/dotenvx": "^1.66.0",
@@ -52,6 +54,7 @@
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^5.1.0",
+    "prettier": "^3.9.6",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "vite": "^7.2.1"

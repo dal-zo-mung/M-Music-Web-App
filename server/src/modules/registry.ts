@@ -1,11 +1,11 @@
-import type { ModuleManifest } from './module.types.js';
-import { authModule }      from './auth/index.js';
-import { songsModule }     from './songs/index.js';
-import { communityModule } from './community/index.js';
-import { supportModule }   from './support/index.js';
-import { healthModule }    from './health/index.js';
-import { adminModule }     from './admin/index.js';
-import { desktopModule }   from './desktop/index.js';
+import type { ModuleManifest } from "./module.types.js";
+import { authModule } from "./auth/index.js";
+import { songsModule } from "./songs/index.js";
+import { communityModule } from "./community/index.js";
+import { supportModule } from "./support/index.js";
+import { healthModule } from "./health/index.js";
+import { adminModule } from "./admin/index.js";
+import { desktopModule } from "./desktop/index.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MODULE REGISTRY

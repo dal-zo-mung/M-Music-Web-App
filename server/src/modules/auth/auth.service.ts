@@ -1,10 +1,14 @@
-import bcrypt from 'bcrypt';
-import { scryptSync, timingSafeEqual } from 'node:crypto';
+import bcrypt from "bcrypt";
+import { scryptSync, timingSafeEqual } from "node:crypto";
 
-import type { ProfileAccent, ProfileUpdateRequest, PublicUser } from '../../../../shared/types.js';
-import { PROFILE_ACCENTS } from '../../../../shared/types.js';
-import { normalizePlainText } from '../shared/security/input.js';
-import type { UserDocument } from './user.model.js';
+import type {
+  ProfileAccent,
+  ProfileUpdateRequest,
+  PublicUser,
+} from "../../../../shared/types.js";
+import { PROFILE_ACCENTS } from "../../../../shared/types.js";
+import { normalizePlainText } from "../shared/security/input.js";
+import type { UserDocument } from "./user.model.js";
 
 const PASSWORD_HASH_KEY_LENGTH = 64;
 const MAX_NAME_LENGTH = 50;
@@ -36,7 +40,7 @@ interface ValidationSuccess<TData> {
 type ValidationResult<TData> = ValidationFailure | ValidationSuccess<TData>;
 
 function readString(value: unknown): string {
-  return typeof value === 'string' ? value : '';
+  return typeof value === "string" ? value : "";
 }
 
 export function normalizeUsername(value: unknown): string {
@@ -48,60 +52,70 @@ export function normalizeName(value: unknown): string {
 }
 
 function isProfileAccent(value: unknown): value is ProfileAccent {
-  return typeof value === 'string' && (PROFILE_ACCENTS as readonly string[]).includes(value);
+  return (
+    typeof value === "string" &&
+    (PROFILE_ACCENTS as readonly string[]).includes(value)
+  );
 }
 
-export function validateProfileUpdatePayload(payload: unknown): ValidationResult<ProfileUpdateRequest> {
-  const body = (payload && typeof payload === 'object' ? payload : {}) as Record<string, unknown>;
+export function validateProfileUpdatePayload(
+  payload: unknown,
+): ValidationResult<ProfileUpdateRequest> {
+  const body = (
+    payload && typeof payload === "object" ? payload : {}
+  ) as Record<string, unknown>;
   const data: ProfileUpdateRequest = {};
 
-  if ('displayName' in body) {
+  if ("displayName" in body) {
     const displayName = normalizePlainText(body.displayName, { maxLength: 80 });
     data.displayName = displayName.length > 0 ? displayName : null;
   }
 
-  if ('firstName' in body) {
+  if ("firstName" in body) {
     const firstName = normalizeName(body.firstName);
 
     if (firstName.length > MAX_NAME_LENGTH) {
       return {
         message: `First name must be ${MAX_NAME_LENGTH} characters or fewer.`,
         status: 400,
-        valid: false
+        valid: false,
       };
     }
 
     data.firstName = firstName;
   }
 
-  if ('lastName' in body) {
+  if ("lastName" in body) {
     const lastName = normalizeName(body.lastName);
 
     if (lastName.length > MAX_NAME_LENGTH) {
       return {
         message: `Last name must be ${MAX_NAME_LENGTH} characters or fewer.`,
         status: 400,
-        valid: false
+        valid: false,
       };
     }
 
     data.lastName = lastName;
   }
 
-  if ('about' in body) {
-    data.about = normalizePlainText(body.about, { maxLength: 1600, preserveNewlines: true });
+  if ("about" in body) {
+    data.about = normalizePlainText(body.about, {
+      maxLength: 1600,
+      preserveNewlines: true,
+    });
   }
 
-  if ('tagline' in body) {
+  if ("tagline" in body) {
     data.tagline = normalizePlainText(body.tagline, { maxLength: 140 });
   }
 
-  if ('accentKey' in body) {
+  if ("accentKey" in body) {
     if (!isProfileAccent(body.accentKey)) {
       return {
-        message: 'Profile theme is not valid.',
+        message: "Profile theme is not valid.",
         status: 400,
-        valid: false
+        valid: false,
       };
     }
 
@@ -110,19 +124,22 @@ export function validateProfileUpdatePayload(payload: unknown): ValidationResult
 
   if (Object.keys(data).length === 0) {
     return {
-      message: 'Nothing to update.',
+      message: "Nothing to update.",
       status: 400,
-      valid: false
+      valid: false,
     };
   }
 
   return {
     data,
-    valid: true
+    valid: true,
   };
 }
 
-export function applyProfileUpdates(user: UserDocument, data: ProfileUpdateRequest): void {
+export function applyProfileUpdates(
+  user: UserDocument,
+  data: ProfileUpdateRequest,
+): void {
   if (data.displayName !== undefined) {
     user.displayName = data.displayName;
   }
@@ -149,23 +166,26 @@ export function applyProfileUpdates(user: UserDocument, data: ProfileUpdateReque
 }
 
 export function toPublicUser(user: UserDocument): PublicUser {
-  const aboutRaw = typeof user.about === 'string' ? user.about.trim() : '';
-  const taglineRaw = typeof user.tagline === 'string' ? user.tagline.trim() : '';
-  const accentKey = isProfileAccent(user.accentKey) ? user.accentKey : 'default';
+  const aboutRaw = typeof user.about === "string" ? user.about.trim() : "";
+  const taglineRaw =
+    typeof user.tagline === "string" ? user.tagline.trim() : "";
+  const accentKey = isProfileAccent(user.accentKey)
+    ? user.accentKey
+    : "default";
 
   return {
     about: aboutRaw.length > 0 ? aboutRaw : null,
     accentKey,
-    authProvider: user.googleId ? 'google' : 'local',
+    authProvider: user.googleId ? "google" : "local",
     createdAt: user.createdAt.toISOString(),
     displayName: user.displayName ?? null,
     firstName: user.firstName ?? null,
     id: String(user._id),
     lastName: user.lastName ?? null,
     profileImage: user.profileImage ?? null,
-    role: user.role ?? 'user',
+    role: user.role ?? "user",
     tagline: taglineRaw.length > 0 ? taglineRaw : null,
-    username: user.username ?? null
+    username: user.username ?? null,
   };
 }
 
@@ -174,7 +194,7 @@ export function hashPassword(password: string): string {
 }
 
 export function isLegacyScryptHash(storedValue: string): boolean {
-  return storedValue.includes(':');
+  return storedValue.includes(":");
 }
 
 export function verifyPassword(password: string, storedValue: string): boolean {
@@ -183,68 +203,110 @@ export function verifyPassword(password: string, storedValue: string): boolean {
   }
 
   if (isLegacyScryptHash(storedValue)) {
-    const [salt, storedHash] = storedValue.split(':');
+    const [salt, storedHash] = storedValue.split(":");
 
     if (!salt || !storedHash) {
       return false;
     }
 
     const derivedHash = scryptSync(password, salt, PASSWORD_HASH_KEY_LENGTH);
-    const storedBuffer = Buffer.from(storedHash, 'hex');
+    const storedBuffer = Buffer.from(storedHash, "hex");
 
-    return storedBuffer.length === derivedHash.length && timingSafeEqual(storedBuffer, derivedHash);
+    return (
+      storedBuffer.length === derivedHash.length &&
+      timingSafeEqual(storedBuffer, derivedHash)
+    );
   }
 
   return bcrypt.compareSync(password, storedValue);
 }
 
-export function validatePassword(password: string): { errors: string[]; valid: boolean } {
+export function validatePassword(password: string): {
+  errors: string[];
+  valid: boolean;
+} {
   const rules = [
-    { message: 'Password must be at least 8 characters long.', valid: (candidate: string) => candidate.length >= 8 },
-    { message: `Password must be ${MAX_PASSWORD_LENGTH} characters or fewer.`, valid: (candidate: string) => candidate.length <= MAX_PASSWORD_LENGTH },
-    { message: 'Password must include at least one uppercase letter.', valid: (candidate: string) => /[A-Z]/.test(candidate) },
-    { message: 'Password must include at least one lowercase letter.', valid: (candidate: string) => /[a-z]/.test(candidate) },
-    { message: 'Password must include at least one number.', valid: (candidate: string) => /[0-9]/.test(candidate) },
-    { message: 'Password must include at least one special character.', valid: (candidate: string) => /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?`~]/.test(candidate) }
+    {
+      message: "Password must be at least 8 characters long.",
+      valid: (candidate: string) => candidate.length >= 8,
+    },
+    {
+      message: `Password must be ${MAX_PASSWORD_LENGTH} characters or fewer.`,
+      valid: (candidate: string) => candidate.length <= MAX_PASSWORD_LENGTH,
+    },
+    {
+      message: "Password must include at least one uppercase letter.",
+      valid: (candidate: string) => /[A-Z]/.test(candidate),
+    },
+    {
+      message: "Password must include at least one lowercase letter.",
+      valid: (candidate: string) => /[a-z]/.test(candidate),
+    },
+    {
+      message: "Password must include at least one number.",
+      valid: (candidate: string) => /[0-9]/.test(candidate),
+    },
+    {
+      message: "Password must include at least one special character.",
+      valid: (candidate: string) =>
+        /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?`~]/.test(candidate),
+    },
   ];
 
-  const errors = rules.filter((rule) => !rule.valid(password)).map((rule) => rule.message);
+  const errors = rules
+    .filter((rule) => !rule.valid(password))
+    .map((rule) => rule.message);
 
   return {
     errors,
-    valid: errors.length === 0
+    valid: errors.length === 0,
   };
 }
 
-export function validateRegistrationPayload(payload: unknown): ValidationResult<RegistrationPayload> {
-  const username = normalizeUsername((payload as Partial<RegistrationPayload> | undefined)?.username);
-  const email = readString((payload as Partial<RegistrationPayload> | undefined)?.email).trim().toLowerCase();
-  const firstName = normalizeName((payload as Partial<RegistrationPayload> | undefined)?.firstName);
-  const lastName = normalizeName((payload as Partial<RegistrationPayload> | undefined)?.lastName);
-  const password = readString((payload as Partial<RegistrationPayload> | undefined)?.password);
+export function validateRegistrationPayload(
+  payload: unknown,
+): ValidationResult<RegistrationPayload> {
+  const username = normalizeUsername(
+    (payload as Partial<RegistrationPayload> | undefined)?.username,
+  );
+  const email = readString(
+    (payload as Partial<RegistrationPayload> | undefined)?.email,
+  )
+    .trim()
+    .toLowerCase();
+  const firstName = normalizeName(
+    (payload as Partial<RegistrationPayload> | undefined)?.firstName,
+  );
+  const lastName = normalizeName(
+    (payload as Partial<RegistrationPayload> | undefined)?.lastName,
+  );
+  const password = readString(
+    (payload as Partial<RegistrationPayload> | undefined)?.password,
+  );
 
   if (!firstName || !lastName || !username || !email || !password) {
     return {
-      message: 'Please complete all required fields.',
+      message: "Please complete all required fields.",
       status: 400,
-      valid: false
+      valid: false,
     };
   }
 
   if (!USERNAME_PATTERN.test(username)) {
     return {
-      message: 'Username must be 3-30 characters and use only letters, numbers, dots, underscores, or hyphens.',
+      message:
+        "Username must be 3-30 characters and use only letters, numbers, dots, underscores, or hyphens.",
       status: 400,
-      valid: false
+      valid: false,
     };
   }
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailPattern.test(email) || email.length > 100) {
     return {
-      message: 'Email address format is invalid.',
+      message: "Email address format is invalid.",
       status: 400,
-      valid: false
+      valid: false,
     };
   }
 
@@ -252,7 +314,7 @@ export function validateRegistrationPayload(payload: unknown): ValidationResult<
     return {
       message: `Names must be ${MAX_NAME_LENGTH} characters or fewer.`,
       status: 400,
-      valid: false
+      valid: false,
     };
   }
 
@@ -260,27 +322,33 @@ export function validateRegistrationPayload(payload: unknown): ValidationResult<
 
   if (!passwordValidation.valid) {
     return {
-      message: passwordValidation.errors.join(' '),
+      message: passwordValidation.errors.join(" "),
       status: 400,
-      valid: false
+      valid: false,
     };
   }
 
   return {
     data: { email, firstName, lastName, password, username },
-    valid: true
+    valid: true,
   };
 }
 
-export function validateLoginPayload(payload: unknown): ValidationResult<LoginPayload> {
-  const username = normalizeUsername((payload as Partial<LoginPayload> | undefined)?.username);
-  const password = readString((payload as Partial<LoginPayload> | undefined)?.password);
+export function validateLoginPayload(
+  payload: unknown,
+): ValidationResult<LoginPayload> {
+  const username = normalizeUsername(
+    (payload as Partial<LoginPayload> | undefined)?.username,
+  );
+  const password = readString(
+    (payload as Partial<LoginPayload> | undefined)?.password,
+  );
 
   if (!username || !password) {
     return {
-      message: 'Username/email and password are required.',
+      message: "Username/email and password are required.",
       status: 400,
-      valid: false
+      valid: false,
     };
   }
 
@@ -290,9 +358,9 @@ export function validateLoginPayload(payload: unknown): ValidationResult<LoginPa
 
   if (!isValidUsername && !isValidEmail) {
     return {
-      message: 'Username or email format is invalid.',
+      message: "Username or email format is invalid.",
       status: 400,
-      valid: false
+      valid: false,
     };
   }
 
@@ -300,13 +368,13 @@ export function validateLoginPayload(payload: unknown): ValidationResult<LoginPa
     return {
       message: `Password must be ${MAX_PASSWORD_LENGTH} characters or fewer.`,
       status: 400,
-      valid: false
+      valid: false,
     };
   }
 
   return {
     data: { password, username },
-    valid: true
+    valid: true,
   };
 }
 

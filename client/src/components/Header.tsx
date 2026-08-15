@@ -1,25 +1,38 @@
-import { useEffect, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect, useRef, useState } from "react";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 
-import { useAuth } from '../context/AuthContext';
-import { usePreferences } from '../context/PreferencesContext';
-import { buildSearchPath } from '../lib/auth';
-import { MenuPanel } from './MenuPanel';
-import { UserMenu } from './UserMenu';
+import { useAuth } from "../context/AuthContext";
+import { usePreferences } from "../context/PreferencesContext";
+import { buildSearchPath } from "../lib/auth";
+import { MenuPanel } from "./MenuPanel";
+import { UserMenu } from "./UserMenu";
 
 export function Header(): React.JSX.Element {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const menuRef = useRef<HTMLDivElement | null>(null);
   const { currentUser, isLoading, logout } = useAuth();
-  const { fontSize, scrollSpeed, setFontSize, setScrollSpeed, setTheme, theme } = usePreferences();
+  const {
+    fontSize,
+    scrollSpeed,
+    setFontSize,
+    setScrollSpeed,
+    setTheme,
+    theme,
+  } = usePreferences();
 
   useEffect(() => {
-    const songSearchQuery = searchParams.get('q') || '';
-    const currentPageSearchQuery = location.pathname === '/search' ? songSearchQuery : songSearchQuery;
+    const songSearchQuery = searchParams.get("q") || "";
+    const currentPageSearchQuery =
+      location.pathname === "/search" ? songSearchQuery : songSearchQuery;
     setSearchValue(currentPageSearchQuery);
   }, [location.pathname, searchParams]);
 
@@ -35,21 +48,21 @@ export function Header(): React.JSX.Element {
     }
 
     function handleEscape(event: KeyboardEvent): void {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         setIsMenuOpen(false);
       }
     }
 
-    window.addEventListener('click', handleDocumentClick);
-    window.addEventListener('keydown', handleEscape);
+    window.addEventListener("click", handleDocumentClick);
+    window.addEventListener("keydown", handleEscape);
 
     return () => {
-      window.removeEventListener('click', handleDocumentClick);
-      window.removeEventListener('keydown', handleEscape);
+      window.removeEventListener("click", handleDocumentClick);
+      window.removeEventListener("keydown", handleEscape);
     };
   }, []);
 
-  const isSongPage = location.pathname.startsWith('/songs/');
+  const isSongPage = location.pathname.startsWith("/songs/");
 
   function handleSearchSubmit(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault();

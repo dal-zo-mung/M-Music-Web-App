@@ -1,40 +1,40 @@
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-import { loadEnv } from 'vite';
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { loadEnv } from "vite";
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(({ mode }) => {
-  const environment = loadEnv(mode, currentDir, '');
-  const apiPort = environment.PORT || '8888';
+  const environment = loadEnv(mode, currentDir, "");
+  const apiPort = environment.PORT || "8888";
 
   return {
     plugins: [react()],
     build: {
-      outDir: 'dist/client',
-      emptyOutDir: true
+      outDir: "dist/client",
+      emptyOutDir: true,
     },
     resolve: {
       alias: {
-        '@client': path.join(currentDir, 'client', 'src'),
-        '@shared': path.join(currentDir, 'shared')
-      }
+        "@client": path.join(currentDir, "client", "src"),
+        "@shared": path.join(currentDir, "shared"),
+      },
     },
     server: {
       port: 5173,
       proxy: {
-        '/api': {
+        "/api": {
           target: `http://localhost:${apiPort}`,
-          changeOrigin: true
+          changeOrigin: true,
         },
-        '/auth': {
+        "/auth": {
           target: `http://localhost:${apiPort}`,
-          changeOrigin: true
-        }
-      }
-    }
+          changeOrigin: true,
+        },
+      },
+    },
   };
 });

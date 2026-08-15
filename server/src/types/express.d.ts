@@ -1,7 +1,7 @@
-import 'express-session';
-import type { UserDocument } from '../modules/auth/user.model.js';
+import "express-session";
+import type { UserDocument } from "../modules/auth/user.model.js";
 
-declare module 'express-session' {
+declare module "express-session" {
   interface SessionData {
     csrfToken?: string;
     returnTo?: string;

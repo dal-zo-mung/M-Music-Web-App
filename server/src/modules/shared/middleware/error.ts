@@ -1,4 +1,4 @@
-import type { ErrorRequestHandler } from 'express';
+import type { ErrorRequestHandler } from "express";
 
 type ErrorWithStatus = Error & {
   statusCode?: number;
@@ -16,8 +16,10 @@ export const errorHandler: ErrorRequestHandler = (error, _req, res, next) => {
 
   res.status(statusCode).json({
     status: false,
-    message: normalizedError.message || 'Internal Server Error',
-    errors: [normalizedError.message || 'Internal Server Error'],
-    ...(process.env.NODE_ENV !== 'production' && normalizedError.stack ? { stack: normalizedError.stack } : {})
+    message: normalizedError.message || "Internal Server Error",
+    errors: [normalizedError.message || "Internal Server Error"],
+    ...(process.env.NODE_ENV !== "production" && normalizedError.stack
+      ? { stack: normalizedError.stack }
+      : {}),
   });
 };

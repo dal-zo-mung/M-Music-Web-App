@@ -1,10 +1,14 @@
-const DANGEROUS_OBJECT_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+const DANGEROUS_OBJECT_KEYS = new Set([
+  "__proto__",
+  "constructor",
+  "prototype",
+]);
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return Object.prototype.toString.call(value) === '[object Object]';
+  return Object.prototype.toString.call(value) === "[object Object]";
 }
 
-export function assertNoDangerousKeys(value: unknown, path = 'payload'): void {
+export function assertNoDangerousKeys(value: unknown, path = "payload"): void {
   if (Array.isArray(value)) {
     value.forEach((item, index) => {
       assertNoDangerousKeys(item, `${path}[${index}]`);
@@ -17,8 +21,14 @@ export function assertNoDangerousKeys(value: unknown, path = 'payload'): void {
   }
 
   Object.entries(value).forEach(([key, nestedValue]) => {
-    if (key.startsWith('$') || key.includes('.') || DANGEROUS_OBJECT_KEYS.has(key)) {
-      const error = new Error(`Unsafe request structure detected at ${path}.${key}.`) as Error & {
+    if (
+      key.startsWith("$") ||
+      key.includes(".") ||
+      DANGEROUS_OBJECT_KEYS.has(key)
+    ) {
+      const error = new Error(
+        `Unsafe request structure detected at ${path}.${key}.`,
+      ) as Error & {
         statusCode?: number;
       };
       error.statusCode = 400;
@@ -29,14 +39,17 @@ export function assertNoDangerousKeys(value: unknown, path = 'payload'): void {
   });
 }
 
-function stripControlCharacters(value: string, options: { preserveNewlines?: boolean } = {}): string {
-  const withoutNullBytes = value.replace(/\u0000/g, '');
+function stripControlCharacters(
+  value: string,
+  options: { preserveNewlines?: boolean } = {},
+): string {
+  const withoutNullBytes = value.replace(/\u0000/g, "");
 
   if (options.preserveNewlines) {
-    return withoutNullBytes.replace(/[^\P{Cc}\n\t]/gu, '');
+    return withoutNullBytes.replace(/[^\P{Cc}\n\t]/gu, "");
   }
 
-  return withoutNullBytes.replace(/[^\P{Cc}\t]/gu, '');
+  return withoutNullBytes.replace(/[^\P{Cc}\t]/gu, "");
 }
 
 export function normalizePlainText(
@@ -44,16 +57,20 @@ export function normalizePlainText(
   options: {
     maxLength: number;
     preserveNewlines?: boolean;
-  }
+  },
 ): string {
-  const rawValue = typeof value === 'string' ? value : '';
-  const trimmedValue = stripControlCharacters(rawValue, { preserveNewlines: options.preserveNewlines }).trim();
+  const rawValue = typeof value === "string" ? value : "";
+  const trimmedValue = stripControlCharacters(rawValue, {
+    preserveNewlines: options.preserveNewlines,
+  }).trim();
 
   if (!trimmedValue) {
-    return '';
+    return "";
   }
 
-  return trimmedValue.length > options.maxLength ? trimmedValue.slice(0, options.maxLength) : trimmedValue;
+  return trimmedValue.length > options.maxLength
+    ? trimmedValue.slice(0, options.maxLength)
+    : trimmedValue;
 }
 
 export function normalizeOptionalPlainText(
@@ -61,7 +78,7 @@ export function normalizeOptionalPlainText(
   options: {
     maxLength: number;
     preserveNewlines?: boolean;
-  }
+  },
 ): string {
   return normalizePlainText(value, options);
 }
@@ -69,7 +86,7 @@ export function normalizeOptionalPlainText(
 export function normalizeLyrics(value: unknown): string[] {
   const text = normalizePlainText(value, {
     maxLength: 12_000,
-    preserveNewlines: true
+    preserveNewlines: true,
   });
 
   if (!text) {
@@ -90,7 +107,7 @@ export function normalizeLyrics(value: unknown): string[] {
 
     if (isBlank) {
       if (!previousWasBlank) {
-        normalizedLines.push('');
+        normalizedLines.push("");
       }
       previousWasBlank = true;
       return;

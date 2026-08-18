@@ -90,7 +90,7 @@ export function DownloadPage(): React.JSX.Element {
         </section>
 
         {/* ── Feature highlights ── */}
-        <section
+        {/* <section
           className="download-features"
           aria-labelledby="features-heading"
         >
@@ -146,7 +146,7 @@ export function DownloadPage(): React.JSX.Element {
               </li>
             ))}
           </ul>
-        </section>
+        </section> */}
       </div>
     </main>
   );

@@ -1,3 +1,4 @@
+import axios, { isAxiosError } from "axios";
 import type { ApiErrorResponse } from "@shared/types";
 
 /** Must match `csrfCookieName` in server `env.ts` (non-httpOnly cookie for double-submit CSRF). */
@@ -38,32 +39,36 @@ export class ApiError<TPayload = unknown> extends Error {
   }
 }
 
-interface RequestJsonOptions extends Omit<RequestInit, "body"> {
+interface RequestJsonOptions {
   body?: unknown;
+  headers?: Record<string, string>;
+  method?: string;
+  signal?: AbortSignal;
 }
 
-function buildRequestInit(options: RequestJsonOptions = {}): RequestInit {
-  const headers = new Headers(options.headers);
+const api = axios.create({
+  withCredentials: true,
+  headers: { "X-M-Music-Client": "M-Music-Web-App" },
+});
+
+function buildHeaders(options: RequestJsonOptions): Record<string, string> {
+  const headers: Record<string, string> = {
+    "X-M-Music-Client": "M-Music-Web-App",
+    ...(options.headers ?? {}),
+  };
   const method = (options.method ?? "GET").toUpperCase();
 
   if (["DELETE", "PATCH", "POST", "PUT"].includes(method)) {
     const token = readBrowserCookie(CSRF_COOKIE_NAME);
 
-    if (token) {
-      headers.set("X-CSRF-Token", token);
-    }
+    if (token) headers["X-CSRF-Token"] = token;
   }
 
-  if (options.body !== undefined && !headers.has("Content-Type")) {
-    headers.set("Content-Type", "application/json");
+  if (options.body !== undefined && !headers["Content-Type"]) {
+    headers["Content-Type"] = "application/json";
   }
 
-  return {
-    ...options,
-    body: options.body === undefined ? undefined : JSON.stringify(options.body),
-    credentials: "same-origin",
-    headers,
-  };
+  return headers;
 }
 
 export function getErrorMessage(
@@ -74,16 +79,31 @@ export function getErrorMessage(
     return fallback;
   }
 
-  const typedPayload = payload as Partial<ApiErrorResponse> & {
-    message?: string;
+  const typedPayload = payload as {
+    error?: unknown;
+    message?: unknown;
   };
 
-  if (typeof typedPayload.message === "string" && typedPayload.message.trim()) {
+  if (
+    typeof typedPayload.message === "string" &&
+    typedPayload.message.trim()
+  ) {
     return typedPayload.message;
   }
 
   if (typeof typedPayload.error === "string" && typedPayload.error.trim()) {
     return typedPayload.error;
+  }
+
+  if (
+    typedPayload.error &&
+    typeof typedPayload.error === "object" &&
+    "message" in typedPayload.error
+  ) {
+    const errorMessage = (typedPayload.error as { message?: unknown }).message;
+    if (typeof errorMessage === "string" && errorMessage.trim()) {
+      return errorMessage;
+    }
   }
 
   return fallback;
@@ -93,22 +113,35 @@ export async function requestJson<TResponse>(
   url: string,
   options: RequestJsonOptions = {},
 ): Promise<TResponse> {
-  const response = await fetch(url, buildRequestInit(options));
-  const payload = (await response.json().catch(() => null)) as
-    TResponse | ApiErrorResponse | null;
+  try {
+    const response = await api.request<TResponse>({
+      data: options.body,
+      headers: buildHeaders(options),
+      method: options.method ?? "GET",
+      signal: options.signal,
+      url,
+    });
 
-  if (!response.ok) {
+    return response.data;
+  } catch (error) {
+    if (!isAxiosError(error)) throw error;
+
+    const payload = (error.response?.data ?? null) as
+      | TResponse
+      | ApiErrorResponse
+      | null;
+
     throw new ApiError(
       getErrorMessage(
         payload,
-        `Request failed with status ${response.status}.`,
+        error.response
+          ? `Request failed with status ${error.response.status}.`
+          : "Cannot connect to the server.",
       ),
-      response.status,
+      error.response?.status ?? 0,
       payload,
     );
   }
-
-  return payload as TResponse;
 }
 
 export function fetchJson<TResponse>(url: string): Promise<TResponse> {

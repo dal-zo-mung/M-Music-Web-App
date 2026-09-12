@@ -11,7 +11,7 @@ const fileFor = (pathname: string) => {
 Bun.serve({
   port,
   hostname: "127.0.0.1",
-  async fetch(request) {
+  async fetch(request: Request) {
     const filePath = fileFor(new URL(request.url).pathname);
     if (!filePath || !(await Bun.file(filePath).exists())) return new Response("Not found", { status: 404 });
     return new Response(Bun.file(filePath));

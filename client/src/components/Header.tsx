@@ -19,7 +19,7 @@ export function Header(): React.JSX.Element {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const { currentUser, isLoading, logout } = useAuth();
+  const { currentUser, isLoading } = useAuth();
   const {
     fontSize,
     scrollSpeed,

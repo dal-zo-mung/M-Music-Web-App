@@ -1,16 +1,19 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "composite": true,
     "jsx": "react-jsx",
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "moduleDetection": "force",
     "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "paths": {
-      "@client/*": ["client/src/*"],
-      "@shared/*": ["shared/*"]
+      "@client/*": ["./client/src/*"],
+      "@shared/*": ["./shared/*"]
     },
     "types": ["vite/client"]
   },

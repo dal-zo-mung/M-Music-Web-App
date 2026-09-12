@@ -1,4 +1,4 @@
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import useSWR from "swr";
 
@@ -28,7 +28,6 @@ function buildSearchUrl(q: string, category: string): string | null {
 
 export function SearchPage(): React.JSX.Element {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
   const query = searchParams.get("q")?.trim() ?? "";
   const category = searchParams.get("category")?.trim() ?? "";
 

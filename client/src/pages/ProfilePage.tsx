@@ -323,7 +323,6 @@ export function ProfilePage(): React.JSX.Element {
           <label className="field">
             <span>About you</span>
             <textarea
-              className="community-textarea community-textarea--short"
               maxLength={1600}
               placeholder="Share a short bio, favorite genres, or how you use M-Music."
               rows={6}

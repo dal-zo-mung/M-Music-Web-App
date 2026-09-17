@@ -1,6 +1,5 @@
 import { Outlet, useLocation } from "react-router-dom";
 
-import { CommunityFab } from "./CommunityFab";
 import { Header } from "./Header";
 import { SupportChat } from "./SupportChat";
 
@@ -25,7 +24,6 @@ export function SiteLayout(): React.JSX.Element {
           </footer>
         )}
       </div>
-      <CommunityFab />
       <SupportChat />
     </div>
   );

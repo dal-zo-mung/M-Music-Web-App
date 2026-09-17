@@ -30,8 +30,8 @@ export function DownloadPage(): React.JSX.Element {
             M-Music - Take Your Music Everywhere
           </h1>
           <p className="download-hero__subtitle">
-            The full M-Music experience — lyrics, favourites, community, and AI
-            support — wrapped into a native desktop app built with Electron. One
+            The full M-Music experience — lyrics, favourites, and AI support —
+            wrapped into a native desktop app built with Electron. One
             universal build runs on every major operating system with no extra
             setup required.
           </p>
@@ -108,11 +108,6 @@ export function DownloadPage(): React.JSX.Element {
                 icon: "❤️",
                 title: "Favourites Sync",
                 body: "Save songs and access them offline or across devices.",
-              },
-              {
-                icon: "🌐",
-                title: "Community Lyrics",
-                body: "Submit and discuss lyrics directly from your desktop.",
               },
               {
                 icon: "🤖",

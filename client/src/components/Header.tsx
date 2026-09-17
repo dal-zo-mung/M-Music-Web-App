@@ -76,7 +76,6 @@ export function Header(): React.JSX.Element {
       </Link>
 
       <nav aria-label="Shortcuts" className="site-header__compact-links">
-        <Link to="/community">Community</Link>
         {currentUser ? <Link to="/profile">Profile</Link> : null}
       </nav>
 
@@ -96,9 +95,6 @@ export function Header(): React.JSX.Element {
 
       <div className="site-header__actions">
         <nav aria-label="Primary navigation" className="quick-links">
-          <Link className="pill-link pill-link--subtle" to="/community">
-            Community
-          </Link>
           <Link className="pill-link pill-link--subtle" to="/download">
             Get App
           </Link>

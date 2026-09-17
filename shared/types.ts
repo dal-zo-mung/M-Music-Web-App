@@ -54,58 +54,6 @@ export interface FavoriteResponse {
   isFavorited: boolean;
 }
 
-export interface CommunityAuthor {
-  id: string;
-  label: string;
-  profileImage: string | null;
-  role: "admin" | "member" | "moderator" | "user";
-}
-
-export interface CommunityCommentRecord {
-  _id: string;
-  author: CommunityAuthor;
-  body: string;
-  createdAt: string;
-  submissionId: string;
-}
-
-export interface CommunitySubmissionRecord {
-  _id: string;
-  author: CommunityAuthor;
-  commentCount: number;
-  createdAt: string;
-  description: string;
-  lyrics: string[];
-  releasedDate: string;
-  status: "published" | "removed";
-  title: string;
-  artist: string;
-  youtubeUrl: string;
-}
-
-export interface CommunityFeedResponse {
-  items: CommunitySubmissionRecord[];
-  mine: CommunitySubmissionRecord[];
-}
-
-export interface CommunitySubmissionDetailResponse {
-  comments: CommunityCommentRecord[];
-  submission: CommunitySubmissionRecord;
-}
-
-export interface CommunitySubmissionPayload {
-  artist: string;
-  description: string;
-  lyrics: string;
-  releasedDate: string;
-  title: string;
-  youtubeUrl: string;
-}
-
-export interface CommunityCommentPayload {
-  body: string;
-}
-
 export interface ApiErrorResponse {
   success: false;
   status: number;
@@ -137,8 +85,6 @@ export interface SupportChatResponse {
 export interface AdminStats {
   totalUsers: number;
   totalSongs: number;
-  totalCommunityPosts: number;
-  totalCommunityComments: number;
   totalFavorites: number;
   recentUsers: number;
   recentPosts: number;
@@ -171,8 +117,6 @@ export interface AdminUserRecord {
   failedLoginAttempts: number;
   lockoutUntil: string | null;
   favoriteCount?: number;
-  communityPostCount?: number;
-  communityCommentCount?: number;
 }
 
 export interface PaginationMeta {
@@ -223,12 +167,6 @@ export interface AdminSongCreateRequest {
   albumCover?: string;
   /** Category slug, e.g. "myanmar-worship", "english-hymns" */
   category?: string;
-}
-
-export interface AdminCommunitySubmissionsResponse {
-  success: true;
-  submissions: CommunitySubmissionRecord[];
-  pagination: PaginationMeta;
 }
 
 export interface AdminStatusUpdateRequest {

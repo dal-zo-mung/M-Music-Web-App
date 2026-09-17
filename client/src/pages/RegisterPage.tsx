@@ -40,7 +40,6 @@ export function RegisterPage(): React.JSX.Element {
       !firstName.trim() ||
       !lastName.trim() ||
       !username.trim() ||
-      !email.trim() ||
       !password ||
       !confirmPassword
     ) {
@@ -105,6 +104,8 @@ export function RegisterPage(): React.JSX.Element {
     <main className="auth-page auth-page--register">
       <section className="auth-card auth-card--register">
         <h1>Create Your Account</h1>
+        <hr/>
+        <br/>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="split-fields">
@@ -132,7 +133,7 @@ export function RegisterPage(): React.JSX.Element {
           </div>
 
           <label className="field">
-            <span>Email Address</span>
+            <span>Email Address (optional)</span>
             <input
               autoComplete="email"
               placeholder="Enter email address"
@@ -152,11 +153,6 @@ export function RegisterPage(): React.JSX.Element {
               onChange={(event) => setUsername(event.currentTarget.value)}
             />
           </label>
-
-          <p className="auth-hint">
-            Your password must include uppercase and lowercase letters, a
-            number, and a special character.
-          </p>
 
           <label className="field">
             <span>New Password</span>

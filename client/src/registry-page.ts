@@ -1,5 +1,5 @@
 import { lazy } from "react";
-import type { PageManifest } from "./page.types";
+import type { PageManifest } from "./pages/page.types";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PAGE REGISTRY
@@ -18,57 +18,43 @@ export const pageRegistry: PageManifest[] = [
   {
     path: "/",
     component: lazy(() =>
-      import("./HomePage").then((m) => ({ default: m.HomePage })),
+      import("./pages/HomePage").then((m) => ({ default: m.HomePage })),
     ),
   },
   {
     path: "/search",
     component: lazy(() =>
-      import("./SearchPage").then((m) => ({ default: m.SearchPage })),
+      import("./pages/SearchPage").then((m) => ({ default: m.SearchPage })),
     ),
   },
   {
     path: "/songs/:songId",
     component: lazy(() =>
-      import("./SongPage").then((m) => ({ default: m.SongPage })),
+      import("./pages/SongPage").then((m) => ({ default: m.SongPage })),
     ),
   },
   {
     path: "/login",
     component: lazy(() =>
-      import("./LoginPage").then((m) => ({ default: m.LoginPage })),
+      import("./pages/LoginPage").then((m) => ({ default: m.LoginPage })),
     ),
   },
   {
     path: "/register",
     component: lazy(() =>
-      import("./RegisterPage").then((m) => ({ default: m.RegisterPage })),
-    ),
-  },
-  {
-    path: "/community",
-    component: lazy(() =>
-      import("./CommunityPage").then((m) => ({ default: m.CommunityPage })),
-    ),
-  },
-  {
-    path: "/community/:submissionId",
-    component: lazy(() =>
-      import("./CommunityThreadPage").then((m) => ({
-        default: m.CommunityThreadPage,
-      })),
+      import("./pages/RegisterPage").then((m) => ({ default: m.RegisterPage })),
     ),
   },
   {
     path: "/profile",
     component: lazy(() =>
-      import("./ProfilePage").then((m) => ({ default: m.ProfilePage })),
+      import("./pages/ProfilePage").then((m) => ({ default: m.ProfilePage })),
     ),
   },
   {
     path: "/download",
     component: lazy(() =>
-      import("./DownloadPage").then((m) => ({ default: m.DownloadPage })),
+      import("./pages/DownloadPage").then((m) => ({ default: m.DownloadPage })),
     ),
   },
   // ← Add new pages here

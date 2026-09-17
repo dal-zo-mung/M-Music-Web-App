@@ -28,15 +28,34 @@ export class ApiError<TPayload = unknown> extends Error {
     public readonly status: number,
     public readonly payload: TPayload,
   ) {
-    const shownMessage =
-      message.includes(`status ${status}`) ||
-      message.includes(`status: ${status}`)
-        ? message
-        : `${message} (status: ${status})`;
-
-    super(shownMessage);
+    super(message);
     this.name = "ApiError";
   }
+}
+
+function friendlyErrorMessage(status: number | undefined, fallback = "Something went wrong."):
+  string {
+  if (typeof status === "number" && status >= 500) {
+    return "The server is currently unavailable. Please try again in a moment.";
+  }
+
+  if (typeof status === "number" && status === 404) {
+    return "The requested item could not be found.";
+  }
+
+  if (typeof status === "number" && status === 401) {
+    return "Please sign in to continue.";
+  }
+
+  if (typeof status === "number" && status === 403) {
+    return "You are not allowed to do that.";
+  }
+
+  if (typeof status === "number" && status >= 400) {
+    return "Something went wrong. Please try again.";
+  }
+
+  return fallback;
 }
 
 interface RequestJsonOptions {
@@ -131,13 +150,12 @@ export async function requestJson<TResponse>(
       | ApiErrorResponse
       | null;
 
+    const fallback = error.response
+      ? friendlyErrorMessage(error.response.status)
+      : "The server is currently unavailable. Please try again in a moment.";
+
     throw new ApiError(
-      getErrorMessage(
-        payload,
-        error.response
-          ? `Request failed with status ${error.response.status}.`
-          : "Cannot connect to the server.",
-      ),
+      getErrorMessage(payload, fallback),
       error.response?.status ?? 0,
       payload,
     );

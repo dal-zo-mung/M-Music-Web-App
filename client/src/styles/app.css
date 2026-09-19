@@ -1122,6 +1122,17 @@ input {
   object-fit: cover;
 }
 
+.profile-image-editor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.profile-image-editor .button {
+  cursor: pointer;
+}
+
 .profile-preview__title {
   margin: 0 0 4px;
   font-size: 1.35rem;

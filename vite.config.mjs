@@ -9,7 +9,7 @@ const currentDir = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(({ mode }) => {
   const environment = loadEnv(mode, currentDir, "");
-  const apiPort = environment.PORT || "8888";
+  const apiPort = environment.PORT || "7000";
 
   return {
     plugins: [react()],
@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      port: 5173,
+      port: 7002,
       proxy: {
         "/api": {
           target: `http://localhost:${apiPort}`,

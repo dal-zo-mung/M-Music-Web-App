@@ -1,5 +1,5 @@
 export {};
-const apiUrl = (window.M_MUSIC_API_URL ?? "http://127.0.0.1:8888/api").replace(/\/$/, "");
+const apiUrl = (window.M_MUSIC_API_URL ?? "http://127.0.0.1:7000/api").replace(/\/$/, "");
 const apiOrigin = apiUrl.replace(/\/api$/, "");
 const page = document.body.dataset.page ?? "home";
 const byId = (id) => document.getElementById(id);

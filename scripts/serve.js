@@ -1,6 +1,6 @@
 import path from "node:path";
 const root = path.resolve(import.meta.dir, "../public");
-const port = Number(process.env.PORT ?? 5173);
+const port = Number(process.env.PORT ?? 7002);
 const fileFor = (pathname) => {
     const requested = pathname === "/" ? "/html/Index.html" : pathname;
     const filePath = path.resolve(root, `.${decodeURIComponent(requested)}`);

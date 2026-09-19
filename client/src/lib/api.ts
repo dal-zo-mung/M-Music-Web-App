@@ -33,8 +33,10 @@ export class ApiError<TPayload = unknown> extends Error {
   }
 }
 
-function friendlyErrorMessage(status: number | undefined, fallback = "Something went wrong."):
-  string {
+function friendlyErrorMessage(
+  status: number | undefined,
+  fallback = "Something went wrong.",
+): string {
   if (typeof status === "number" && status >= 500) {
     return "The server is currently unavailable. Please try again in a moment.";
   }
@@ -83,7 +85,11 @@ function buildHeaders(options: RequestJsonOptions): Record<string, string> {
     if (token) headers["X-CSRF-Token"] = token;
   }
 
-  if (options.body !== undefined && !headers["Content-Type"]) {
+  if (
+    options.body !== undefined &&
+    !(typeof FormData !== "undefined" && options.body instanceof FormData) &&
+    !headers["Content-Type"]
+  ) {
     headers["Content-Type"] = "application/json";
   }
 
@@ -103,10 +109,7 @@ export function getErrorMessage(
     message?: unknown;
   };
 
-  if (
-    typeof typedPayload.message === "string" &&
-    typedPayload.message.trim()
-  ) {
+  if (typeof typedPayload.message === "string" && typedPayload.message.trim()) {
     return typedPayload.message;
   }
 
@@ -146,9 +149,7 @@ export async function requestJson<TResponse>(
     if (!isAxiosError(error)) throw error;
 
     const payload = (error.response?.data ?? null) as
-      | TResponse
-      | ApiErrorResponse
-      | null;
+      TResponse | ApiErrorResponse | null;
 
     const fallback = error.response
       ? friendlyErrorMessage(error.response.status)

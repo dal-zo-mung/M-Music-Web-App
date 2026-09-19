@@ -18,6 +18,7 @@ import {
   fetchJson,
   getErrorMessage,
   patchJson,
+  requestJson,
 } from "../lib/api";
 
 interface ProfileSaveResponse {
@@ -69,6 +70,10 @@ export function ProfilePage(): React.JSX.Element {
   const [message, setMessage] = useState("");
   const [tone, setTone] = useState<"error" | "info" | "success">("info");
   const [isSaving, setIsSaving] = useState(false);
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(
+    currentUser?.profileImage ?? null,
+  );
   const [isRemovingFavorite, setIsRemovingFavorite] = useState(false);
   const {
     data: favorites = [],
@@ -82,6 +87,7 @@ export function ProfilePage(): React.JSX.Element {
   useEffect(() => {
     if (currentUser) {
       setForm(buildFormState(currentUser));
+      setProfileImagePreview(currentUser.profileImage);
     }
   }, [currentUser]);
 
@@ -107,6 +113,16 @@ export function ProfilePage(): React.JSX.Element {
     setTone("info");
 
     try {
+      if (profileImageFile) {
+        const imageForm = new FormData();
+        imageForm.append("image", profileImageFile);
+        await requestJson("/api/me/profile-image", {
+          body: imageForm,
+          method: "POST",
+        });
+        setProfileImageFile(null);
+      }
+
       await patchJson<ProfileSaveResponse>("/api/me/profile", {
         about: form.about,
         accentKey: form.accentKey,
@@ -192,8 +208,8 @@ export function ProfilePage(): React.JSX.Element {
           aria-label="Accent preview"
         >
           <div className="profile-preview__avatar" aria-hidden="true">
-            {currentUser.profileImage ? (
-              <img alt="" src={currentUser.profileImage} />
+            {profileImagePreview ? (
+              <img alt="" src={profileImagePreview} />
             ) : (
               <span>
                 {(currentUser.username || currentUser.displayName || "U")
@@ -227,6 +243,67 @@ export function ProfilePage(): React.JSX.Element {
 
         <form className="profile-card profile-form" onSubmit={handleSubmit}>
           <h2 className="profile-form__heading">Edit details</h2>
+
+          <div className="field">
+            <span>Profile image</span>
+            <div className="profile-image-editor">
+              <div className="profile-preview__avatar" aria-hidden="true">
+                {profileImagePreview ? (
+                  <img alt="" src={profileImagePreview} />
+                ) : (
+                  <span>
+                    {(currentUser.username || currentUser.displayName || "U")
+                      .charAt(0)
+                      .toUpperCase()}
+                  </span>
+                )}
+              </div>
+              <label className="button button--secondary">
+                Choose image
+                <input
+                  accept="image/*"
+                  hidden
+                  type="file"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (!file) return;
+                    setProfileImageFile(file);
+                    setProfileImagePreview(URL.createObjectURL(file));
+                  }}
+                />
+              </label>
+              {profileImagePreview ? (
+                <button
+                  className="button button--secondary"
+                  disabled={isSaving}
+                  type="button"
+                  onClick={async () => {
+                    setIsSaving(true);
+                    setMessage("Removing image…");
+                    setTone("info");
+                    try {
+                      await deleteJson("/api/me/profile-image");
+                      setProfileImageFile(null);
+                      setProfileImagePreview(null);
+                      await refreshAuth();
+                      setMessage("Profile image removed.");
+                      setTone("success");
+                    } catch (error) {
+                      setMessage(
+                        getErrorMessage(error, "Unable to remove image."),
+                      );
+                      setTone("error");
+                    } finally {
+                      setIsSaving(false);
+                    }
+                  }}
+                >
+                  Remove image
+                </button>
+              ) : null}
+            </div>
+            <small className="muted-copy">Image files up to 5 MB.</small>
+          </div>
 
           <label className="field">
             <span>Display name</span>

@@ -22,10 +22,23 @@ bun run dev
 ```
 
 This starts two concurrent processes:
-- **Vite dev server** on `http://localhost:5173` (React + HMR)
-- **Express server** on `http://localhost:8888` (API, watched via `tsx`)
+- **Vite dev server** on `http://localhost:7002` (React + HMR)
+- **Cloud Server** on `http://localhost:7000` (API)
 
 Vite proxies `/api` and `/auth` requests to the Express server automatically.
+
+### User profile images
+
+Signed-in users can choose a profile image from the Profile page. The browser
+sends the file as `multipart/form-data` to `POST /api/me/profile-image` using
+the `image` field. The Cloud Server uploads it to Cloudinary under
+`m-music/user-profiles` and stores the returned URL and `public_id` on the
+user record. Image files are limited to 5 MB and are never converted to
+base64 or stored as image bytes in MongoDB.
+
+When a user replaces an image, the new Cloudinary asset is saved first and the
+previous asset is then deleted. The Profile page also supports removing the
+image through `DELETE /api/me/profile-image`.
 
 ### Production Build
 

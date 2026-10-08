@@ -1,8 +1,20 @@
 import axios, { isAxiosError } from "axios";
 import type { ApiErrorResponse } from "@shared/types";
 
-/** Must match `csrfCookieName` in server `env.ts` (non-httpOnly cookie for double-submit CSRF). */
+/** Must match the Cloud Server's double-submit CSRF token name. */
 const CSRF_COOKIE_NAME = "m_music.csrf";
+const API_ORIGIN = (import.meta.env.VITE_API_URL ?? "")
+  .trim()
+  .replace(/\/+$/, "");
+let responseCsrfToken = "";
+
+export function apiUrl(path: string): string {
+  return `${API_ORIGIN}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+export function clearCsrfToken(): void {
+  responseCsrfToken = "";
+}
 
 function readBrowserCookie(name: string): string | null {
   if (typeof document === "undefined") {
@@ -68,11 +80,31 @@ interface RequestJsonOptions {
 }
 
 const api = axios.create({
+  baseURL: API_ORIGIN || undefined,
   withCredentials: true,
   headers: { "X-M-Music-Client": "M-Music-Web-App" },
 });
 
-function buildHeaders(options: RequestJsonOptions): Record<string, string> {
+api.interceptors.response.use((response) => {
+  const token = response.headers["x-csrf-token"];
+  if (typeof token === "string" && token) responseCsrfToken = token;
+  return response;
+});
+
+async function ensureCsrfToken(): Promise<string> {
+  if (responseCsrfToken) return responseCsrfToken;
+
+  const cookieToken = readBrowserCookie(CSRF_COOKIE_NAME);
+  if (cookieToken) return cookieToken;
+
+  const response = await api.get("/api/me");
+  const token = response.headers["x-csrf-token"];
+  return typeof token === "string" ? token : "";
+}
+
+async function buildHeaders(
+  options: RequestJsonOptions,
+): Promise<Record<string, string>> {
   const headers: Record<string, string> = {
     "X-M-Music-Client": "M-Music-Web-App",
     ...(options.headers ?? {}),
@@ -80,7 +112,7 @@ function buildHeaders(options: RequestJsonOptions): Record<string, string> {
   const method = (options.method ?? "GET").toUpperCase();
 
   if (["DELETE", "PATCH", "POST", "PUT"].includes(method)) {
-    const token = readBrowserCookie(CSRF_COOKIE_NAME);
+    const token = await ensureCsrfToken();
 
     if (token) headers["X-CSRF-Token"] = token;
   }
@@ -138,7 +170,7 @@ export async function requestJson<TResponse>(
   try {
     const response = await api.request<TResponse>({
       data: options.body,
-      headers: buildHeaders(options),
+      headers: await buildHeaders(options),
       method: options.method ?? "GET",
       signal: options.signal,
       url,

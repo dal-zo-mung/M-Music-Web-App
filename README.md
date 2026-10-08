@@ -21,11 +21,9 @@ bun install
 bun run dev
 ```
 
-This starts two concurrent processes:
-- **Vite dev server** on `http://localhost:7002` (React + HMR)
-- **Cloud Server** on `http://localhost:7000` (API)
-
-Vite proxies `/api` and `/auth` requests to the Express server automatically.
+This starts the **Vite dev server** on `http://localhost:7002` (React + HMR).
+Run `M-Music-Cloud-Server` separately on `http://localhost:7000`; Vite proxies
+`/api` and `/auth` requests to it during local development.
 
 ### User profile images
 
@@ -46,15 +44,19 @@ image through `DELETE /api/me/profile-image`.
 bun run build
 ```
 
-Builds both client (`dist/client/`) and server (`dist/server/`).
+Builds the static client into `dist/client/`.
 
-### Run Production Build
+### Deploy separately on Render
 
-```bash
-bun start
-```
+Create a **Static Site**, not a Web Service:
 
-Express serves the React SPA from `dist/client/` and handles API routes.
+- Build command: `bun install --frozen-lockfile && bun run build`
+- Publish directory: `dist/client`
+- Environment variable: `VITE_API_URL=https://api.m-music.site`
+- Rewrite rule: source `/*`, destination `/index.html`, action `Rewrite`
+
+The Cloud Server is deployed independently. Never use `node server.js` for
+this repository; it contains no Node/Express production server.
 
 ---
 
@@ -62,21 +64,11 @@ Express serves the React SPA from `dist/client/` and handles API routes.
 
 | Script | Command | Description |
 |---|---|---|
-| `bun run dev` | `concurrently "bun:dev:server" "bun:dev:client"` | Start full-stack dev server |
-| `bun run dev:server` | `tsx watch server/src/server.ts` | Watch-mode backend only |
-| `bun run dev:client` | `vite --configLoader runner` | Vite frontend only |
-| `bun run build` | `bun run build:client && bun run build:server` | Full production build |
-| `bun run build:client` | `vite build --configLoader runner` | Build React app to `dist/client/` |
-| `bun run build:server` | `tsc -p tsconfig.server.json` | Compile TypeScript server |
-| `bun run typecheck` | `bun run typecheck:client && bun run typecheck:server` | Run both TypeScript checks |
-| `bun run typecheck:client` | `tsc -p tsconfig.client.json --noEmit` | Client type check |
-| `bun run typecheck:server` | `tsc -p tsconfig.server.json --noEmit` | Server type check |
+| `bun run dev` | `vite --configLoader runner` | Start the Vite frontend |
+| `bun run build` | `vite build --configLoader runner` | Build React app to `dist/client/` |
+| `bun run typecheck` | `tsc -p tsconfig.client.json --noEmit` | Client type check |
 | `bun run format` | `prettier --write ...` | Format all source files |
 | `bun run format:check` | `prettier --check ...` | Check formatting without writing |
-| `bun start` | `node dist/server/server/src/server.js` | Run production build |
-
-> [!TIP]
-> For a detailed guide on how each script works and what it compiles/targets under the hood, check out the dedicated [bunRunCommand.md](./bunRunCommand.md) reference.
 
 ---
 

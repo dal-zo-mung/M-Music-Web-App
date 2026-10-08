@@ -8,7 +8,7 @@ import type {
   PublicUser,
 } from "@shared/types";
 
-import { fetchJson, postJson } from "../lib/api";
+import { clearCsrfToken, fetchJson, postJson } from "../lib/api";
 
 interface AuthContextValue {
   currentUser: PublicUser | null;
@@ -40,6 +40,7 @@ export function AuthProvider({
   async function logout(): Promise<void> {
     try {
       await postJson<AuthMutationResponse>("/api/logout");
+      clearCsrfToken();
       await mutate({ authenticated: false }, { revalidate: false });
     } catch {
       await mutate(undefined, { revalidate: true });

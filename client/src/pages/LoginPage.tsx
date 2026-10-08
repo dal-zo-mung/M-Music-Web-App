@@ -14,7 +14,7 @@ import {
   safeRedirectPath,
   validatePassword,
 } from "../lib/auth";
-import { ApiError, getErrorMessage, postJson } from "../lib/api";
+import { ApiError, apiUrl, getErrorMessage, postJson } from "../lib/api";
 
 export function LoginPage(): React.JSX.Element {
   const [username, setUsername] = useState("");
@@ -196,7 +196,9 @@ export function LoginPage(): React.JSX.Element {
 
           <a
             className="oauth-link"
-            href={`/auth/google?returnTo=${encodeURIComponent(returnTo)}`}
+            href={apiUrl(
+              `/auth/google?returnTo=${encodeURIComponent(returnTo)}`,
+            )}
           >
             <img alt="" src="/images/Google1.png" />
             <span>Continue with Google</span>

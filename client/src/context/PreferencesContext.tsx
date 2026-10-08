@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 export type ThemeMode = "dark" | "light";
 
@@ -17,7 +23,12 @@ const THEME_STORAGE_KEY = "mMusic.theme";
 
 const PreferencesContext = createContext<PreferencesContextValue | null>(null);
 
-function readStoredNumber(key: string, fallback: number): number {
+function readStoredNumber(
+  key: string,
+  fallback: number,
+  min: number,
+  max: number,
+): number {
   const rawValue = window.localStorage.getItem(key);
   const parsedValue = Number.parseInt(rawValue ?? "", 10);
 
@@ -25,7 +36,7 @@ function readStoredNumber(key: string, fallback: number): number {
     return fallback;
   }
 
-  return parsedValue;
+  return Math.max(min, Math.min(max, parsedValue));
 }
 
 function readStoredTheme(): ThemeMode {
@@ -40,12 +51,42 @@ interface PreferencesProviderProps {
 export function PreferencesProvider({
   children,
 }: PreferencesProviderProps): React.JSX.Element {
-  const [theme, setTheme] = useState<ThemeMode>(() => readStoredTheme());
-  const [fontSize, setFontSize] = useState<number>(() =>
-    readStoredNumber(FONT_SIZE_STORAGE_KEY, 18),
+  const [theme, setThemeState] = useState<ThemeMode>(() => readStoredTheme());
+  const [fontSize, setFontSizeState] = useState<number>(() =>
+    readStoredNumber(FONT_SIZE_STORAGE_KEY, 18, 10, 40),
   );
-  const [scrollSpeed, setScrollSpeed] = useState<number>(() =>
-    readStoredNumber(SCROLL_SPEED_STORAGE_KEY, 18),
+  const [scrollSpeed, setScrollSpeedState] = useState<number>(() =>
+    readStoredNumber(SCROLL_SPEED_STORAGE_KEY, 18, 1, 40),
+  );
+  const setFontSize = useCallback((value: number) => {
+    if (Number.isFinite(value))
+      setFontSizeState(Math.max(10, Math.min(40, Math.round(value))));
+  }, []);
+  const setScrollSpeed = useCallback((value: number) => {
+    if (Number.isFinite(value))
+      setScrollSpeedState(Math.max(1, Math.min(40, Math.round(value))));
+  }, []);
+
+  const setTheme = useCallback(
+    (value: ThemeMode): void => {
+      if (value === theme) return;
+
+      const updateTheme = (): void => {
+        document.body.classList.toggle("dark-mode", value === "dark");
+        setThemeState(value);
+      };
+      const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      if (typeof document.startViewTransition !== "function" || reduceMotion) {
+        updateTheme();
+        return;
+      }
+
+      document.startViewTransition(updateTheme);
+    },
+    [theme],
   );
 
   useEffect(() => {

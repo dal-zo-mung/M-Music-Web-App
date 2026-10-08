@@ -1,0 +1,209 @@
+.lyrics-song-search {
+  position: relative;
+  z-index: 16;
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto 20px;
+  color: var(--library-ink);
+}
+
+.lyrics-song-search form {
+  max-width: 620px;
+}
+
+.lyrics-song-search label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9375rem;
+  font-weight: 800;
+}
+
+.lyrics-song-search__field {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding-left: 14px;
+  border: 1px solid var(--library-line);
+  border-radius: 12px;
+  background: var(--library-tab);
+  box-shadow: 0 3px 10px rgb(0 0 0 / 3%);
+}
+
+.lyrics-song-search__field:focus-within {
+  border-color: var(--library-focus);
+  outline: 2px solid var(--library-focus);
+  outline-offset: 2px;
+}
+
+.lyrics-song-search svg {
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.lyrics-song-search__field > svg {
+  color: var(--library-muted);
+}
+
+.lyrics-song-search__field input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: inherit;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.lyrics-song-search__field input:focus-visible {
+  outline: 0;
+}
+
+.lyrics-song-search__field input::placeholder {
+  color: var(--library-muted);
+  opacity: 1;
+}
+
+.lyrics-song-search__field input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.lyrics-song-search__clear {
+  display: grid;
+  place-items: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  margin-right: 2px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.lyrics-song-search__clear:hover {
+  background: color-mix(in srgb, var(--library-ink) 7%, transparent);
+}
+
+.lyrics-song-search__hint {
+  margin: 7px 0 0;
+  color: var(--library-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.lyrics-song-search__dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: min(100%, 620px);
+  overflow: hidden;
+  border: 1px solid var(--library-line);
+  border-radius: 12px;
+  background: var(--library-tab);
+  color: var(--library-ink);
+  box-shadow: var(--library-shadow);
+}
+
+.lyrics-song-search__status {
+  margin: 0;
+  padding: 12px 16px;
+  color: var(--library-muted);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.lyrics-song-search__options {
+  max-height: min(45svh, 360px);
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  list-style: none;
+}
+
+.lyrics-song-search__options li {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  gap: 12px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--library-line);
+  cursor: pointer;
+}
+
+.lyrics-song-search__options li[aria-selected="true"] {
+  background: color-mix(in srgb, var(--library-active) 45%, var(--library-tab));
+  box-shadow: inset 3px 0 0 var(--library-focus);
+}
+
+.lyrics-song-search__options li > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.lyrics-song-search__title,
+.lyrics-song-search__artist {
+  display: block;
+  line-height: 1.5;
+}
+
+.lyrics-song-search__title {
+  font-size: 1rem;
+  font-weight: 750;
+}
+
+.lyrics-song-search__artist {
+  margin-top: 3px;
+  color: var(--library-muted);
+  font-size: 0.8125rem;
+}
+
+.lyrics-song-search__all {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--library-line);
+  color: inherit;
+  font-size: 0.875rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.lyrics-song-search__all:hover {
+  text-decoration: underline;
+}
+
+.lyrics-song-search__error {
+  padding: 0 16px 14px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.lyrics-song-search__error p {
+  margin: 0 0 10px;
+}
+
+.lyrics-song-search__error button {
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--library-line);
+  border-radius: 8px;
+  background: var(--library-button);
+  color: var(--library-song-ink);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+@media (max-width: 640px) {
+  .lyrics-song-search {
+    margin-bottom: 16px;
+  }
+}

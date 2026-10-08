@@ -101,11 +101,28 @@ export function RegisterPage(): React.JSX.Element {
   }
 
   return (
-    <main className="auth-page auth-page--register">
+    <main className="auth-page auth-page--register" id="main-content">
       <section className="auth-card auth-card--register">
-        <h1>Create Your Account</h1>
-        <hr/>
-        <br/>
+        <Link
+          className="auth-card__brand"
+          to="/"
+          aria-label="Back to M-Music home"
+        >
+          <span className="auth-card__back-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="m10 5-7 7 7 7M3 12h18" />
+            </svg>
+          </span>
+          <span className="auth-card__brand-mark" aria-hidden="true">
+            M
+          </span>
+          <span>M-Music</span>
+        </Link>
+
+        <header className="auth-card__heading">
+          <p className="auth-card__eyebrow">Join the library</p>
+          <h1>Create your account.</h1>
+        </header>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="split-fields">
@@ -132,93 +149,99 @@ export function RegisterPage(): React.JSX.Element {
             </label>
           </div>
 
-          <label className="field">
-            <span>Email Address (optional)</span>
-            <input
-              autoComplete="email"
-              placeholder="Enter email address"
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.currentTarget.value)}
-            />
-          </label>
-
-          <label className="field">
-            <span>Username</span>
-            <input
-              autoComplete="username"
-              placeholder="Choose a username"
-              type="text"
-              value={username}
-              onChange={(event) => setUsername(event.currentTarget.value)}
-            />
-          </label>
-
-          <label className="field">
-            <span>New Password</span>
-            <div className="field__input">
+          <div className="split-fields">
+            <label className="field">
+              <span>Email Address (optional)</span>
               <input
-                autoComplete="new-password"
-                placeholder="Enter new password"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(event) => setPassword(event.currentTarget.value)}
+                autoComplete="email"
+                placeholder="Enter email address"
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.currentTarget.value)}
               />
-              <button
-                aria-label={
-                  showPassword ? "Hide new password" : "Show new password"
-                }
-                className="field__toggle"
-                type="button"
-                onClick={() => setShowPassword((currentValue) => !currentValue)}
-              >
-                <img
-                  alt=""
-                  src={
-                    showPassword
-                      ? "/icons/visibility_off.svg"
-                      : "/icons/visibility.svg"
+            </label>
+
+            <label className="field">
+              <span>Username</span>
+              <input
+                autoComplete="username"
+                placeholder="Choose a username"
+                type="text"
+                value={username}
+                onChange={(event) => setUsername(event.currentTarget.value)}
+              />
+            </label>
+          </div>
+
+          <div className="split-fields">
+            <label className="field">
+              <span>New Password</span>
+              <div className="field__input">
+                <input
+                  autoComplete="new-password"
+                  placeholder="Enter new password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(event) => setPassword(event.currentTarget.value)}
+                />
+                <button
+                  aria-label={
+                    showPassword ? "Hide new password" : "Show new password"
+                  }
+                  className="field__toggle"
+                  type="button"
+                  onClick={() =>
+                    setShowPassword((currentValue) => !currentValue)
+                  }
+                >
+                  <img
+                    alt=""
+                    src={
+                      showPassword
+                        ? "/icons/visibility_off.svg"
+                        : "/icons/visibility.svg"
+                    }
+                  />
+                </button>
+              </div>
+            </label>
+
+            <label className="field">
+              <span>Confirm Password</span>
+              <div className="field__input">
+                <input
+                  autoComplete="new-password"
+                  placeholder="Confirm your password"
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(event) =>
+                    setConfirmPassword(event.currentTarget.value)
                   }
                 />
-              </button>
-            </div>
-          </label>
-
-          <label className="field">
-            <span>Confirm Password</span>
-            <div className="field__input">
-              <input
-                autoComplete="new-password"
-                placeholder="Confirm your password"
-                type={showConfirmPassword ? "text" : "password"}
-                value={confirmPassword}
-                onChange={(event) =>
-                  setConfirmPassword(event.currentTarget.value)
-                }
-              />
-              <button
-                aria-label={
-                  showConfirmPassword
-                    ? "Hide confirm password"
-                    : "Show confirm password"
-                }
-                className="field__toggle"
-                type="button"
-                onClick={() =>
-                  setShowConfirmPassword((currentValue) => !currentValue)
-                }
-              >
-                <img
-                  alt=""
-                  src={
+                <button
+                  aria-label={
                     showConfirmPassword
-                      ? "/icons/visibility_off.svg"
-                      : "/icons/visibility.svg"
+                      ? "Hide confirm password"
+                      : "Show confirm password"
                   }
-                />
-              </button>
-            </div>
-          </label>
+                  className="field__toggle"
+                  type="button"
+                  onClick={() =>
+                    setShowConfirmPassword((currentValue) => !currentValue)
+                  }
+                >
+                  <img
+                    alt=""
+                    src={
+                      showConfirmPassword
+                        ? "/icons/visibility_off.svg"
+                        : "/icons/visibility.svg"
+                    }
+                  />
+                </button>
+              </div>
+            </label>
+          </div>
 
           <ul className="password-rules">
             {[
@@ -245,14 +268,6 @@ export function RegisterPage(): React.JSX.Element {
             {message}
           </p>
 
-          <a
-            className="oauth-link"
-            href={`/auth/google?returnTo=${encodeURIComponent(returnTo)}`}
-          >
-            <img alt="" src="/images/Google1.png" />
-            <span>Continue with Google</span>
-          </a>
-
           <label className="terms-row">
             <input
               checked={acceptedTerms}
@@ -276,9 +291,21 @@ export function RegisterPage(): React.JSX.Element {
               Reset
             </button>
             <button className="button" type="submit">
-              Register
+              Create account
             </button>
           </div>
+
+          <div className="auth-divider" aria-hidden="true">
+            <span>or</span>
+          </div>
+
+          <a
+            className="oauth-link"
+            href={`/auth/google?returnTo=${encodeURIComponent(returnTo)}`}
+          >
+            <img alt="" src="/images/Google1.png" />
+            <span>Continue with Google</span>
+          </a>
         </form>
 
         <p className="auth-card__switch">

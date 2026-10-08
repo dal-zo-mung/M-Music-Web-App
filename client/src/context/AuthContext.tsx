@@ -29,9 +29,6 @@ export function AuthProvider({
   const { data, isLoading, mutate } = useSWR<AuthStatusResponse>(
     "/api/me",
     fetchJson,
-    {
-      revalidateOnFocus: true,
-    },
   );
 
   const currentUser = data?.authenticated ? (data.user ?? null) : null;

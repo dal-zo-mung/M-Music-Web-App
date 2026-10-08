@@ -16,6 +16,20 @@ import type { PageManifest } from "./pages/page.types";
 
 export const pageRegistry: PageManifest[] = [
   {
+    path: "/community",
+    component: lazy(() =>
+      import("./pages/CommunityPage").then((m) => ({
+        default: m.CommunityPage,
+      })),
+    ),
+  },
+  {
+    path: "/about",
+    component: lazy(() =>
+      import("./pages/AboutPage").then((m) => ({ default: m.AboutPage })),
+    ),
+  },
+  {
     path: "/",
     component: lazy(() =>
       import("./pages/HomePage").then((m) => ({ default: m.HomePage })),

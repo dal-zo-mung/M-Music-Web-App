@@ -46,8 +46,19 @@ export interface SongRecord {
   "Direct to YT": string;
   Lyric: string[];
   albumCover: string;
-  /** Category slug, e.g. "myanmar-worship", "english-hymns" */
-  category?: string;
+  category?: string[];
+  language?: "my" | "en";
+}
+
+export interface SongBrowseResponse {
+  songs: SongRecord[];
+  counts: { found: number; total: number };
+  pagination: {
+    page: number;
+    limit: number;
+    totalItems: number;
+    totalPages: number;
+  };
 }
 
 export interface FavoriteResponse {
@@ -165,8 +176,8 @@ export interface AdminSongCreateRequest {
   "Direct to YT"?: string;
   Lyric?: string[];
   albumCover?: string;
-  /** Category slug, e.g. "myanmar-worship", "english-hymns" */
-  category?: string;
+  category?: string[];
+  language?: "my" | "en";
 }
 
 export interface AdminStatusUpdateRequest {

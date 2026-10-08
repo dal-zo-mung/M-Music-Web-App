@@ -70,6 +70,7 @@ export function ProfilePage(): React.JSX.Element {
   const [message, setMessage] = useState("");
   const [tone, setTone] = useState<"error" | "info" | "success">("info");
   const [isSaving, setIsSaving] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(
     currentUser?.profileImage ?? null,
@@ -135,6 +136,7 @@ export function ProfilePage(): React.JSX.Element {
       await refreshAuth();
       setMessage("Profile updated.");
       setTone("success");
+      setIsEditing(false);
     } catch (error) {
       const normalized =
         error instanceof ApiError
@@ -195,12 +197,7 @@ export function ProfilePage(): React.JSX.Element {
       <div className="profile-shell">
         <header className="profile-hero">
           <p className="section-eyebrow">Account</p>
-          <h1>Profile &amp; appearance</h1>
-          <p className="muted-copy">
-            Choose a page accent, tune how your name appears, and write an
-            optional about section. Updates stay on this site and go through the
-            same CSRF and rate limits as other writes.
-          </p>
+          <h1>Your profile</h1>
         </header>
 
         <section
@@ -218,7 +215,7 @@ export function ProfilePage(): React.JSX.Element {
               </span>
             )}
           </div>
-          <div>
+          <div className="profile-preview__content">
             <h2 className="profile-preview__title">
               {form.displayName.trim() ||
                 currentUser.username ||
@@ -239,10 +236,24 @@ export function ProfilePage(): React.JSX.Element {
               {currentUser.authProvider === "google" ? "Google" : "email"}
             </p>
           </div>
+          <button
+            className="button button--secondary profile-preview__edit"
+            type="button"
+            aria-expanded={isEditing}
+            aria-controls="profile-edit-form"
+            onClick={() => setIsEditing(true)}
+          >
+            Edit profile
+          </button>
         </section>
 
-        <form className="profile-card profile-form" onSubmit={handleSubmit}>
-          <h2 className="profile-form__heading">Edit details</h2>
+        {isEditing && (
+          <form
+            id="profile-edit-form"
+            className="profile-card profile-form"
+            onSubmit={handleSubmit}
+          >
+          <h2 className="profile-form__heading">Edit profile</h2>
 
           <div className="field">
             <span>Profile image</span>
@@ -416,11 +427,26 @@ export function ProfilePage(): React.JSX.Element {
           <p className={`form-message form-message--${tone}`}>{message}</p>
 
           <div className="profile-form__actions">
+            <button
+              className="button button--secondary"
+              disabled={isSaving}
+              type="button"
+              onClick={() => {
+                setForm(buildFormState(currentUser));
+                setProfileImageFile(null);
+                setProfileImagePreview(currentUser.profileImage);
+                setMessage("");
+                setIsEditing(false);
+              }}
+            >
+              Cancel
+            </button>
             <button className="button" disabled={isSaving} type="submit">
               {isSaving ? "Saving…" : "Save profile"}
             </button>
           </div>
-        </form>
+          </form>
+        )}
 
         <section
           className="profile-card profile-card--saved"
@@ -445,6 +471,7 @@ export function ProfilePage(): React.JSX.Element {
                 <Link
                   className="search-result-card"
                   to={buildSongPath(song._id)}
+                  state={{ returnTo: "/profile" }}
                 >
                   <h3>{song["Song Title"] || "Untitled song"}</h3>
                   <p>{song.Artist}</p>

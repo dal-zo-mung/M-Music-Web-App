@@ -1,132 +1,89 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
-
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { usePreferences } from "../context/PreferencesContext";
-import { buildSearchPath } from "../lib/auth";
-import { MenuPanel } from "./MenuPanel";
+import { ThemeIcon } from "./ThemeIcon";
 import { UserMenu } from "./UserMenu";
 
 export function Header(): React.JSX.Element {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
+  const menuButton = useRef<HTMLButtonElement>(null);
   const location = useLocation();
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const menuRef = useRef<HTMLDivElement | null>(null);
   const { currentUser, isLoading } = useAuth();
-  const {
-    fontSize,
-    scrollSpeed,
-    setFontSize,
-    setScrollSpeed,
-    setTheme,
-    theme,
-  } = usePreferences();
+  const preferences = usePreferences();
 
   useEffect(() => {
-    const songSearchQuery = searchParams.get("q") || "";
-    const currentPageSearchQuery =
-      location.pathname === "/search" ? songSearchQuery : songSearchQuery;
-    setSearchValue(currentPageSearchQuery);
-  }, [location.pathname, searchParams]);
-
+    setMenuOpen(false);
+  }, [location.key]);
   useEffect(() => {
-    function handleDocumentClick(event: MouseEvent): void {
-      const target = event.target;
-
-      if (target instanceof Node && menuRef.current?.contains(target)) {
-        return;
-      }
-
-      setIsMenuOpen(false);
-    }
-
-    function handleEscape(event: KeyboardEvent): void {
-      if (event.key === "Escape") {
-        setIsMenuOpen(false);
+    function outside(event: PointerEvent): void {
+      if (
+        event.target instanceof Node &&
+        !headerRef.current?.contains(event.target)
+      ) {
+        setMenuOpen(false);
       }
     }
-
-    window.addEventListener("click", handleDocumentClick);
-    window.addEventListener("keydown", handleEscape);
-
+    function escape(event: KeyboardEvent): void {
+      if (event.key === "Escape" && menuOpen) {
+        setMenuOpen(false);
+        menuButton.current?.focus();
+      }
+    }
+    document.addEventListener("pointerdown", outside);
+    document.addEventListener("keydown", escape);
     return () => {
-      window.removeEventListener("click", handleDocumentClick);
-      window.removeEventListener("keydown", handleEscape);
+      document.removeEventListener("pointerdown", outside);
+      document.removeEventListener("keydown", escape);
     };
-  }, []);
-
-  const isSongPage = location.pathname.startsWith("/songs/");
-
-  function handleSearchSubmit(event: React.FormEvent<HTMLFormElement>): void {
-    event.preventDefault();
-    navigate(buildSearchPath(searchValue));
-  }
+  }, [menuOpen]);
 
   return (
-    <header className="site-header">
-      <Link className="brand-link" to="/">
-        <span className="brand-link__title">M-Music</span>
+    <header className="library-header" ref={headerRef}>
+      <Link className="library-brand" to="/" aria-label="M-Music song library">
+        M-Music
       </Link>
-
-      <nav aria-label="Shortcuts" className="site-header__compact-links">
-        {currentUser ? <Link to="/profile">Profile</Link> : null}
+      <button
+        className="library-mobile-menu"
+        ref={menuButton}
+        type="button"
+        aria-label="Menu"
+        aria-expanded={menuOpen}
+        aria-controls="main-navigation"
+        onClick={() => setMenuOpen(!menuOpen)}
+      >
+        <span className="library-mobile-menu__label">Menu</span>
+        <span aria-hidden="true">☰</span>
+      </button>
+      <nav
+        id="main-navigation"
+        aria-label="Main navigation"
+        className={`library-topnav ${menuOpen ? "is-open" : ""}`}
+        onBlur={(event) => {
+          if (
+            !event.currentTarget.contains(event.relatedTarget) &&
+            event.relatedTarget !== menuButton.current
+          )
+            setMenuOpen(false);
+        }}
+      >
+        <NavLink to="/community">Community</NavLink>
+        <NavLink to="/about">About</NavLink>
+        <NavLink to="/download">Get app</NavLink>
+        <UserMenu currentUser={currentUser} isLoading={isLoading} />
       </nav>
-
-      <form className="search-form" onSubmit={handleSearchSubmit}>
-        <input
-          id="app-search-input"
-          className="search-form__input"
-          placeholder="Find a song or artist..."
-          type="search"
-          value={searchValue}
-          onChange={(event) => setSearchValue(event.currentTarget.value)}
-        />
-        <button className="button" type="submit">
-          Search
-        </button>
-      </form>
-
-      <div className="site-header__actions">
-        <nav aria-label="Primary navigation" className="quick-links">
-          <Link className="pill-link pill-link--subtle" to="/download">
-            Get App
-          </Link>
-        </nav>
-
-        <div className="site-header__account">
-          <UserMenu currentUser={currentUser} isLoading={isLoading} />
-
-          <div className="site-header__menu" ref={menuRef}>
-            <button
-              aria-expanded={isMenuOpen}
-              aria-haspopup="dialog"
-              className="icon-button"
-              type="button"
-              onClick={() => setIsMenuOpen((currentValue) => !currentValue)}
-            >
-              <img alt="" src="/icons/menu4.png" />
-            </button>
-
-            <MenuPanel
-              fontSize={fontSize}
-              isOpen={isMenuOpen}
-              scrollSpeed={scrollSpeed}
-              setFontSize={setFontSize}
-              setScrollSpeed={setScrollSpeed}
-              setTheme={setTheme}
-              showSongControls={isSongPage}
-              theme={theme}
-            />
-          </div>
-        </div>
-      </div>
+      <button
+        className="library-theme-toggle"
+        type="button"
+        aria-label={`Switch to ${preferences.theme === "dark" ? "light" : "dark"} mode`}
+        title={`Switch to ${preferences.theme === "dark" ? "light" : "dark"} mode`}
+        onClick={() =>
+          preferences.setTheme(preferences.theme === "dark" ? "light" : "dark")
+        }
+      >
+        <ThemeIcon mode={preferences.theme === "dark" ? "light" : "dark"} />
+      </button>
     </header>
   );
 }

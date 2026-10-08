@@ -1,147 +1,212 @@
 const PLATFORMS = [
   {
-    icon: "🪟",
+    code: "WIN",
     label: "Windows",
-    note: "Windows 10 / 11",
+    note: "NSIS installer",
   },
   {
-    icon: "🍎",
+    code: "MAC",
     label: "macOS",
-    note: "macOS 12+",
+    note: "DMG installer",
   },
   {
-    icon: "🐧",
+    code: "LNX",
     label: "Linux",
-    note: "Ubuntu · Debian · Arch",
+    note: "AppImage package",
   },
 ] as const;
 
+const FEATURES = [
+  {
+    number: "01",
+    title: "Cloud-to-offline library",
+    body: "Browse the public song catalogue, filter by language or category, and download songs for offline use.",
+  },
+  {
+    number: "02",
+    title: "Flexible slide editor",
+    body: "Build lyric slides, position text boxes, and customise fonts, colours, backgrounds, transitions and slide size.",
+  },
+  {
+    number: "03",
+    title: "Service-ready setlists",
+    body: "Group songs for a service or event, reorder them by drag and drop, and save each setlist locally.",
+  },
+  {
+    number: "04",
+    title: "Live presenter controls",
+    body: "Run a dedicated audience window, preview nearby slides, navigate by keyboard, blank the screen and toggle fullscreen.",
+  },
+] as const;
+
+function DownloadIcon(): React.JSX.Element {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <path d="M12 3v11m0 0 4-4m-4 4-4-4M5 19h14" />
+    </svg>
+  );
+}
+
+function AppMark(): React.JSX.Element {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 96 96">
+      <path
+        className="download-app-mark__disc"
+        d="M48 18a30 30 0 1 0 0 60 30 30 0 0 0 0-60Z"
+      />
+      <path
+        className="download-app-mark__ring"
+        d="M48 30a18 18 0 1 0 0 36 18 18 0 0 0 0-36Z"
+      />
+      <path
+        className="download-app-mark__note"
+        d="M56 35v22.5a7.5 7.5 0 1 1-4-6.65V39l14-3v16.5a7.5 7.5 0 1 1-4-6.65V33.5L56 35Z"
+      />
+    </svg>
+  );
+}
+
 export function DownloadPage(): React.JSX.Element {
   return (
-    <main className="download-page">
+    <main className="download-page" id="main-content">
       <div className="download-shell">
-        {/* ── Hero ── */}
         <header className="download-hero">
-          <div className="download-hero__badge">
-            <span aria-hidden="true">🎵</span>
-            <span>Desktop App</span>
-          </div>
-          <h1 className="download-hero__title">
-            M-Music - Take Your Music Everywhere
-          </h1>
-          <p className="download-hero__subtitle">
-            The full M-Music experience — lyrics, favourites, and AI support —
-            wrapped into a native desktop app built with Electron. One
-            universal build runs on every major operating system with no extra
-            setup required.
+          <p className="download-hero__badge">
+            <span aria-hidden="true" />
+            M-Music Slider for desktop
           </p>
+          <h1 className="download-hero__title">
+            Ready to present all worship, hymn, Christmas, and gospel songs.          
+          </h1>
         </header>
 
-        {/* ── Download card ── */}
-        <section className="download-card" aria-labelledby="download-heading">
-          <div className="download-card__glow" aria-hidden="true" />
+        <section
+          className="download-release"
+          aria-labelledby="download-heading"
+        >
+          <div className="download-release__visual" aria-hidden="true">
+            <span className="download-release__label">LYRICS PRESENTER</span>
+            <div className="download-app-mark">
+              <AppMark />
+            </div>
+            <span className="download-release__version">Version 1.0.0</span>
+          </div>
 
-          <div className="download-card__inner">
-            <p id="download-heading" className="download-card__eyebrow">
-              Cross-Platform · One Installer
-            </p>
-            <h2 className="download-card__title">Download M-Music</h2>
-            <p className="download-card__body">
-              A single installer covers Windows, macOS, and Linux. Click the
-              button and run the file — the app detects your OS automatically.
+          <div className="download-release__content">
+            <p className="download-release__eyebrow">Available now</p>
+            <h2 id="download-heading">Download M-Music Slider</h2>
+            <p className="download-release__copy">
+              Browse the cloud catalogue, download songs, design presentation
+              slides, prepare setlists and control a full-screen audience
+              display from one desktop workspace.
             </p>
 
             <a
               className="download-btn"
               href="#"
-              aria-label="Download M-Music desktop app"
+              aria-label="Download M-Music Slider desktop app, version 1.0.0"
             >
-              <span className="download-btn__icon" aria-hidden="true">
-                ⬇
+              <span className="download-btn__icon">
+                <DownloadIcon />
               </span>
-              <span className="download-btn__text">Download Now</span>
-              <span className="download-btn__version">v1.0.0</span>
+              <span className="download-btn__copy">
+                <strong>Download M-Music Slider</strong>
+                <small>Free · Version 1.0.0</small>
+              </span>
             </a>
 
-            {/* ── Platform chips ── */}
-            <div
-              className="platform-row"
-              role="list"
-              aria-label="Supported platforms"
-            >
-              {PLATFORMS.map(({ icon, label, note }) => (
-                <div className="platform-chip" key={label} role="listitem">
-                  <span className="platform-chip__icon" aria-hidden="true">
-                    {icon}
-                  </span>
-                  <div className="platform-chip__info">
-                    <span className="platform-chip__label">{label}</span>
-                    <span className="platform-chip__note">{note}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <p className="download-card__fine">
-              Free to use · No account required to install · Open settings to
-              sign in and sync your favourites.
+            <p className="download-release__fine-print">
+              Downloaded songs, setlists and settings are
+              stored locally for offline use.
             </p>
           </div>
         </section>
 
-        {/* ── Feature highlights ── */}
-        {/* <section
+        <section
+          className="download-platforms"
+          aria-labelledby="platform-heading"
+        >
+          <div className="download-section-heading">
+            <p>Cross-platform</p>
+            <h2 id="platform-heading">Windows, macOS and Linux</h2>
+          </div>
+
+          <div className="platform-row" role="list">
+            {PLATFORMS.map(({ code, label, note }) => (
+              <div className="platform-chip" key={label} role="listitem">
+                <span className="platform-chip__code" aria-hidden="true">
+                  {code}
+                </span>
+                <span className="platform-chip__info">
+                  <strong>{label}</strong>
+                  <small>{note}</small>
+                </span>
+                <span className="platform-chip__status">Supported</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="download-purpose" aria-labelledby="purpose-heading">
+          <div className="download-section-heading">
+            <p>Why M-Music Slider</p>
+            <h2 id="purpose-heading">Built for Live Lyrics Presentation</h2>
+          </div>
+
+          <div className="download-purpose__cards">
+            <article className="download-purpose__card download-purpose__card--primary">
+              <span className="download-purpose__label">Its purpose</span>
+              <h3>Prepare once. Present clearly.</h3>
+              <p>
+                M-Music Slider turns song lyrics into audience-ready slides. It
+                brings song preparation, slide design, service planning and live
+                presentation control into one offline-first workspace.
+              </p>
+            </article>
+
+            <article className="download-purpose__card">
+              <span className="download-purpose__label">Who it is for</span>
+              <h3>Teams responsible for the screen</h3>
+              <p>
+                Designed for people who prepare and operate projected lyrics
+                during worship services and lyric-led events.
+              </p>
+              <ul className="download-purpose__audience">
+                <li>Churches</li>
+                <li>Worship teams</li>
+                <li>Media operators</li>
+                <li>Event presenters</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section
           className="download-features"
           aria-labelledby="features-heading"
         >
-          <h2 id="features-heading" className="download-features__heading">
-            Everything in the app
-          </h2>
-          <ul className="download-feature-list">
-            {[
-              {
-                icon: "🔍",
-                title: "Full Lyrics Search",
-                body: "Instant search across the entire curated catalogue.",
-              },
-              {
-                icon: "❤️",
-                title: "Favourites Sync",
-                body: "Save songs and access them offline or across devices.",
-              },
-              {
-                icon: "🤖",
-                title: "AI Support Chat",
-                body: "Get help or discover new songs with the built-in AI assistant.",
-              },
-              {
-                icon: "🎨",
-                title: "Themes & Accents",
-                body: "Dark mode, accent colours, and reading preferences all work natively.",
-              },
-              {
-                icon: "🔒",
-                title: "Secure Session",
-                body: "Google OAuth and local accounts — session backed by the same server security.",
-              },
-            ].map(({ icon, title, body }) => (
-              <li className="download-feature-item" key={title}>
+          <div className="download-section-heading">
+            <p>Built for worship teams</p>
+            <h2 id="features-heading">
+              Everything You Need for Live Lyrics Presentation
+            </h2>
+          </div>
+
+          <ol className="download-feature-list">
+            {FEATURES.map(({ number, title, body }) => (
+              <li className="download-feature-item" key={number}>
                 <span
-                  className="download-feature-item__icon"
+                  className="download-feature-item__number"
                   aria-hidden="true"
                 >
-                  {icon}
+                  {number}
                 </span>
-                <div>
-                  <strong className="download-feature-item__title">
-                    {title}
-                  </strong>
-                  <p className="download-feature-item__body">{body}</p>
-                </div>
+                <h3>{title}</h3>
+                <p>{body}</p>
               </li>
             ))}
-          </ul>
-        </section> */}
+          </ol>
+        </section>
       </div>
     </main>
   );

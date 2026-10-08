@@ -1,0 +1,441 @@
+.library-app .song-page {
+  min-width: 0;
+  padding: 24px clamp(14px, 3vw, 40px) 48px;
+  background: var(--library-page);
+  color: var(--library-ink);
+}
+
+.library-app .song-page .song-library-back,
+.library-app .song-page .song-page__stack,
+.library-app .song-page > .library-message {
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+}
+
+.library-app .song-page .song-library-back {
+  margin-bottom: 16px;
+}
+
+.library-app .song-page .song-library-back a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--library-ink);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.library-app .song-page .song-library-back a:hover {
+  text-decoration: underline;
+}
+
+.library-app .song-page .song-page__stack {
+  display: grid;
+  grid-template-columns: minmax(280px, 30fr) minmax(0, 70fr);
+  align-items: start;
+  gap: 20px;
+}
+
+.library-app .song-page .song-card,
+.library-app .song-page .lyrics-card {
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid var(--library-line);
+  border-radius: 10px;
+  background: var(--library-tab);
+  box-shadow: var(--library-shadow);
+}
+
+.library-app .song-page .song-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+  gap: 18px;
+  background: var(--library-song);
+  color: var(--library-song-ink);
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.library-app .song-page .song-card__cover-wrap {
+  width: min(100%, 220px);
+  margin: 0;
+  justify-self: center;
+}
+
+.library-app .song-page .song-card__cover {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  border-radius: 16px;
+  box-shadow: var(--library-shadow);
+}
+
+.library-app .song-page .song-card__meta {
+  min-width: 0;
+  gap: 4px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.library-app .song-page .song-card h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  line-height: 1.45;
+}
+
+.library-app .song-page .song-card__artist {
+  font-weight: 800;
+}
+
+.library-app .song-page .muted-copy {
+  color: var(--library-muted);
+}
+
+.library-app .song-page .song-card .muted-copy {
+  color: inherit;
+  opacity: 0.8;
+}
+
+.library-app .song-page .section-eyebrow,
+.library-app .song-page .text-link {
+  color: inherit;
+}
+
+.library-app .song-page .song-card .text-link {
+  color: #0756b8;
+  font-weight: 800;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.library-app .song-page .song-card .text-link:hover {
+  color: #003d8f;
+}
+
+.library-app .song-page .song-card .text-link:focus-visible {
+  outline-color: #0756b8;
+}
+
+.library-app .song-page .section-eyebrow {
+  margin: 0;
+}
+
+.library-app .song-page .lyrics-card {
+  gap: 20px;
+}
+
+.library-app .song-page .lyrics-card__header {
+  align-items: center;
+}
+
+.library-app .song-page .lyrics-card__settings {
+  position: relative;
+  z-index: 15;
+}
+
+.library-app .song-page .lyrics-card__settings .menu-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(340px, calc(100vw - 52px));
+  min-width: 0;
+  max-height: min(70vh, 500px);
+  overflow-y: auto;
+  background: var(--library-tab);
+  color: var(--library-ink);
+  border: 1px solid var(--library-line);
+  border-radius: 14px;
+}
+
+.library-app .song-page .lyrics-card__settings .library-settings-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: auto;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.reader-icon {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.reader-setting {
+  display: grid;
+  gap: 8px;
+}
+
+.reader-setting + .reader-setting {
+  padding-top: 16px;
+  border-top: 1px solid var(--library-line, #ffffff30);
+}
+
+.reader-setting__heading,
+.reader-setting__heading label,
+.reader-setting__scale {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.reader-setting__heading label {
+  justify-content: flex-start;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.reader-setting__heading output {
+  padding: 4px 8px;
+  border: 1px solid var(--library-line, #ffffff30);
+  border-radius: 7px;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.reader-setting__adjust {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 12px;
+}
+
+.reader-setting__adjust button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--library-line, #ffffff30);
+  border-radius: 10px;
+  background: var(--library-button, #ffffff20);
+  color: var(--library-song-ink, white);
+  cursor: pointer;
+}
+
+.reader-setting__adjust input {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  accent-color: var(--library-focus, #5ae3ac);
+  cursor: pointer;
+}
+
+.reader-setting__scale,
+.reader-setting__hint {
+  color: var(--library-muted, #d4faff);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.reader-setting__scale {
+  padding-inline: 56px;
+}
+
+.reader-setting__hint {
+  margin: 0;
+}
+
+.library-app .song-page .lyrics-card__header h2 {
+  margin: 4px 0 0;
+  font-size: 1.5rem;
+  line-height: 1.4;
+}
+
+.library-app .song-page .lyrics-card__header > .muted-copy {
+  max-width: 28ch;
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.library-app .song-page .lyrics-card__actions,
+.library-app .song-page .lyrics-card__transport {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.library-app .song-page .lyrics-card__transport {
+  margin-left: auto;
+}
+
+.library-app .song-page .button,
+.library-app .song-page .icon-button {
+  min-height: 44px;
+  border: 1px solid var(--library-line);
+  background: var(--library-button);
+  color: var(--library-song-ink);
+  box-shadow: none;
+}
+
+.library-app .song-page .lyrics-card__actions > .button,
+.library-app .song-page .lyrics-card__transport > .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+.library-app .song-page .button--secondary,
+.library-app .song-page .icon-button--ghost {
+  background: var(--library-tab);
+  color: var(--library-ink);
+}
+
+.library-app .song-page .button[aria-pressed="true"] {
+  border-color: var(--library-focus);
+  background: var(--library-active);
+  color: var(--library-ink);
+}
+
+.library-app .song-page .icon-button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+}
+
+.library-app .song-page button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (hover: hover) {
+  .library-app .song-page .button:not(:disabled):hover {
+    border-color: var(--library-focus);
+    background: var(--library-active);
+    color: var(--library-ink);
+  }
+
+  .library-app .song-page .icon-button:not(:disabled):hover {
+    border-color: var(--library-focus);
+    background: var(--library-active);
+    color: var(--library-ink);
+  }
+}
+
+.library-app .song-page .lyrics-card__body {
+  scroll-behavior: auto;
+  overscroll-behavior: contain;
+  min-width: 0;
+  max-height: min(65svh, 640px);
+  padding: clamp(16px, 3vw, 28px);
+  border: 1px solid var(--library-line);
+  border-radius: 16px;
+  background: var(--library-paper);
+  color: var(--library-song-ink);
+  scrollbar-color: var(--library-line) var(--library-paper);
+}
+
+.library-app .song-page .lyrics-card__text {
+  font-family: inherit;
+  line-height: 2;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 960px) {
+  .library-app .song-page .song-page__stack {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .library-app .song-page .song-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .library-app .song-page {
+    padding: 16px 14px 32px;
+  }
+
+  .library-app .song-page .song-page__stack {
+    gap: 14px;
+  }
+
+  .library-app .song-page .song-card,
+  .library-app .song-page .lyrics-card {
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  .library-app .song-page .song-card {
+    grid-template-columns: minmax(96px, 38%) minmax(0, 1fr);
+    align-items: start;
+    gap: 14px;
+  }
+
+  .library-app .song-page .song-card__cover-wrap {
+    width: 100%;
+    justify-self: stretch;
+  }
+
+  .library-app .song-page .song-card__cover {
+    border-radius: 12px;
+  }
+
+  .library-app .song-page .song-card h1 {
+    font-size: 1.1rem;
+  }
+
+  .library-app .song-page .song-card__meta {
+    font-size: 0.8rem;
+    line-height: 1.55;
+  }
+
+  .library-app .song-page .lyrics-card__actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .library-app .song-page .lyrics-card__actions .button {
+    min-width: 0;
+    min-height: 44px;
+    padding: 0 8px;
+    font-size: 0.8125rem;
+  }
+
+  .library-app .song-page .lyrics-card__actions > .button {
+    grid-column: 1 / -1;
+  }
+
+  .library-app .song-page .lyrics-card__transport {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: 44px 44px minmax(0, 1fr);
+    gap: 8px;
+    margin-left: 0;
+  }
+
+  .library-app .song-page .lyrics-card__body {
+    padding: 14px;
+    border-radius: 12px;
+  }
+}
+
+body.dark-mode .library-app .song-page .song-card .text-link {
+  color: #a8d6ff;
+}
+
+body.dark-mode .library-app .song-page .song-card .text-link:hover {
+  color: #d7ecff;
+}

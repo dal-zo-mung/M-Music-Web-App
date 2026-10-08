@@ -102,14 +102,28 @@ export function LoginPage(): React.JSX.Element {
   }
 
   return (
-    <main className="auth-page">
+    <main className="auth-page" id="main-content">
       <section className="auth-card auth-card--login">
-        <div className="auth-card__brand">
-          <img alt="M-Music logo" src="/images/M-Music.png" />
+        <Link
+          className="auth-card__brand"
+          to="/"
+          aria-label="Back to M-Music home"
+        >
+          <span className="auth-card__back-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="m10 5-7 7 7 7M3 12h18" />
+            </svg>
+          </span>
+          <span className="auth-card__brand-mark" aria-hidden="true">
+            M
+          </span>
           <span>M-Music</span>
-        </div>
+        </Link>
 
-        <h1>Welcome Back</h1>
+        <header className="auth-card__heading">
+          <p className="auth-card__eyebrow">Member access</p>
+          <h1>Welcome back.</h1>
+        </header>
 
         {oauthNotice ? (
           <p className="form-message form-message--error">{oauthNotice}</p>
@@ -118,16 +132,13 @@ export function LoginPage(): React.JSX.Element {
         <form className="auth-form" onSubmit={handleSubmit}>
           <label className="field">
             <span>Username or Email</span>
-            <div className="field__input">
-              <input
-                autoComplete="username"
-                placeholder="Enter username or email"
-                type="text"
-                value={username}
-                onChange={(event) => setUsername(event.currentTarget.value)}
-              />
-              <img alt="" src="/images/User.png" />
-            </div>
+            <input
+              autoComplete="username"
+              placeholder="Enter username or email"
+              type="text"
+              value={username}
+              onChange={(event) => setUsername(event.currentTarget.value)}
+            />
           </label>
 
           <label className="field">
@@ -166,14 +177,6 @@ export function LoginPage(): React.JSX.Element {
             {message}
           </p>
 
-          <a
-            className="oauth-link"
-            href={`/auth/google?returnTo=${encodeURIComponent(returnTo)}`}
-          >
-            <img alt="" src="/images/Google1.png" />
-            <span>Continue with Google</span>
-          </a>
-
           <div className="auth-form__actions">
             <button
               className="button button--secondary"
@@ -183,9 +186,21 @@ export function LoginPage(): React.JSX.Element {
               Reset
             </button>
             <button className="button" type="submit">
-              Login
+              Sign in
             </button>
           </div>
+
+          <div className="auth-divider" aria-hidden="true">
+            <span>or</span>
+          </div>
+
+          <a
+            className="oauth-link"
+            href={`/auth/google?returnTo=${encodeURIComponent(returnTo)}`}
+          >
+            <img alt="" src="/images/Google1.png" />
+            <span>Continue with Google</span>
+          </a>
         </form>
 
         <p className="auth-card__switch">

@@ -1,94 +1,99 @@
-# M-Music Project
+## Getting Started
 
-## Overview
+### Prerequisites
 
-This project is a Node.js/Express web application for music/song browsing and authentication. It uses MongoDB via Mongoose for data persistence and supports both local user authentication and Google OAuth.
+- **Node.js** ≥ 20.19.0
+- **MongoDB** — local instance or [MongoDB Atlas](https://www.mongodb.com/atlas) free tier
 
-## Architecture
-
-- `server.js`: application entrypoint
-  - loads environment variables
-  - configures middleware (CORS, Helmet, JSON body parsing, session storage)
-  - initializes Passport for OAuth
-  - serves static UI files from `public`
-  - mounts routes
-  - connects to MongoDB
-  - handles shutdown and errors
-
-- `src/routes/`
-  - `auth.js`: local authentication endpoints (`/api/login`, `/api/register`, `/api/logout`, `/api/me`)
-  - `oauth.js`: Google OAuth endpoints (`/auth/google`, `/auth/google/callback`, `/auth/google/failure`)
-  - `main.js`: song-related endpoints (`/api/songs`, `/api/songs/search/:query`, `/api/songs/:id`)
-
-- `src/controllers/`
-  - `authController.js`: handles authentication workflows, session creation, user lookup, and logout
-  - `songController.js`: handles song listing, search, and retrieval by ID
-
-- `src/services/`
-  - `authService.js`: handles user payload validation, password hashing, password verification, and public user formatting
-  - `songService.js`: handles song database queries and search logic
-
-- `src/models/`
-  - `user.js`: Mongoose schema for users, including Google OAuth and local login fields
-  - `songform.js`: Mongoose schema for songs, matching the existing `Songs` collection
-
-- `src/middleware/`
-  - `authRateLimit.js`: rate limiting on auth write endpoints (`/register`, `/login`)
-  - `validation.js`: request validation middleware for MongoDB ObjectIds
-  - `error.js`: centralized error handler for API responses
-
-- `config/passport.js`
-  - configures Passport Google OAuth strategy, serialization, and deserialization
-
-## Code Flow
-
-1. Client sends a request to an endpoint.
-2. `server.js` routes the request to the appropriate router.
-3. The router delegates to a controller.
-4. The controller performs validation and calls a service.
-5. The service queries or updates MongoDB models.
-6. The controller returns JSON to the client or handles errors via the error middleware.
-
-### Example: Login flow
-
-1. `POST /api/login` → `src/routes/auth.js`
-2. Calls `authController.login`
-3. Validates payload via `authService.validateLoginPayload`
-4. Finds the user in `src/models/user.js`
-5. Verifies password using `authService.verifyPassword`
-6. Creates a local session and returns public user data
-
-### Example: Song search flow
-
-1. `GET /api/songs/search/:query` → `src/routes/main.js`
-2. Calls `songController.searchSongs`
-3. Normalizes and validates the query in `songService.searchSongs`
-4. Queries `src/models/songform.js` using a case-insensitive regex
-5. Returns matching songs
-
-## Notes
-
-- The project now aligns `package.json` with `server.js` as the true entrypoint.
-- Static UI files are served from `public/css`, `public/html`, and `public`.
-- Sessions are stored in MongoDB using `connect-mongo`.
-- OAuth is optional and requires `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
-
-## Run commands
+### Installation
 
 ```bash
-npm install
-npm run dev
+# Clone or enter the project
+cd "M-Music-Web-App"
+
+# Install all dependencies
+bun install
 ```
 
-## Environment variables
+### Development
 
-Required:
-- `MONGODB_URL`
-- `SESSION_SECRET`
+```bash
+bun run dev
+```
 
-Optional (for Google OAuth):
-- `GOOGLE_CLIENT_ID`
-- `GOOGLE_CLIENT_SECRET`
-- `GOOGLE_CALLBACK_URL`
-- `AUTH_RATE_LIMIT_WINDOW_MS`
-- `AUTH_RATE_LIMIT_MAX`
+This starts two concurrent processes:
+- **Vite dev server** on `http://localhost:7002` (React + HMR)
+- **Cloud Server** on `http://localhost:7000` (API)
+
+Vite proxies `/api` and `/auth` requests to the Express server automatically.
+
+### User profile images
+
+Signed-in users can choose a profile image from the Profile page. The browser
+sends the file as `multipart/form-data` to `POST /api/me/profile-image` using
+the `image` field. The Cloud Server uploads it to Cloudinary under
+`m-music/user-profiles` and stores the returned URL and `public_id` on the
+user record. Image files are limited to 5 MB and are never converted to
+base64 or stored as image bytes in MongoDB.
+
+When a user replaces an image, the new Cloudinary asset is saved first and the
+previous asset is then deleted. The Profile page also supports removing the
+image through `DELETE /api/me/profile-image`.
+
+### Production Build
+
+```bash
+bun run build
+```
+
+Builds both client (`dist/client/`) and server (`dist/server/`).
+
+### Run Production Build
+
+```bash
+bun start
+```
+
+Express serves the React SPA from `dist/client/` and handles API routes.
+
+---
+
+## 📜 Scripts
+
+| Script | Command | Description |
+|---|---|---|
+| `bun run dev` | `concurrently "bun:dev:server" "bun:dev:client"` | Start full-stack dev server |
+| `bun run dev:server` | `tsx watch server/src/server.ts` | Watch-mode backend only |
+| `bun run dev:client` | `vite --configLoader runner` | Vite frontend only |
+| `bun run build` | `bun run build:client && bun run build:server` | Full production build |
+| `bun run build:client` | `vite build --configLoader runner` | Build React app to `dist/client/` |
+| `bun run build:server` | `tsc -p tsconfig.server.json` | Compile TypeScript server |
+| `bun run typecheck` | `bun run typecheck:client && bun run typecheck:server` | Run both TypeScript checks |
+| `bun run typecheck:client` | `tsc -p tsconfig.client.json --noEmit` | Client type check |
+| `bun run typecheck:server` | `tsc -p tsconfig.server.json --noEmit` | Server type check |
+| `bun run format` | `prettier --write ...` | Format all source files |
+| `bun run format:check` | `prettier --check ...` | Check formatting without writing |
+| `bun start` | `node dist/server/server/src/server.js` | Run production build |
+
+> [!TIP]
+> For a detailed guide on how each script works and what it compiles/targets under the hood, check out the dedicated [bunRunCommand.md](./bunRunCommand.md) reference.
+
+---
+
+## 👤 Author
+
+**MuMung** — M-Music Project
+
+---
+
+The Song payload is 
+
+{ 
+"Song Title": "",
+"Artist": "",
+"Released Date": "",
+"About Song": "",
+"Direct to YT": "",
+"Lyric": [
+]
+}

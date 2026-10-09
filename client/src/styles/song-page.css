@@ -125,11 +125,17 @@
 }
 
 .library-app .song-page .lyrics-card {
-  gap: 20px;
+  gap: 0;
+  padding: 15px 15px 0;
+  border: 0;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--library-tab) 78%, var(--library-header));
+  box-shadow: none;
 }
 
 .library-app .song-page .lyrics-card__header {
   align-items: center;
+  margin-bottom: 12px;
 }
 
 .library-app .song-page .lyrics-card__settings {
@@ -157,10 +163,10 @@
   justify-content: center;
   gap: 8px;
   width: auto;
-  min-height: 44px;
-  padding: 0 12px;
+  min-height: 40px;
+  padding: 0 10px;
   border-radius: 10px;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 700;
 }
 
@@ -273,6 +279,10 @@
   margin-left: auto;
 }
 
+.library-app .song-page .lyrics-card__actions {
+  margin-bottom: 14px;
+}
+
 .library-app .song-page .button,
 .library-app .song-page .icon-button {
   min-height: 44px;
@@ -292,6 +302,23 @@
   border-radius: 8px;
   font-size: 0.9rem;
   line-height: 1.2;
+}
+
+.library-app .song-page .lyrics-card__actions > .button {
+  min-height: 40px;
+  gap: 6px;
+  padding-inline: 10px;
+  font-size: 0.8125rem;
+}
+
+.library-app .song-page .lyrics-card__actions > .button .reader-icon,
+.library-app
+  .song-page
+  .lyrics-card__settings
+  .library-settings-button
+  .reader-icon {
+  width: 19px;
+  height: 19px;
 }
 
 .library-app .song-page .button--secondary,
@@ -338,24 +365,33 @@
   overscroll-behavior: contain;
   overflow-y: scroll;
   scrollbar-gutter: stable;
+  width: calc(100% + 30px);
   min-width: 0;
   max-height: min(65svh, 640px);
+  margin-inline: -15px;
   padding: clamp(16px, 3vw, 28px);
   border: 1px solid var(--library-line);
-  border-radius: 16px;
+  border-radius: 0 0 12px 12px;
   background: var(--library-paper);
   color: var(--library-song-ink);
-  scrollbar-width: auto;
+  scrollbar-width: thin;
   scrollbar-color: #176b8a color-mix(in srgb, #176b8a 26%, var(--library-paper));
 }
 
 .library-app .song-page .lyrics-card__body::-webkit-scrollbar {
-  width: 12px;
+  width: 10px;
+}
+
+.library-app .song-page .lyrics-card__body::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .library-app .song-page .lyrics-card__body::-webkit-scrollbar-track {
+  margin-block: 6px;
   border-radius: 999px;
-  background: color-mix(in srgb, #176b8a 26%, var(--library-paper));
+  background: color-mix(in srgb, #176b8a 18%, var(--library-paper));
 }
 
 .library-app .song-page .lyrics-card__body::-webkit-scrollbar-thumb {
@@ -374,7 +410,7 @@ body.dark-mode
   .library-app
   .song-page
   .lyrics-card__body::-webkit-scrollbar-track {
-  background: #3f6266;
+  background: color-mix(in srgb, #3f6266 72%, var(--library-paper));
 }
 
 body.dark-mode
@@ -384,6 +420,60 @@ body.dark-mode
   border-color: #765c00;
   background: #ffd22e;
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 45%);
+}
+
+@media (hover: hover) {
+  .library-app .song-page .lyrics-card__body::-webkit-scrollbar-thumb:hover {
+    background: #2183a5;
+  }
+
+  body.dark-mode
+    .library-app
+    .song-page
+    .lyrics-card__body::-webkit-scrollbar-thumb:hover {
+    background: #ffe05c;
+  }
+}
+
+@media (min-width: 961px) {
+  .library-app .song-page .lyrics-card {
+    grid-template-columns: auto auto auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 14px;
+    row-gap: 10px;
+  }
+
+  .library-app .song-page .lyrics-card__header,
+  .library-app .song-page .lyrics-card__actions {
+    display: contents;
+  }
+
+  .library-app .song-page .lyrics-card__header .section-eyebrow {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .library-app .song-page .lyrics-card__actions > .button {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .library-app .song-page .lyrics-card__settings {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .library-app .song-page .lyrics-card__transport {
+    grid-column: 4;
+    grid-row: 1;
+    justify-self: end;
+    margin-left: 0;
+  }
+
+  .library-app .song-page .song-navigation-error,
+  .library-app .song-page .lyrics-card__body {
+    grid-column: 1 / -1;
+  }
 }
 
 .library-app .song-page .lyrics-card__text {

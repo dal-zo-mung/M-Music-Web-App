@@ -20,7 +20,7 @@ export function SiteLayout(): React.JSX.Element {
         </div>
         {bareAuth ? null : (
           <footer className="site-footer" role="contentinfo">
-            © M-Music
+            <span className="site-footer__copyright">© M-Music</span>
           </footer>
         )}
       </div>

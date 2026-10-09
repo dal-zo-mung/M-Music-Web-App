@@ -68,6 +68,9 @@ export function Header(): React.JSX.Element {
             setMenuOpen(false);
         }}
       >
+        <NavLink to="/" end>
+          Search
+        </NavLink>
         <NavLink to="/community">Community</NavLink>
         <NavLink to="/about">About</NavLink>
         <NavLink to="/download">Get app</NavLink>

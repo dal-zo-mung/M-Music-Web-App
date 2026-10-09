@@ -258,15 +258,6 @@ function SongReader(): React.JSX.Element {
                 <ReaderIcon name="previous" />
               </button>
               <button
-                className="icon-button icon-button--ghost"
-                type="button"
-                aria-label="Next song"
-                disabled={!navigation.canNavigate}
-                onClick={() => void navigation.navigateRelative(1)}
-              >
-                <ReaderIcon name="next" />
-              </button>
-              <button
                 className="button button--secondary"
                 aria-pressed={isAutoScrollEnabled}
                 aria-controls="lyrics-container"
@@ -287,6 +278,15 @@ function SongReader(): React.JSX.Element {
               >
                 <ReaderIcon name={isAutoScrollEnabled ? "pause" : "play"} />
                 {isAutoScrollEnabled ? "Pause scrolling" : "Auto-scroll"}
+              </button>
+              <button
+                className="icon-button icon-button--ghost"
+                type="button"
+                aria-label="Next song"
+                disabled={!navigation.canNavigate}
+                onClick={() => void navigation.navigateRelative(1)}
+              >
+                <ReaderIcon name="next" />
               </button>
             </div>
           </div>

@@ -1272,6 +1272,17 @@ body.dark-mode .auth-page .button--secondary {
   opacity: 0.75;
 }
 
+.profile-form .field input[aria-invalid="true"] {
+  border-color: #b83348;
+}
+
+.profile-form .field-error {
+  color: #b83348;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
 .profile-form__actions {
   display: flex;
   justify-content: flex-end;
@@ -1640,20 +1651,37 @@ body.dark-mode .site-footer {
   }
 
   .profile-card--preview {
-    align-items: flex-start;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-areas:
+      "avatar edit"
+      "content content";
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .profile-card--preview > .profile-preview__avatar {
+    grid-area: avatar;
+  }
+
+  .profile-card--preview > .profile-preview__content {
+    grid-area: content;
   }
 
   .profile-preview__edit {
-    margin-left: 80px;
+    grid-area: edit;
+    margin-left: 0;
   }
 
   .saved-song-item {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: stretch;
   }
 
   .saved-song-item .button {
-    justify-self: end;
+    align-self: stretch;
+    justify-self: stretch;
+    padding-inline: 12px;
   }
 
   .search-form {
@@ -2386,6 +2414,7 @@ body.dark-mode .download-feature-item__number {
 
   .download-page {
     padding: 34px var(--phone-gutter, 18px) 60px;
+    font-family: "Nunito", sans-serif;
   }
 
   .download-shell {
@@ -2397,8 +2426,10 @@ body.dark-mode .download-feature-item__number {
   }
 
   .download-hero__title {
-    font-size: clamp(1.7rem, 7vw, 2.2rem);
-    line-height: 1.08;
+    font-size: clamp(1.5rem, 6.2vw, 1.8rem);
+    line-height: 1.14;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
     white-space: normal;
   }
 
@@ -2418,6 +2449,25 @@ body.dark-mode .download-feature-item__number {
 
   .download-release__content {
     padding: 27px 20px 25px;
+  }
+
+  .download-release__content h2 {
+    font-size: clamp(1.4rem, 6vw, 1.7rem);
+    line-height: 1.18;
+    letter-spacing: -0.025em;
+  }
+
+  .download-section-heading h2,
+  #platform-heading {
+    font-size: clamp(1.15rem, 5vw, 1.35rem);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+
+  .download-purpose__card h3,
+  .download-feature-item h3 {
+    font-size: 1rem;
+    line-height: 1.3;
   }
 
   .download-btn {

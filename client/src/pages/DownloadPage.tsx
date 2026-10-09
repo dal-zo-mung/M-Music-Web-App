@@ -1,15 +1,43 @@
+import { useState } from "react";
+import useSWR from "swr";
+import type { DesktopLatestReleaseResponse } from "@shared/types";
+import { fetchJson } from "../lib/api";
+
+const RELEASE_ENDPOINT = "/api/desktop/releases/latest";
+const PLATFORM_LABELS = {
+  win: "Windows",
+  mac: "macOS",
+  linux: "Linux",
+  all: "All platforms",
+} as const;
+
+async function fetchLatestRelease(): Promise<DesktopLatestReleaseResponse> {
+  const response =
+    await fetchJson<DesktopLatestReleaseResponse>(RELEASE_ENDPOINT);
+  if (response.release) {
+    const url = new URL(response.release.download_url);
+    if (!["https:", "http:"].includes(url.protocol)) {
+      throw new Error("Invalid installer URL.");
+    }
+  }
+  return response;
+}
+
 const PLATFORMS = [
   {
+    platform: "win",
     code: "WIN",
     label: "Windows",
     note: "NSIS installer",
   },
   {
+    platform: "mac",
     code: "MAC",
     label: "macOS",
     note: "DMG installer",
   },
   {
+    platform: "linux",
     code: "LNX",
     label: "Linux",
     note: "AppImage package",
@@ -67,16 +95,51 @@ function AppMark(): React.JSX.Element {
 }
 
 export function DownloadPage(): React.JSX.Element {
+  const { data, error, isLoading, isValidating, mutate } =
+    useSWR<DesktopLatestReleaseResponse>(RELEASE_ENDPOINT, fetchLatestRelease, {
+      refreshInterval: 60_000,
+    });
+  const [downloading, setDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState("");
+  const release = data?.release;
+  const releaseStatus = isLoading
+    ? "Checking latest release…"
+    : error
+      ? "Release details unavailable"
+      : release
+        ? `Version ${release.version}`
+        : "No release available yet";
+
+  async function downloadLatest(): Promise<void> {
+    setDownloading(true);
+    setDownloadError("");
+    try {
+      // Always resolve the active installer again at click time.
+      const latest = await fetchLatestRelease();
+      await mutate(latest, { revalidate: false });
+      if (!latest.release) {
+        setDownloadError(
+          "No desktop release is available yet. Please check back soon.",
+        );
+        return;
+      }
+      window.location.assign(latest.release.download_url);
+    } catch {
+      setDownloadError("Unable to start the download. Please try again.");
+    } finally {
+      setDownloading(false);
+    }
+  }
+
   return (
     <main className="download-page" id="main-content">
       <div className="download-shell">
         <header className="download-hero">
           <p className="download-hero__badge">
-            <span aria-hidden="true" />
-            M-Music Slider for desktop
+            <span aria-hidden="true" />M Slide Show for desktop
           </p>
           <h1 className="download-hero__title">
-            Ready to present all worship, hymn, Christmas, and gospel songs.          
+            Ready to present all worship, hymn, Christmas, and gospel songs.
           </h1>
         </header>
 
@@ -89,35 +152,74 @@ export function DownloadPage(): React.JSX.Element {
             <div className="download-app-mark">
               <AppMark />
             </div>
-            <span className="download-release__version">Version 1.0.0</span>
+            <span className="download-release__version">{releaseStatus}</span>
           </div>
 
           <div className="download-release__content">
-            <p className="download-release__eyebrow">Available now</p>
-            <h2 id="download-heading">Download M-Music Slider</h2>
+            <p className="download-release__eyebrow">
+              {release
+                ? `Available for ${PLATFORM_LABELS[release.platform]}`
+                : "Desktop releases"}
+            </p>
+            <h2 id="download-heading">Download M Slide Show</h2>
             <p className="download-release__copy">
               Browse the cloud catalogue, download songs, design presentation
               slides, prepare setlists and control a full-screen audience
               display from one desktop workspace.
             </p>
 
-            <a
+            <button
+              type="button"
               className="download-btn"
-              href="#"
-              aria-label="Download M-Music Slider desktop app, version 1.0.0"
+              onClick={() => void downloadLatest()}
+              disabled={isLoading || downloading || !release}
+              aria-busy={downloading}
+              aria-describedby="download-status"
             >
               <span className="download-btn__icon">
                 <DownloadIcon />
               </span>
               <span className="download-btn__copy">
-                <strong>Download M-Music Slider</strong>
-                <small>Free · Version 1.0.0</small>
+                <strong>
+                  {downloading
+                    ? "Preparing download…"
+                    : "Download M Slide Show"}
+                </strong>
+                <small>
+                  {release
+                    ? `Free · Version ${release.version} · ${PLATFORM_LABELS[release.platform]}`
+                    : releaseStatus}
+                </small>
               </span>
-            </a>
+            </button>
+
+            <p
+              id="download-status"
+              className="download-release__fine-print"
+              role="status"
+            >
+              {downloadError ||
+                (error
+                  ? "Unable to load the latest release. Please try again."
+                  : releaseStatus)}
+            </p>
+            {!isLoading && (error || !release) && (
+              <button
+                type="button"
+                className="download-release__retry"
+                disabled={isValidating}
+                onClick={() => {
+                  setDownloadError("");
+                  void mutate();
+                }}
+              >
+                {isValidating ? "Checking…" : "Check again"}
+              </button>
+            )}
 
             <p className="download-release__fine-print">
-              Downloaded songs, setlists and settings are
-              stored locally for offline use.
+              Downloaded songs, setlists and settings are stored locally for
+              offline use.
             </p>
           </div>
         </section>
@@ -132,7 +234,7 @@ export function DownloadPage(): React.JSX.Element {
           </div>
 
           <div className="platform-row" role="list">
-            {PLATFORMS.map(({ code, label, note }) => (
+            {PLATFORMS.map(({ platform, code, label, note }) => (
               <div className="platform-chip" key={label} role="listitem">
                 <span className="platform-chip__code" aria-hidden="true">
                   {code}
@@ -141,7 +243,17 @@ export function DownloadPage(): React.JSX.Element {
                   <strong>{label}</strong>
                   <small>{note}</small>
                 </span>
-                <span className="platform-chip__status">Supported</span>
+                <span className="platform-chip__status">
+                  {isLoading
+                    ? "Checking…"
+                    : error
+                      ? "Unavailable"
+                      : release &&
+                          (release.platform === platform ||
+                            release.platform === "all")
+                        ? "Available"
+                        : "Not released"}
+                </span>
               </div>
             ))}
           </div>
@@ -149,7 +261,7 @@ export function DownloadPage(): React.JSX.Element {
 
         <section className="download-purpose" aria-labelledby="purpose-heading">
           <div className="download-section-heading">
-            <p>Why M-Music Slider</p>
+            <p>Why M Slide Show</p>
             <h2 id="purpose-heading">Built for Live Lyrics Presentation</h2>
           </div>
 
@@ -158,7 +270,7 @@ export function DownloadPage(): React.JSX.Element {
               <span className="download-purpose__label">Its purpose</span>
               <h3>Prepare once. Present clearly.</h3>
               <p>
-                M-Music Slider turns song lyrics into audience-ready slides. It
+                M Slide Show turns song lyrics into audience-ready slides. It
                 brings song preparation, slide design, service planning and live
                 presentation control into one offline-first workspace.
               </p>

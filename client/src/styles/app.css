@@ -1977,19 +1977,41 @@ body.dark-mode .site-footer {
   background: var(--library-ink);
   color: var(--library-header);
   text-decoration: none;
+  text-align: left;
+  cursor: pointer;
   box-shadow: 4px 5px 0 rgb(26 65 79 / 17%);
   transition:
     transform 180ms ease,
     box-shadow 180ms ease;
 }
 
-.download-btn:hover {
+.download-btn:hover:not(:disabled) {
   transform: translate(3px, -2px);
   box-shadow: 6px 8px 0 rgb(26 65 79 / 15%);
 }
 
 .download-btn:active {
   transform: translate(1px, 0);
+}
+
+.download-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.download-release__retry {
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--library-ink);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.download-release__retry:disabled {
+  cursor: wait;
+  opacity: 0.6;
 }
 
 .download-btn__icon {

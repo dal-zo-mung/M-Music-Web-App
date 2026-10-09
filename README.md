@@ -25,6 +25,18 @@ This starts the **Vite dev server** on `http://localhost:7002` (React + HMR).
 Run `M-Music-Cloud-Server` separately on `http://localhost:7000`; Vite proxies
 `/api` and `/auth` requests to it during local development.
 
+### Desktop downloads
+
+The Download page reads `GET /api/desktop/releases/latest` from the Cloud Server.
+In the Admin Dashboard, create a Desktop Release with the hosted installer URL,
+then select **Activate** to publish it. Creating a release alone keeps it inactive.
+
+The page displays the active version and platform, refreshes every minute and
+when the window regains focus, and requests the latest release again on every
+download click before opening its installer URL. If no release is active or the
+server is unavailable, the page shows an unavailable state with a retry button.
+Use a direct HTTP or HTTPS installer URL so the browser downloads the file.
+
 ### User profile images
 
 Signed-in users can choose a profile image from the Profile page. The browser

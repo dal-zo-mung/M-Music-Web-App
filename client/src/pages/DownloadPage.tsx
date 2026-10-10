@@ -1,9 +1,13 @@
 import { useState } from "react";
 import useSWR from "swr";
-import type { DesktopLatestReleaseResponse } from "@shared/types";
+import type { DesktopLatestReleaseResponse, Release } from "@shared/types";
 import { fetchJson } from "../lib/api";
 
 const RELEASE_ENDPOINT = "/api/desktop/releases/latest";
+const RELEASES_CACHE_KEY = `${RELEASE_ENDPOINT}?platform=desktop`;
+type DesktopPlatform = "win" | "mac" | "linux";
+type PlatformReleases = Record<DesktopPlatform, Release | null>;
+
 const PLATFORM_LABELS = {
   win: "Windows",
   mac: "macOS",
@@ -11,9 +15,60 @@ const PLATFORM_LABELS = {
   all: "All platforms",
 } as const;
 
-async function fetchLatestRelease(): Promise<DesktopLatestReleaseResponse> {
-  const response =
-    await fetchJson<DesktopLatestReleaseResponse>(RELEASE_ENDPOINT);
+const PLATFORMS = [
+  {
+    platform: "win",
+    code: "WIN",
+    label: "Windows",
+  },
+  {
+    platform: "mac",
+    code: "MAC",
+    label: "macOS",
+  },
+  {
+    platform: "linux",
+    code: "LNX",
+    label: "Linux",
+  },
+] as const;
+
+type NavigatorWithClientHints = Navigator & {
+  userAgentData?: {
+    mobile?: boolean;
+    platform?: string;
+  };
+};
+
+export function detectDesktopPlatform(): DesktopPlatform | null {
+  if (typeof navigator === "undefined") return null;
+
+  const browser = navigator as NavigatorWithClientHints;
+  const userAgent = browser.userAgent;
+
+  if (
+    browser.userAgentData?.mobile ||
+    /Android|iPhone|iPad|iPod|CrOS/i.test(userAgent) ||
+    (browser.platform === "MacIntel" && browser.maxTouchPoints > 1)
+  ) {
+    return null;
+  }
+
+  const platform =
+    browser.userAgentData?.platform || browser.platform || userAgent;
+
+  if (/Windows|Win32|Win64/i.test(platform)) return "win";
+  if (/macOS|MacIntel|Macintosh/i.test(platform)) return "mac";
+  if (/Linux|X11/i.test(platform)) return "linux";
+  return null;
+}
+
+async function fetchLatestRelease(
+  platform: DesktopPlatform,
+): Promise<DesktopLatestReleaseResponse> {
+  const response = await fetchJson<DesktopLatestReleaseResponse>(
+    `${RELEASE_ENDPOINT}?platform=${platform}`,
+  );
   if (response.release) {
     const url = new URL(response.release.download_url);
     if (!["https:", "http:"].includes(url.protocol)) {
@@ -23,26 +78,16 @@ async function fetchLatestRelease(): Promise<DesktopLatestReleaseResponse> {
   return response;
 }
 
-const PLATFORMS = [
-  {
-    platform: "win",
-    code: "WIN",
-    label: "Windows",
-    note: "NSIS installer",
-  },
-  {
-    platform: "mac",
-    code: "MAC",
-    label: "macOS",
-    note: "DMG installer",
-  },
-  {
-    platform: "linux",
-    code: "LNX",
-    label: "Linux",
-    note: "AppImage package",
-  },
-] as const;
+async function fetchPlatformReleases(): Promise<PlatformReleases> {
+  const entries = await Promise.all(
+    PLATFORMS.map(async ({ platform }) => {
+      const response = await fetchLatestRelease(platform);
+      return [platform, response.release] as const;
+    }),
+  );
+
+  return Object.fromEntries(entries) as PlatformReleases;
+}
 
 const FEATURES = [
   {
@@ -96,30 +141,51 @@ function AppMark(): React.JSX.Element {
 
 export function DownloadPage(): React.JSX.Element {
   const { data, error, isLoading, isValidating, mutate } =
-    useSWR<DesktopLatestReleaseResponse>(RELEASE_ENDPOINT, fetchLatestRelease, {
+    useSWR<PlatformReleases>(RELEASES_CACHE_KEY, fetchPlatformReleases, {
       refreshInterval: 60_000,
     });
-  const [downloading, setDownloading] = useState(false);
+  const [detectedPlatform] = useState<DesktopPlatform | null>(() =>
+    detectDesktopPlatform(),
+  );
+  const [selectedPlatform, setSelectedPlatform] = useState<DesktopPlatform>(
+    () => detectDesktopPlatform() ?? "win",
+  );
+  const [downloadingPlatform, setDownloadingPlatform] =
+    useState<DesktopPlatform | null>(null);
   const [downloadError, setDownloadError] = useState("");
-  const release = data?.release;
+  const selectedPlatformInfo = PLATFORMS.find(
+    ({ platform }) => platform === selectedPlatform,
+  )!;
+  const release = data?.[selectedPlatform] ?? null;
   const releaseStatus = isLoading
     ? "Checking latest release…"
     : error
       ? "Release details unavailable"
       : release
         ? `Version ${release.version}`
-        : "No release available yet";
+        : `Not released for ${selectedPlatformInfo.label} yet`;
+  const statusMessage =
+    downloadError ||
+    (error ? "Unable to load the latest release. Please try again." : "");
 
-  async function downloadLatest(): Promise<void> {
-    setDownloading(true);
+  async function downloadLatest(platform: DesktopPlatform): Promise<void> {
+    setSelectedPlatform(platform);
+    setDownloadingPlatform(platform);
     setDownloadError("");
     try {
-      // Always resolve the active installer again at click time.
-      const latest = await fetchLatestRelease();
-      await mutate(latest, { revalidate: false });
+      const latest = await fetchLatestRelease(platform);
+      await mutate(
+        (current) => ({
+          win: current?.win ?? null,
+          mac: current?.mac ?? null,
+          linux: current?.linux ?? null,
+          [platform]: latest.release,
+        }),
+        { revalidate: false },
+      );
       if (!latest.release) {
         setDownloadError(
-          "No desktop release is available yet. Please check back soon.",
+          `No ${PLATFORM_LABELS[platform]} release is available yet. Please check back soon.`,
         );
         return;
       }
@@ -127,7 +193,7 @@ export function DownloadPage(): React.JSX.Element {
     } catch {
       setDownloadError("Unable to start the download. Please try again.");
     } finally {
-      setDownloading(false);
+      setDownloadingPlatform(null);
     }
   }
 
@@ -152,57 +218,100 @@ export function DownloadPage(): React.JSX.Element {
             <div className="download-app-mark">
               <AppMark />
             </div>
-            <span className="download-release__version">{releaseStatus}</span>
+            <span className="download-release__version">
+              Windows · macOS · Linux
+            </span>
           </div>
 
           <div className="download-release__content">
-            <p className="download-release__eyebrow">
-              {release
-                ? `Available for ${PLATFORM_LABELS[release.platform]}`
-                : "Desktop releases"}
-            </p>
+            <p className="download-release__eyebrow">Desktop releases</p>
             <h2 id="download-heading">Download M Slide Show</h2>
-            <p className="download-release__copy">
-              Browse the cloud catalogue, download songs, design presentation
-              slides, prepare setlists and control a full-screen audience
-              display from one desktop workspace.
-            </p>
+            <br></br>
+            <fieldset className="download-platform-picker">
+              <legend>Choose your platform</legend>
+              <div className="download-platform-picker__options">
+                {PLATFORMS.map(({ platform, code, label }) => {
+                  const platformRelease = data?.[platform] ?? null;
+                  const isSelected = selectedPlatform === platform;
+                  const isRecommended = detectedPlatform === platform;
+
+                  return (
+                    <button
+                      type="button"
+                      key={platform}
+                      className={`download-platform-option${isSelected ? " download-platform-option--selected" : ""}`}
+                      aria-pressed={isSelected}
+                      onClick={() => {
+                        setSelectedPlatform(platform);
+                        setDownloadError("");
+                      }}
+                    >
+                      <span className="download-platform-option__topline">
+                        <span className="download-platform-option__code">
+                          {code}
+                        </span>
+                        {isRecommended && (
+                          <span className="download-platform-option__recommended">
+                            Recommended
+                          </span>
+                        )}
+                      </span>
+                      <strong>{label}</strong>
+                      <small
+                        className={
+                          !isLoading && !error && !platformRelease
+                            ? "download-platform-option__status--coming-soon"
+                            : undefined
+                        }
+                      >
+                        {isLoading
+                          ? "Checking…"
+                          : error
+                            ? "Unavailable"
+                            : platformRelease
+                              ? `Version ${platformRelease.version}`
+                              : "Coming soon"}
+                      </small>
+                    </button>
+                  );
+                })}
+              </div>
+            </fieldset>
 
             <button
               type="button"
               className="download-btn"
-              onClick={() => void downloadLatest()}
-              disabled={isLoading || downloading || !release}
-              aria-busy={downloading}
-              aria-describedby="download-status"
+              onClick={() => void downloadLatest(selectedPlatform)}
+              disabled={isLoading || downloadingPlatform !== null || !release}
+              aria-busy={downloadingPlatform === selectedPlatform}
+              aria-describedby={statusMessage ? "download-status" : undefined}
             >
               <span className="download-btn__icon">
                 <DownloadIcon />
               </span>
               <span className="download-btn__copy">
                 <strong>
-                  {downloading
+                  {downloadingPlatform === selectedPlatform
                     ? "Preparing download…"
-                    : "Download M Slide Show"}
+                    : `Download for ${selectedPlatformInfo.label}`}
                 </strong>
                 <small>
                   {release
-                    ? `Free · Version ${release.version} · ${PLATFORM_LABELS[release.platform]}`
+                    ? `Free · Version ${release.version}${release.platform === "all" ? " · Universal link" : ""}`
                     : releaseStatus}
                 </small>
               </span>
             </button>
 
-            <p
-              id="download-status"
-              className="download-release__fine-print"
-              role="status"
-            >
-              {downloadError ||
-                (error
-                  ? "Unable to load the latest release. Please try again."
-                  : releaseStatus)}
-            </p>
+            {statusMessage && (
+              <p
+                id="download-status"
+                className="download-release__fine-print"
+                role="status"
+              >
+                {statusMessage}
+              </p>
+            )}
             {!isLoading && (error || !release) && (
               <button
                 type="button"
@@ -216,46 +325,12 @@ export function DownloadPage(): React.JSX.Element {
                 {isValidating ? "Checking…" : "Check again"}
               </button>
             )}
+            <br></br>
 
             <p className="download-release__fine-print">
               Downloaded songs, setlists and settings are stored locally for
               offline use.
             </p>
-          </div>
-        </section>
-
-        <section
-          className="download-platforms"
-          aria-labelledby="platform-heading"
-        >
-          <div className="download-section-heading">
-            <p>Cross-platform</p>
-            <h2 id="platform-heading">Windows, macOS and Linux</h2>
-          </div>
-
-          <div className="platform-row" role="list">
-            {PLATFORMS.map(({ platform, code, label, note }) => (
-              <div className="platform-chip" key={label} role="listitem">
-                <span className="platform-chip__code" aria-hidden="true">
-                  {code}
-                </span>
-                <span className="platform-chip__info">
-                  <strong>{label}</strong>
-                  <small>{note}</small>
-                </span>
-                <span className="platform-chip__status">
-                  {isLoading
-                    ? "Checking…"
-                    : error
-                      ? "Unavailable"
-                      : release &&
-                          (release.platform === platform ||
-                            release.platform === "all")
-                        ? "Available"
-                        : "Not released"}
-                </span>
-              </div>
-            ))}
           </div>
         </section>
 

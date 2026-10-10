@@ -27,14 +27,15 @@ Run `M-Music-Cloud-Server` separately on `http://localhost:7000`; Vite proxies
 
 ### Desktop downloads
 
-The Download page reads `GET /api/desktop/releases/latest` from the Cloud Server.
-In the Admin Dashboard, create a Desktop Release with the hosted installer URL,
-then select **Activate** to publish it. Creating a release alone keeps it inactive.
+The Download page reads `GET /api/desktop/releases/latest?platform=...` for
+Windows, macOS and Linux. In the Admin Dashboard, create a Desktop Release with
+the hosted installer URL, then select **Activate** to publish it. Each platform
+keeps its own active release; creating a release alone keeps it inactive.
 
-The page displays the active version and platform, refreshes every minute and
-when the window regains focus, and requests the latest release again on every
-download click before opening its installer URL. If no release is active or the
-server is unavailable, the page shows an unavailable state with a retry button.
+The page detects the visitor's desktop OS to highlight a recommended download,
+but always keeps all three platform choices visible. It refreshes every minute,
+when the window regains focus, and requests the selected platform's latest
+release again on every download click. Missing releases show **Coming soon**.
 Use a direct HTTP or HTTPS installer URL so the browser downloads the file.
 
 ### User profile images

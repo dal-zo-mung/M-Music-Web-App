@@ -1,12 +1,11 @@
 import axios, { isAxiosError } from "axios";
 import type { ApiErrorResponse } from "@shared/types";
 
-/** Must match the Cloud Server's double-submit CSRF token name. */
-const CSRF_COOKIE_NAME = "m_music.csrf";
 const API_ORIGIN = (import.meta.env.VITE_API_URL ?? "")
   .trim()
   .replace(/\/+$/, "");
 let responseCsrfToken = "";
+let csrfBootstrap: Promise<string> | null = null;
 
 export function apiUrl(path: string): string {
   return `${API_ORIGIN}${path.startsWith("/") ? path : `/${path}`}`;
@@ -14,24 +13,6 @@ export function apiUrl(path: string): string {
 
 export function clearCsrfToken(): void {
   responseCsrfToken = "";
-}
-
-function readBrowserCookie(name: string): string | null {
-  if (typeof document === "undefined") {
-    return null;
-  }
-
-  const segments = document.cookie.split(";");
-
-  for (const segment of segments) {
-    const trimmed = segment.trim();
-
-    if (trimmed.startsWith(`${name}=`)) {
-      return decodeURIComponent(trimmed.slice(name.length + 1));
-    }
-  }
-
-  return null;
 }
 
 export class ApiError<TPayload = unknown> extends Error {
@@ -91,15 +72,30 @@ api.interceptors.response.use((response) => {
   return response;
 });
 
-async function ensureCsrfToken(): Promise<string> {
-  if (responseCsrfToken) return responseCsrfToken;
+async function ensureCsrfToken(refresh = false): Promise<string> {
+  if (!refresh && responseCsrfToken) return responseCsrfToken;
 
-  const cookieToken = readBrowserCookie(CSRF_COOKIE_NAME);
-  if (cookieToken) return cookieToken;
-
-  const response = await api.get("/api/me");
-  const token = response.headers["x-csrf-token"];
-  return typeof token === "string" ? token : "";
+  // A readable CSRF cookie alone does not prove that the API session exists.
+  // Bootstrap through the API and share the request across concurrent mutations.
+  if (!csrfBootstrap) {
+    csrfBootstrap = api
+      .get("/api/me")
+      .then((response) => {
+        const token = response.headers["x-csrf-token"];
+        if (typeof token !== "string" || !token) {
+          throw new ApiError(
+            "Could not initialize the security token. Please try again.",
+            0,
+            null,
+          );
+        }
+        return token;
+      })
+      .finally(() => {
+        csrfBootstrap = null;
+      });
+  }
+  return csrfBootstrap;
 }
 
 async function buildHeaders(
@@ -168,13 +164,34 @@ export async function requestJson<TResponse>(
   options: RequestJsonOptions = {},
 ): Promise<TResponse> {
   try {
-    const response = await api.request<TResponse>({
+    const config = {
       data: options.body,
       headers: await buildHeaders(options),
       method: options.method ?? "GET",
       signal: options.signal,
       url,
-    });
+    };
+    let response;
+    try {
+      response = await api.request<TResponse>(config);
+    } catch (error) {
+      // CSRF rejection happens before the route runs, so this mutation can
+      // safely retry once after refreshing an expired or replaced session.
+      if (
+        !isAxiosError(error) ||
+        error.response?.status !== 403 ||
+        error.response.data?.error !== "CSRF validation failed." ||
+        !["DELETE", "PATCH", "POST", "PUT"].includes(
+          config.method.toUpperCase(),
+        ) ||
+        options.signal?.aborted
+      ) {
+        throw error;
+      }
+      clearCsrfToken();
+      config.headers["X-CSRF-Token"] = await ensureCsrfToken(true);
+      response = await api.request<TResponse>(config);
+    }
 
     return response.data;
   } catch (error) {

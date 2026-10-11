@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
 import { SiteLayout } from "./components/SiteLayout";
+import { RouteErrorBoundary } from "./components/RouteErrorBoundary";
 import { pageRegistry } from "./registry-page";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -18,8 +19,10 @@ import { pageRegistry } from "./registry-page";
 export const router = createBrowserRouter([
   {
     element: <SiteLayout />,
+    errorElement: <RouteErrorBoundary standalone />,
     children: pageRegistry.map(({ path, component: Page }) => ({
       path,
+      errorElement: <RouteErrorBoundary />,
       element: (
         <Suspense fallback={<div className="route-loading">Loading...</div>}>
           <Page />

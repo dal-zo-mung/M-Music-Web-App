@@ -8,7 +8,6 @@ import { router } from "./router";
 import { AppErrorBoundary } from "./components/AppErrorBoundary";
 import "./styles/app.css";
 import "./styles/library.css";
-import "./styles/support-chat.css";
 import "./styles/error-screen.css";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

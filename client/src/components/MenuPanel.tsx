@@ -1,6 +1,5 @@
 import { useId } from "react";
 import type { ThemeMode } from "../context/PreferencesContext";
-import { ReaderIcon } from "./ReaderIcon";
 import { ThemeIcon } from "./ThemeIcon";
 
 interface MenuPanelProps {
@@ -56,91 +55,77 @@ export function MenuPanel({
 
       {showSongControls ? (
         <>
-          <div className="reader-setting">
-            <div className="reader-setting__heading">
-              <label htmlFor={`${controlId}-font`}>
-                <ReaderIcon name="text" /> Lyrics size
-              </label>
-              <output htmlFor={`${controlId}-font`}>{fontSize} px</output>
-            </div>
-            <div className="reader-setting__adjust">
-              <button
-                type="button"
-                aria-label="Decrease lyrics size"
-                disabled={fontSize <= 10}
-                onClick={() => setFontSize(Math.max(10, fontSize - 2))}
-              >
-                <ReaderIcon name="minus" />
-              </button>
-              <input
-                id={`${controlId}-font`}
-                aria-valuetext={`${fontSize} pixels`}
-                max="40"
-                min="10"
-                type="range"
-                value={fontSize}
-                onChange={(event) =>
-                  setFontSize(Number.parseInt(event.currentTarget.value, 10))
-                }
-              />
-              <button
-                type="button"
-                aria-label="Increase lyrics size"
-                disabled={fontSize >= 40}
-                onClick={() => setFontSize(Math.min(40, fontSize + 2))}
-              >
-                <ReaderIcon name="plus" />
-              </button>
-            </div>
-            <div className="reader-setting__scale">
-              <span>Small</span>
-              <span>Large</span>
-            </div>
-          </div>
-
-          <div className="reader-setting">
-            <div className="reader-setting__heading">
-              <label htmlFor={`${controlId}-speed`}>
-                <ReaderIcon name="speed" /> Scroll speed
-              </label>
-              <output htmlFor={`${controlId}-speed`}>{scrollSpeed} px/s</output>
-            </div>
-            <div className="reader-setting__adjust">
-              <button
-                type="button"
-                aria-label="Decrease scroll speed"
-                disabled={scrollSpeed <= 1}
-                onClick={() => setScrollSpeed(Math.max(1, scrollSpeed - 1))}
-              >
-                <ReaderIcon name="minus" />
-              </button>
-              <input
-                id={`${controlId}-speed`}
-                aria-valuetext={`${scrollSpeed} pixels per second`}
-                max="40"
-                min="1"
-                type="range"
-                value={scrollSpeed}
-                onChange={(event) =>
-                  setScrollSpeed(Number.parseInt(event.currentTarget.value, 10))
-                }
-              />
-              <button
-                type="button"
-                aria-label="Increase scroll speed"
-                disabled={scrollSpeed >= 40}
-                onClick={() => setScrollSpeed(Math.min(40, scrollSpeed + 1))}
-              >
-                <ReaderIcon name="plus" />
-              </button>
-            </div>
-            <div className="reader-setting__scale">
-              <span>Slower</span>
-              <span>Faster</span>
-            </div>
-          </div>
+          <ReadingSlider
+            id={controlId + "-font"}
+            label="Text size"
+            value={fontSize}
+            min={10}
+            max={40}
+            unit="px"
+            valueText={fontSize + " pixels"}
+            onChange={setFontSize}
+          />
+          <ReadingSlider
+            id={controlId + "-speed"}
+            label="Scroll speed"
+            value={scrollSpeed}
+            min={1}
+            max={40}
+            unit="px/s"
+            valueText={scrollSpeed + " pixels per second"}
+            onChange={setScrollSpeed}
+          />
         </>
       ) : null}
+    </div>
+  );
+}
+
+function ReadingSlider({
+  id,
+  label,
+  value,
+  min,
+  max,
+  unit,
+  valueText,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  unit: string;
+  valueText: string;
+  onChange: (value: number) => void;
+}) {
+  return (
+    <div className="reader-setting">
+      <label htmlFor={id}>{label}</label>
+      <span className="reader-setting__track">
+        <input
+          id={id}
+          type="range"
+          min={min}
+          max={max}
+          step={1}
+          value={value}
+          aria-valuetext={valueText}
+          onChange={(event) =>
+            onChange(Number.parseInt(event.currentTarget.value, 10))
+          }
+        />
+        <span className="reader-setting__ticks" aria-hidden="true">
+          {Array.from({ length: 12 }, (_, index) => (
+            <span key={index} />
+          ))}
+        </span>
+      </span>
+      <output htmlFor={id} aria-hidden="true">
+        {value}
+        {unit}
+      </output>
     </div>
   );
 }

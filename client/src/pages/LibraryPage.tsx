@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import useSWR from "swr";
 import type { SongBrowseResponse } from "@shared/types";
 import { LibraryFilters } from "../components/LibraryFilters";
+import { PageLink } from "../components/PageLink";
 import { fetchJson } from "../lib/api";
 import {
   buildBrowseUrl,
@@ -157,7 +158,7 @@ export function LibraryPage(): React.JSX.Element {
                       index +
                       1}
                   </span>
-                  <Link
+                  <PageLink
                     className="library-song-link"
                     to={buildLibrarySongPath(song._id, {
                       ...state,
@@ -173,7 +174,7 @@ export function LibraryPage(): React.JSX.Element {
                     {song.Artist && (
                       <span className="library-song-artist">{song.Artist}</span>
                     )}
-                  </Link>
+                  </PageLink>
                 </li>
               ))}
             </ol>

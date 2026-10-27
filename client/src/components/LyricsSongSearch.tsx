@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import type { SongBrowseResponse, SongRecord } from "@shared/types";
+import { PageLink } from "./PageLink";
 import { requestJson } from "../lib/api";
 import {
   buildBrowseUrl,
@@ -8,6 +9,7 @@ import {
   buildLibrarySongPath,
   type LibraryState,
 } from "../lib/library";
+import { supportsViewTransitions } from "../lib/motion";
 import "../styles/lyrics-song-search.css";
 
 const SEARCH_DELAY = 300;
@@ -115,6 +117,7 @@ function LyricsSongSearchInput(): React.JSX.Element {
         song._id,
         searchState(trimmedDraft, data?.pagination.page ?? 1),
       ),
+      { viewTransition: supportsViewTransitions() },
     );
   }
 
@@ -316,12 +319,12 @@ function LyricsSongSearchInput(): React.JSX.Element {
             ))}
           </ul>
           {data && data.counts.found > songs.length && (
-            <Link
+            <PageLink
               className="lyrics-song-search__all"
               to={buildLibraryPath(searchState(trimmedDraft))}
             >
               See all {data.counts.found.toLocaleString()} matching songs →
-            </Link>
+            </PageLink>
           )}
         </div>
       )}

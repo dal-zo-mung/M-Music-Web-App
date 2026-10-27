@@ -83,7 +83,7 @@
 
 .library-app .song-page .song-card h1 {
   margin: 0;
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
   line-height: 1.45;
 }
 
@@ -125,6 +125,7 @@
 }
 
 .library-app .song-page .lyrics-card {
+  display: block;
   gap: 0;
   padding: 15px 15px 0;
   border: 0;
@@ -133,9 +134,16 @@
   box-shadow: none;
 }
 
-.library-app .song-page .lyrics-card__header {
+.library-app .song-page .lyrics-card__toolbar {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  margin-bottom: 12px;
+  gap: 8px;
+  padding-bottom: 14px;
+}
+
+.library-app .song-page .lyrics-card__toolbar .chord-controls {
+  display: contents;
 }
 
 .library-app .song-page .lyrics-card__settings {
@@ -147,7 +155,9 @@
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  width: min(340px, calc(100vw - 52px));
+  width: min(360px, calc(100vw - 52px));
+  padding: 12px;
+  gap: 8px;
   min-width: 0;
   max-height: min(70vh, 500px);
   overflow-y: auto;
@@ -155,6 +165,24 @@
   color: var(--library-ink);
   border: 1px solid var(--library-line);
   border-radius: 14px;
+  animation: reading-settings-enter 180ms ease-out;
+}
+
+@keyframes reading-settings-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .library-app .song-page .lyrics-card__settings .menu-panel {
+    animation: none;
+  }
 }
 
 .library-app .song-page .lyrics-card__settings .library-settings-button {
@@ -163,8 +191,8 @@
   justify-content: center;
   gap: 8px;
   width: auto;
-  min-height: 40px;
-  padding: 0 10px;
+  min-height: 44px;
+  padding: 0 12px;
   border-radius: 10px;
   font-size: 0.8125rem;
   font-weight: 700;
@@ -176,111 +204,127 @@
 }
 
 .reader-setting {
+  --reader-slider-accent: #047857;
+  --reader-slider-track: #94a3b8;
   display: grid;
-  gap: 8px;
-}
-
-.reader-setting + .reader-setting {
-  padding-top: 16px;
-  border-top: 1px solid var(--library-line, #ffffff30);
-}
-
-.reader-setting__heading,
-.reader-setting__heading label,
-.reader-setting__scale {
-  display: flex;
+  grid-template-columns: 76px minmax(60px, 1fr) 6ch;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.reader-setting__heading label {
-  justify-content: flex-start;
-  font-size: 0.875rem;
-  font-weight: 700;
-}
-
-.reader-setting__heading output {
-  padding: 4px 8px;
-  border: 1px solid var(--library-line, #ffffff30);
-  border-radius: 7px;
-  font-size: 0.8125rem;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.reader-setting__adjust {
-  display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) 44px;
-  align-items: center;
-  gap: 12px;
-}
-
-.reader-setting__adjust button {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: 1px solid var(--library-line, #ffffff30);
-  border-radius: 10px;
-  background: var(--library-button, #ffffff20);
-  color: var(--library-song-ink, white);
-  cursor: pointer;
-}
-
-.reader-setting__adjust input {
-  width: 100%;
+  gap: 10px;
   min-width: 0;
-  min-height: 44px;
-  margin: 0;
-  accent-color: var(--library-focus, #5ae3ac);
-  cursor: pointer;
-}
-
-.reader-setting__scale,
-.reader-setting__hint {
-  color: var(--library-muted, #d4faff);
-  font-size: 0.75rem;
-  line-height: 1.6;
-}
-
-.reader-setting__scale {
-  padding-inline: 56px;
-}
-
-.reader-setting__hint {
-  margin: 0;
-}
-
-.library-app .song-page .lyrics-card__header h2 {
-  margin: 4px 0 0;
-  font-size: 1.5rem;
+  padding: 6px 10px;
+  border: 1px solid var(--library-line);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--library-paper) 60%, var(--library-tab));
+  color: var(--library-ink);
+  font-size: 0.8125rem;
   line-height: 1.4;
 }
 
-.library-app .song-page .lyrics-card__header > .muted-copy {
-  max-width: 28ch;
-  margin: 0;
-  font-size: 0.875rem;
-  line-height: 1.6;
+body.dark-mode .reader-setting {
+  --reader-slider-accent: #8ce7c2;
+  --reader-slider-track: #a0b4c6;
+  background: var(--library-tab);
 }
 
-.library-app .song-page .lyrics-card__actions,
+.reader-setting > label {
+  font-weight: 500;
+}
+
+.reader-setting output {
+  color: var(--library-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.reader-setting__track {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.reader-setting input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.reader-setting input[type="range"]::-webkit-slider-runnable-track {
+  height: 2px;
+  border-radius: 1px;
+  background: var(--reader-slider-track);
+}
+
+.reader-setting input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  margin-top: -5px;
+  border: 2px solid var(--library-tab);
+  border-radius: 50%;
+  background: var(--reader-slider-accent);
+  box-shadow: 0 0 0 1px var(--reader-slider-accent);
+}
+
+.reader-setting input[type="range"]::-moz-range-track,
+.reader-setting input[type="range"]::-moz-range-progress {
+  height: 2px;
+  border-radius: 1px;
+  background: var(--reader-slider-track);
+}
+
+.reader-setting input[type="range"]::-moz-range-thumb {
+  box-sizing: border-box;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--library-tab);
+  border-radius: 50%;
+  background: var(--reader-slider-accent);
+  box-shadow: 0 0 0 1px var(--reader-slider-accent);
+}
+
+.reader-setting input[type="range"]:focus-visible {
+  outline: 2px solid var(--library-focus);
+  outline-offset: 2px;
+}
+
+.reader-setting__ticks {
+  position: absolute;
+  top: calc(50% + 9px);
+  right: 6px;
+  left: 6px;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.reader-setting__ticks > span {
+  width: 1px;
+  height: 4px;
+  background: var(--reader-slider-track);
+}
+
+.reader-setting__ticks > span:first-child,
+.reader-setting__ticks > span:last-child {
+  height: 6px;
+}
+
 .library-app .song-page .lyrics-card__transport {
-  flex-direction: row;
+  display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
-}
-
-.library-app .song-page .lyrics-card__transport {
+  gap: 8px;
   margin-left: auto;
-}
-
-.library-app .song-page .lyrics-card__actions {
-  margin-bottom: 14px;
 }
 
 .library-app .song-page .button,
@@ -292,7 +336,7 @@
   box-shadow: none;
 }
 
-.library-app .song-page .lyrics-card__actions > .button,
+.library-app .song-page .lyrics-card__toolbar > .button,
 .library-app .song-page .lyrics-card__transport > .button {
   display: inline-flex;
   align-items: center;
@@ -304,14 +348,14 @@
   line-height: 1.2;
 }
 
-.library-app .song-page .lyrics-card__actions > .button {
-  min-height: 40px;
+.library-app .song-page .lyrics-card__toolbar > .button {
+  min-height: 44px;
   gap: 6px;
   padding-inline: 10px;
   font-size: 0.8125rem;
 }
 
-.library-app .song-page .lyrics-card__actions > .button .reader-icon,
+.library-app .song-page .lyrics-card__toolbar > .button .reader-icon,
 .library-app
   .song-page
   .lyrics-card__settings
@@ -435,47 +479,6 @@ body.dark-mode
   }
 }
 
-@media (min-width: 961px) {
-  .library-app .song-page .lyrics-card {
-    grid-template-columns: auto auto auto minmax(0, 1fr);
-    align-items: center;
-    column-gap: 14px;
-    row-gap: 10px;
-  }
-
-  .library-app .song-page .lyrics-card__header,
-  .library-app .song-page .lyrics-card__actions {
-    display: contents;
-  }
-
-  .library-app .song-page .lyrics-card__header .section-eyebrow {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .library-app .song-page .lyrics-card__actions > .button {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .library-app .song-page .lyrics-card__settings {
-    grid-column: 3;
-    grid-row: 1;
-  }
-
-  .library-app .song-page .lyrics-card__transport {
-    grid-column: 4;
-    grid-row: 1;
-    justify-self: end;
-    margin-left: 0;
-  }
-
-  .library-app .song-page .song-navigation-error,
-  .library-app .song-page .lyrics-card__body {
-    grid-column: 1 / -1;
-  }
-}
-
 .library-app .song-page .lyrics-card__text {
   font-family: inherit;
   line-height: 2;
@@ -516,9 +519,6 @@ body.dark-mode
       var(--library-header)
     );
     box-shadow: none;
-    grid-template-columns: minmax(0, 1fr) auto 38px;
-    column-gap: 8px;
-    row-gap: 8px;
   }
 
   .library-app .song-page .song-card {
@@ -545,61 +545,50 @@ body.dark-mode
     line-height: 1.55;
   }
 
-  .library-app .song-page .lyrics-card__header,
-  .library-app .song-page .lyrics-card__actions {
-    display: contents;
+  .library-app .song-page .lyrics-card__toolbar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) 44px 44px;
+    gap: 6px;
+    padding-bottom: 10px;
   }
 
-  .library-app .song-page .lyrics-card__header .section-eyebrow {
-    grid-column: 1;
-    grid-row: 1;
-    align-self: center;
-    margin: 0;
+  .library-app .song-page .lyrics-card__toolbar > .button,
+  .library-app .song-page .lyrics-card__toolbar .chord-controls > .button,
+  .library-app .song-page .song-key-select__trigger,
+  .library-app .song-page .lyrics-card__settings .library-settings-button {
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding-inline: 6px;
+    font-size: 0.8125rem;
+  }
+
+  .library-app .song-page .lyrics-card__save {
+    grid-column: 3;
   }
 
   .library-app .song-page .lyrics-card__settings {
-    grid-column: 3;
-    grid-row: 1;
+    grid-column: 4;
   }
 
+  .library-app .song-page .lyrics-card__toolbar .lyrics-card__save,
   .library-app .song-page .lyrics-card__settings .library-settings-button {
-    width: 38px;
-    height: 38px;
-    min-width: 38px;
-    min-height: 38px;
+    width: 44px;
+    height: 44px;
     padding: 0;
   }
 
+  .library-app .song-page .lyrics-card__save > span,
   .library-app
     .song-page
     .lyrics-card__settings
     .library-settings-button
-    .reader-icon {
-    width: 19px;
-    height: 19px;
-  }
-
-  .library-app .song-page .lyrics-card__settings .library-settings-button span {
+    > span {
     display: none;
   }
 
-  .library-app .song-page .lyrics-card__actions .button {
-    min-width: 0;
-    min-height: 38px;
+  .library-app .song-page .song-key-select__trigger {
     gap: 6px;
-    padding: 0 7px;
-    font-size: 0.75rem;
-  }
-
-  .library-app .song-page .lyrics-card__actions .reader-icon {
-    width: 18px;
-    height: 18px;
-  }
-
-  .library-app .song-page .lyrics-card__actions > .button {
-    grid-column: 2;
-    grid-row: 1;
-    white-space: nowrap;
   }
 
   .library-app .song-page .lyrics-card__transport {
@@ -608,11 +597,11 @@ body.dark-mode
     z-index: 29;
     left: 50%;
     right: auto;
-    bottom: max(12px, env(safe-area-inset-bottom));
+    bottom: calc(12px + env(safe-area-inset-bottom));
     width: max-content;
     max-width: calc(100% - 32px);
-    grid-template-columns: 40px auto 40px;
-    gap: 6px;
+    grid-template-columns: 44px auto 44px;
+    gap: 8px;
     margin-left: 0;
     padding: 6px;
     border-radius: 20px;
@@ -624,7 +613,7 @@ body.dark-mode
   .library-app .song-page .lyrics-card__transport > .button,
   .library-app .song-page .lyrics-card__transport > .icon-button {
     border-color: color-mix(in srgb, var(--library-line) 72%, transparent);
-    background: color-mix(in srgb, var(--library-header) 34%, transparent);
+    background: color-mix(in srgb, var(--library-tab) 88%, transparent);
     box-shadow: 0 6px 18px rgb(7 27 44 / 18%);
     backdrop-filter: blur(5px) saturate(1);
     -webkit-backdrop-filter: blur(20px) saturate(1.25);
@@ -638,13 +627,13 @@ body.dark-mode
   }
 
   .library-app .song-page .lyrics-card__transport > .icon-button {
-    width: 40px;
-    height: 40px;
-    min-height: 40px;
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
   }
 
   .library-app .song-page .lyrics-card__transport > .button {
-    min-height: 40px;
+    min-height: 44px;
     padding-inline: 10px;
     font-size: 0.8125rem;
   }
@@ -666,6 +655,20 @@ body.dark-mode
     margin-inline: -12px;
     padding: 14px;
     border-radius: 0 0 12px 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .library-app .song-page .song-key-select__label {
+    display: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .library-app .song-page .song-key-select__trigger,
+  .library-app .song-page .lyrics-card__toolbar .chord-controls > .button {
+    gap: 4px;
+    font-size: 0.75rem;
   }
 }
 

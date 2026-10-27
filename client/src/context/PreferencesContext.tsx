@@ -9,6 +9,8 @@ import {
 export type ThemeMode = "dark" | "light";
 
 interface PreferencesContextValue {
+  showChords: boolean;
+  setShowChords: (value: boolean) => void;
   fontSize: number;
   scrollSpeed: number;
   setFontSize: (value: number) => void;
@@ -23,13 +25,28 @@ const THEME_STORAGE_KEY = "mMusic.theme";
 
 const PreferencesContext = createContext<PreferencesContextValue | null>(null);
 
+function readStoredValue(key: string): string | null {
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+function writeStoredValue(key: string, value: string): void {
+  try {
+    window.localStorage.setItem(key, value);
+  } catch {
+    /* Preferences remain usable for this session when storage is blocked. */
+  }
+}
+
 function readStoredNumber(
   key: string,
   fallback: number,
   min: number,
   max: number,
 ): number {
-  const rawValue = window.localStorage.getItem(key);
+  const rawValue = readStoredValue(key);
   const parsedValue = Number.parseInt(rawValue ?? "", 10);
 
   if (Number.isNaN(parsedValue)) {
@@ -40,7 +57,7 @@ function readStoredNumber(
 }
 
 function readStoredTheme(): ThemeMode {
-  const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+  const storedTheme = readStoredValue(THEME_STORAGE_KEY);
   return storedTheme === "dark" ? "dark" : "light";
 }
 
@@ -51,6 +68,21 @@ interface PreferencesProviderProps {
 export function PreferencesProvider({
   children,
 }: PreferencesProviderProps): React.JSX.Element {
+  const [showChords, setShowChordsState] = useState(() => {
+    try {
+      return window.localStorage.getItem("mMusic.showChords") === "true";
+    } catch {
+      return false;
+    }
+  });
+  const setShowChords = (value: boolean) => {
+    setShowChordsState(value);
+    try {
+      window.localStorage.setItem("mMusic.showChords", String(value));
+    } catch {
+      /* memory fallback */
+    }
+  };
   const [theme, setThemeState] = useState<ThemeMode>(() => readStoredTheme());
   const [fontSize, setFontSizeState] = useState<number>(() =>
     readStoredNumber(FONT_SIZE_STORAGE_KEY, 18, 10, 40),
@@ -91,7 +123,7 @@ export function PreferencesProvider({
 
   useEffect(() => {
     document.body.classList.toggle("dark-mode", theme === "dark");
-    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+    writeStoredValue(THEME_STORAGE_KEY, theme);
   }, [theme]);
 
   useEffect(() => {
@@ -99,16 +131,18 @@ export function PreferencesProvider({
       "--lyrics-font-size",
       `${fontSize}px`,
     );
-    window.localStorage.setItem(FONT_SIZE_STORAGE_KEY, String(fontSize));
+    writeStoredValue(FONT_SIZE_STORAGE_KEY, String(fontSize));
   }, [fontSize]);
 
   useEffect(() => {
-    window.localStorage.setItem(SCROLL_SPEED_STORAGE_KEY, String(scrollSpeed));
+    writeStoredValue(SCROLL_SPEED_STORAGE_KEY, String(scrollSpeed));
   }, [scrollSpeed]);
 
   return (
     <PreferencesContext.Provider
       value={{
+        showChords,
+        setShowChords,
         fontSize,
         scrollSpeed,
         setFontSize,

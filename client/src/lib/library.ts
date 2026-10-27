@@ -7,9 +7,9 @@ export const LIBRARY_CATEGORIES = [
   { value: "hymns", label: "Hymns" },
 ];
 export const LIBRARY_LANGUAGES = [
-  { value: "", label: "ALL" },
-  { value: "my", label: "Myan" },
-  { value: "en", label: "English" },
+  { value: "", label: "All song" },
+  { value: "my", label: "Myan song" },
+  { value: "en", label: "Eng song" },
 ] as const;
 
 export interface LibraryState {

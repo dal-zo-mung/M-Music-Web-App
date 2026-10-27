@@ -1,5 +1,18 @@
 ## Getting Started
 
+### Chord reader
+
+Charted songs display a key selector, Show/Hide chords and Original key reset.
+Chord roots and slash bass notes transpose locally from the saved original chart;
+lyrics stay unchanged. Visibility and per-song keys are stored in this browser.
+Songs without supported charts keep their plain lyrics.
+
+Chords are authored in the Admin Dashboard; see the family
+[authoring guide](../docs/CHORD_AUTHORING_GUIDE.md). The shared music rules are
+installed from this project's committed `vendor/` archive, so standalone builds
+do not depend on a parent-folder checkout. Verify with `bun test ./tests`,
+`bun run typecheck` and `bun run build`.
+
 ### Prerequisites
 
 - **Node.js** ≥ 20.19.0
@@ -37,6 +50,14 @@ but always keeps all three platform choices visible. It refreshes every minute,
 when the window regains focus, and requests the selected platform's latest
 release again on every download click. Missing releases show **Coming soon**.
 Use a direct HTTP or HTTPS installer URL so the browser downloads the file.
+
+Below the download card, **Released data** loads release history from
+`GET /api/desktop/releases` and refreshes every minute and on window focus.
+Activating a release records its first publication date; later versions keep
+previously published entries in this history. Drafts are not shown. Older active
+records without a publication date show **Recorded on** using their creation
+date. Previously inactive legacy records need publication metadata before they
+can appear, because the old data cannot distinguish drafts from past releases.
 
 ### User profile images
 

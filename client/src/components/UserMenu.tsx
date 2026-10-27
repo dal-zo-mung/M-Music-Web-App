@@ -1,8 +1,9 @@
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import type { PublicUser } from "@shared/types";
 
 import { buildReturnTo } from "../lib/auth";
+import { PageLink } from "./PageLink";
 
 interface UserMenuProps {
   currentUser: PublicUser | null;
@@ -25,12 +26,12 @@ export function UserMenu({
 
   if (!currentUser) {
     return (
-      <Link
+      <PageLink
         className="pill-link"
         to={`/login?returnTo=${encodeURIComponent(buildReturnTo(location))}`}
       >
         {isLoading ? "Checking..." : "Login / Sign up"}
-      </Link>
+      </PageLink>
     );
   }
 
@@ -38,7 +39,7 @@ export function UserMenu({
 
   return (
     <div className="user-menu">
-      <Link className="user-menu__trigger" to="/profile">
+      <PageLink className="user-menu__trigger" to="/profile">
         <span className="user-menu__avatar" aria-hidden="true">
           {currentUser.profileImage ? (
             <img alt="" src={currentUser.profileImage} />
@@ -47,7 +48,7 @@ export function UserMenu({
           )}
         </span>
         <span className="user-menu__label">{displayName}</span>
-      </Link>
+      </PageLink>
     </div>
   );
 }

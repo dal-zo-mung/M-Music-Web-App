@@ -9,6 +9,7 @@ import {
   buildLibrarySongPath,
   readLibraryState,
 } from "./library";
+import { supportsViewTransitions } from "./motion";
 
 export function useSongNavigation(songId: string) {
   const [params] = useSearchParams();
@@ -76,6 +77,7 @@ export function useSongNavigation(songId: string) {
         if (nextSong)
           navigate(buildLibrarySongPath(nextSong._id, { ...state, page }), {
             state: returnTo ? { returnTo } : null,
+            viewTransition: supportsViewTransitions(),
           });
         else
           setNavigationError(

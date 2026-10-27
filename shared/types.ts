@@ -38,6 +38,7 @@ export interface AuthMutationResponse {
 }
 
 export interface SongRecord {
+  chordChart?: import("@m-music/chord-core").ChordChart | null;
   _id: string;
   "Song Title": string;
   Artist: string;
@@ -80,15 +81,6 @@ export interface ProfileUpdateRequest {
   firstName?: string;
   lastName?: string;
   tagline?: string;
-}
-
-export interface SupportChatRequest {
-  messages: Array<{ content: string; role: "assistant" | "user" }>;
-}
-
-export interface SupportChatResponse {
-  reply: string;
-  stub: boolean;
 }
 
 // ── Admin Types ──────────────────────────────────────────────
@@ -227,6 +219,8 @@ export interface Release {
   platform: ReleasePlatform;
   download_url: string;
   is_active: boolean;
+  was_released?: boolean;
+  released_at?: string | null;
   created_at: string;
 }
 
@@ -251,6 +245,10 @@ export interface DesktopCategoriesPublicResponse {
 
 export interface DesktopLatestReleaseResponse {
   release: Release | null;
+}
+
+export interface DesktopReleaseHistoryResponse {
+  releases: Release[];
 }
 
 export interface DesktopLegalResponse {

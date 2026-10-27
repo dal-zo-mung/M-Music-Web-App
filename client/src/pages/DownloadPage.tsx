@@ -2,6 +2,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import type { DesktopLatestReleaseResponse, Release } from "@shared/types";
 import { fetchJson } from "../lib/api";
+import { DesktopReleaseHistory } from "../components/DesktopReleaseHistory";
 
 const RELEASE_ENDPOINT = "/api/desktop/releases/latest";
 const RELEASES_CACHE_KEY = `${RELEASE_ENDPOINT}?platform=desktop`;
@@ -333,6 +334,8 @@ export function DownloadPage(): React.JSX.Element {
             </p>
           </div>
         </section>
+
+        <DesktopReleaseHistory />
 
         <section className="download-purpose" aria-labelledby="purpose-heading">
           <div className="download-section-heading">

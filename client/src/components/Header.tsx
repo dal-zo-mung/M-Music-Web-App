@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { usePreferences } from "../context/PreferencesContext";
+import { PageLink, PageNavLink } from "./PageLink";
 import { ThemeIcon } from "./ThemeIcon";
 import { UserMenu } from "./UserMenu";
 
@@ -41,9 +42,13 @@ export function Header(): React.JSX.Element {
 
   return (
     <header className="library-header" ref={headerRef}>
-      <Link className="library-brand" to="/" aria-label="M-Music song library">
+      <PageLink
+        className="library-brand"
+        to="/"
+        aria-label="M-Music song library"
+      >
         M-Music
-      </Link>
+      </PageLink>
       <button
         className="library-mobile-menu"
         ref={menuButton}
@@ -68,12 +73,12 @@ export function Header(): React.JSX.Element {
             setMenuOpen(false);
         }}
       >
-        <NavLink to="/" end>
+        <PageNavLink to="/" end>
           Search
-        </NavLink>
-        <NavLink to="/community">Community</NavLink>
-        <NavLink to="/about">About</NavLink>
-        <NavLink to="/download">Get app</NavLink>
+        </PageNavLink>
+        <PageNavLink to="/community">Community</PageNavLink>
+        <PageNavLink to="/about">About</PageNavLink>
+        <PageNavLink to="/download">Get app</PageNavLink>
         <UserMenu currentUser={currentUser} isLoading={isLoading} />
       </nav>
       <button

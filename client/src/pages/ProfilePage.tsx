@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 
 import useSWR from "swr";
 import type {
@@ -10,6 +9,8 @@ import type {
 } from "@shared/types";
 import { PROFILE_ACCENTS } from "@shared/types";
 
+import { PageLink } from "../components/PageLink";
+import { ProfileSummary } from "../components/ProfileSummary";
 import { useAuth } from "../context/AuthContext";
 import { buildReturnTo, buildSongPath } from "../lib/auth";
 import {
@@ -74,6 +75,7 @@ export function ProfilePage(): React.JSX.Element {
   const [isSaving, setIsSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+  const [removeProfileImage, setRemoveProfileImage] = useState(false);
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(
     currentUser?.profileImage ?? null,
   );
@@ -88,14 +90,25 @@ export function ProfilePage(): React.JSX.Element {
   );
 
   useEffect(() => {
-    if (currentUser) {
+    if (currentUser && !isEditing) {
       setForm(buildFormState(currentUser));
       setProfileImagePreview(currentUser.profileImage);
       setDisplayNameError("");
     }
-  }, [currentUser]);
+  }, [currentUser, isEditing]);
 
-  const previewAccent = form.accentKey;
+  useEffect(() => {
+    if (!profileImagePreview?.startsWith("blob:")) return;
+    return () => URL.revokeObjectURL(profileImagePreview);
+  }, [profileImagePreview]);
+
+  useEffect(() => {
+    if (isEditing) displayNameInputRef.current?.focus({ preventScroll: true });
+  }, [isEditing]);
+
+  const previewAccent = isEditing
+    ? form.accentKey
+    : (currentUser?.accentKey ?? "default");
 
   const returnToLogin = useMemo(
     () =>
@@ -136,7 +149,8 @@ export function ProfilePage(): React.JSX.Element {
           body: imageForm,
           method: "POST",
         });
-        setProfileImageFile(null);
+      } else if (removeProfileImage) {
+        await deleteJson("/api/me/profile-image");
       }
 
       await patchJson<ProfileSaveResponse>("/api/me/profile", {
@@ -149,6 +163,8 @@ export function ProfilePage(): React.JSX.Element {
       });
 
       await refreshAuth();
+      setProfileImageFile(null);
+      setRemoveProfileImage(false);
       setMessage("Profile updated.");
       setTone("success");
       setIsEditing(false);
@@ -220,9 +236,9 @@ export function ProfilePage(): React.JSX.Element {
           <p className="muted-copy">
             Sign in to edit your public details, about text, and page theme.
           </p>
-          <Link className="button" to={returnToLogin}>
+          <PageLink className="button" to={returnToLogin}>
             Log in
-          </Link>
+          </PageLink>
         </div>
       </main>
     );
@@ -230,278 +246,267 @@ export function ProfilePage(): React.JSX.Element {
 
   return (
     <main className={`profile-page profile-page--accent-${previewAccent}`}>
-      <div className="profile-shell">
+      <div
+        className={
+          isEditing ? "profile-shell profile-shell--editing" : "profile-shell"
+        }
+      >
         <header className="profile-hero">
           <p className="section-eyebrow">Account</p>
           <h1>Your profile</h1>
         </header>
 
-        <section
-          className={`profile-card profile-card--preview profile-card--accent-${previewAccent}`}
-          aria-label="Accent preview"
+        <div
+          className={
+            isEditing
+              ? "profile-workspace profile-workspace--editing"
+              : "profile-workspace"
+          }
         >
-          <div className="profile-preview__avatar" aria-hidden="true">
-            {profileImagePreview ? (
-              <img alt="" src={profileImagePreview} />
-            ) : (
-              <span>
-                {(currentUser.username || currentUser.displayName || "U")
-                  .charAt(0)
-                  .toUpperCase()}
-              </span>
-            )}
+          <div className="profile-workspace__preview">
+            <ProfileSummary
+              user={
+                isEditing
+                  ? {
+                      ...currentUser,
+                      ...form,
+                      profileImage: profileImagePreview,
+                    }
+                  : currentUser
+              }
+              onEdit={
+                isEditing
+                  ? undefined
+                  : () => {
+                      setForm(buildFormState(currentUser));
+                      setProfileImageFile(null);
+                      setRemoveProfileImage(false);
+                      setProfileImagePreview(currentUser.profileImage);
+                      setMessage("");
+                      setIsEditing(true);
+                    }
+              }
+            />
           </div>
-          <div className="profile-preview__content">
-            <h2 className="profile-preview__title">
-              {form.displayName.trim() ||
-                currentUser.username ||
-                currentUser.displayName ||
-                [form.firstName, form.lastName].filter(Boolean).join(" ") ||
-                "Your name"}
-            </h2>
-            {form.tagline.trim() ? (
-              <p className="profile-preview__tagline">{form.tagline.trim()}</p>
-            ) : null}
-            {currentUser.username ? (
-              <p className="muted-copy profile-preview__username">
-                @{currentUser.username}
-              </p>
-            ) : null}
-            <p className="profile-preview__provider">
-              Signed in with{" "}
-              {currentUser.authProvider === "google" ? "Google" : "email"}
-            </p>
-          </div>
-          <button
-            className="button button--secondary profile-preview__edit"
-            type="button"
-            aria-expanded={isEditing}
-            aria-controls="profile-edit-form"
-            onClick={() => setIsEditing(true)}
-          >
-            Edit profile
-          </button>
-        </section>
 
-        {isEditing && (
-          <form
-            id="profile-edit-form"
-            className="profile-card profile-form"
-            noValidate
-            onSubmit={handleSubmit}
-          >
-            <h2 className="profile-form__heading">Edit profile</h2>
+          {isEditing && (
+            <form
+              id="profile-edit-form"
+              className="profile-card profile-form"
+              noValidate
+              onSubmit={handleSubmit}
+            >
+              <h2 className="profile-form__heading">Edit profile</h2>
 
-            <div className="field">
-              <span>Profile image</span>
-              <div className="profile-image-editor">
-                <div className="profile-preview__avatar" aria-hidden="true">
+              <div className="field">
+                <span>Profile image</span>
+                <div className="profile-image-editor">
+                  <div className="profile-preview__avatar" aria-hidden="true">
+                    {profileImagePreview ? (
+                      <img alt="" src={profileImagePreview} />
+                    ) : (
+                      <span>
+                        {(
+                          currentUser.username ||
+                          currentUser.displayName ||
+                          "U"
+                        )
+                          .charAt(0)
+                          .toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                  <label className="button button--secondary">
+                    Choose image
+                    <input
+                      accept="image/*"
+                      hidden
+                      type="file"
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        if (!file) return;
+                        setRemoveProfileImage(false);
+                        setProfileImageFile(file);
+                        setProfileImagePreview(URL.createObjectURL(file));
+                      }}
+                    />
+                  </label>
                   {profileImagePreview ? (
-                    <img alt="" src={profileImagePreview} />
-                  ) : (
-                    <span>
-                      {(currentUser.username || currentUser.displayName || "U")
-                        .charAt(0)
-                        .toUpperCase()}
-                    </span>
-                  )}
-                </div>
-                <label className="button button--secondary">
-                  Choose image
-                  <input
-                    accept="image/*"
-                    hidden
-                    type="file"
-                    onChange={(event) => {
-                      const file = event.target.files?.[0];
-                      if (!file) return;
-                      setProfileImageFile(file);
-                      setProfileImagePreview(URL.createObjectURL(file));
-                    }}
-                  />
-                </label>
-                {profileImagePreview ? (
-                  <button
-                    className="button button--secondary"
-                    disabled={isSaving}
-                    type="button"
-                    onClick={async () => {
-                      setIsSaving(true);
-                      setMessage("Removing image…");
-                      setTone("info");
-                      try {
-                        await deleteJson("/api/me/profile-image");
+                    <button
+                      className="button button--secondary"
+                      disabled={isSaving}
+                      type="button"
+                      onClick={() => {
                         setProfileImageFile(null);
                         setProfileImagePreview(null);
-                        await refreshAuth();
-                        setMessage("Profile image removed.");
-                        setTone("success");
-                      } catch (error) {
-                        setMessage(
-                          getErrorMessage(error, "Unable to remove image."),
+                        setRemoveProfileImage(
+                          Boolean(currentUser.profileImage),
                         );
-                        setTone("error");
-                      } finally {
-                        setIsSaving(false);
-                      }
-                    }}
+                      }}
+                    >
+                      Remove image
+                    </button>
+                  ) : null}
+                </div>
+                <small className="muted-copy">Image files up to 5 MB.</small>
+              </div>
+
+              <label className="field">
+                <span>Display name (required)</span>
+                <input
+                  ref={displayNameInputRef}
+                  aria-describedby={
+                    displayNameError ? "profile-display-name-error" : undefined
+                  }
+                  aria-invalid={Boolean(displayNameError)}
+                  autoComplete="nickname"
+                  maxLength={50}
+                  required
+                  type="text"
+                  value={form.displayName}
+                  onChange={(event) => {
+                    setForm((previous) => ({
+                      ...previous,
+                      displayName: event.target.value,
+                    }));
+                    if (displayNameError) {
+                      setDisplayNameError("");
+                    }
+                  }}
+                />
+                {displayNameError ? (
+                  <small
+                    id="profile-display-name-error"
+                    className="field-error"
+                    role="alert"
                   >
-                    Remove image
-                  </button>
+                    {displayNameError}
+                  </small>
                 ) : null}
-              </div>
-              <small className="muted-copy">Image files up to 5 MB.</small>
-            </div>
+              </label>
 
-            <label className="field">
-              <span>Display name (required)</span>
-              <input
-                ref={displayNameInputRef}
-                aria-describedby={
-                  displayNameError ? "profile-display-name-error" : undefined
-                }
-                aria-invalid={Boolean(displayNameError)}
-                autoComplete="nickname"
-                maxLength={50}
-                required
-                type="text"
-                value={form.displayName}
-                onChange={(event) => {
-                  setForm((previous) => ({
-                    ...previous,
-                    displayName: event.target.value,
-                  }));
-                  if (displayNameError) {
+              <label className="field">
+                <span>Tagline (optional)</span>
+                <input
+                  autoComplete="off"
+                  maxLength={140}
+                  placeholder="e.g. Indie · piano covers · night playlists"
+                  type="text"
+                  value={form.tagline}
+                  onChange={(event) =>
+                    setForm((previous) => ({
+                      ...previous,
+                      tagline: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+
+              <div className="split-fields">
+                <label className="field">
+                  <span>First name</span>
+                  <input
+                    autoComplete="given-name"
+                    maxLength={50}
+                    type="text"
+                    value={form.firstName}
+                    onChange={(event) =>
+                      setForm((previous) => ({
+                        ...previous,
+                        firstName: event.target.value,
+                      }))
+                    }
+                  />
+                </label>
+                <label className="field">
+                  <span>Last name</span>
+                  <input
+                    autoComplete="family-name"
+                    maxLength={50}
+                    type="text"
+                    value={form.lastName}
+                    onChange={(event) =>
+                      setForm((previous) => ({
+                        ...previous,
+                        lastName: event.target.value,
+                      }))
+                    }
+                  />
+                </label>
+              </div>
+
+              <fieldset className="profile-accents">
+                <legend>Page accent</legend>
+                <div className="profile-accents__grid">
+                  {PROFILE_ACCENTS.map((accent) => (
+                    <label
+                      className={`profile-accent-option${form.accentKey === accent ? " profile-accent-option--active" : ""}`}
+                      key={accent}
+                    >
+                      <input
+                        checked={form.accentKey === accent}
+                        name="accent"
+                        type="radio"
+                        value={accent}
+                        onChange={() =>
+                          setForm((previous) => ({
+                            ...previous,
+                            accentKey: accent,
+                          }))
+                        }
+                      />
+                      <span>{ACCENT_LABELS[accent]}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+
+              <label className="field">
+                <span>About me</span>
+                <textarea
+                  maxLength={1600}
+                  placeholder="Share a short bio, favorite genres, or how you use M-Music."
+                  rows={6}
+                  value={form.about}
+                  onChange={(event) =>
+                    setForm((previous) => ({
+                      ...previous,
+                      about: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+
+              <p className={`form-message form-message--${tone}`}>{message}</p>
+
+              <div className="profile-form__actions">
+                <button
+                  className="button button--secondary"
+                  disabled={isSaving}
+                  type="button"
+                  onClick={() => {
+                    setForm(buildFormState(currentUser));
+                    setRemoveProfileImage(false);
+                    setProfileImageFile(null);
+                    setProfileImagePreview(currentUser.profileImage);
                     setDisplayNameError("");
-                  }
-                }}
-              />
-              {displayNameError ? (
-                <small
-                  id="profile-display-name-error"
-                  className="field-error"
-                  role="alert"
+                    setMessage("");
+                    setIsEditing(false);
+                  }}
                 >
-                  {displayNameError}
-                </small>
-              ) : null}
-            </label>
-
-            <label className="field">
-              <span>Tagline (optional)</span>
-              <input
-                autoComplete="off"
-                maxLength={140}
-                placeholder="e.g. Indie · piano covers · night playlists"
-                type="text"
-                value={form.tagline}
-                onChange={(event) =>
-                  setForm((previous) => ({
-                    ...previous,
-                    tagline: event.target.value,
-                  }))
-                }
-              />
-            </label>
-
-            <div className="split-fields">
-              <label className="field">
-                <span>First name</span>
-                <input
-                  autoComplete="given-name"
-                  maxLength={50}
-                  type="text"
-                  value={form.firstName}
-                  onChange={(event) =>
-                    setForm((previous) => ({
-                      ...previous,
-                      firstName: event.target.value,
-                    }))
-                  }
-                />
-              </label>
-              <label className="field">
-                <span>Last name</span>
-                <input
-                  autoComplete="family-name"
-                  maxLength={50}
-                  type="text"
-                  value={form.lastName}
-                  onChange={(event) =>
-                    setForm((previous) => ({
-                      ...previous,
-                      lastName: event.target.value,
-                    }))
-                  }
-                />
-              </label>
-            </div>
-
-            <fieldset className="profile-accents">
-              <legend>Page accent</legend>
-              <div className="profile-accents__grid">
-                {PROFILE_ACCENTS.map((accent) => (
-                  <label
-                    className={`profile-accent-option${form.accentKey === accent ? " profile-accent-option--active" : ""}`}
-                    key={accent}
-                  >
-                    <input
-                      checked={form.accentKey === accent}
-                      name="accent"
-                      type="radio"
-                      value={accent}
-                      onChange={() =>
-                        setForm((previous) => ({
-                          ...previous,
-                          accentKey: accent,
-                        }))
-                      }
-                    />
-                    <span>{ACCENT_LABELS[accent]}</span>
-                  </label>
-                ))}
+                  Cancel
+                </button>
+                <button className="button" disabled={isSaving} type="submit">
+                  {isSaving ? "Saving…" : "Save profile"}
+                </button>
               </div>
-            </fieldset>
-
-            <label className="field">
-              <span>About you</span>
-              <textarea
-                maxLength={1600}
-                placeholder="Share a short bio, favorite genres, or how you use M-Music."
-                rows={6}
-                value={form.about}
-                onChange={(event) =>
-                  setForm((previous) => ({
-                    ...previous,
-                    about: event.target.value,
-                  }))
-                }
-              />
-            </label>
-
-            <p className={`form-message form-message--${tone}`}>{message}</p>
-
-            <div className="profile-form__actions">
-              <button
-                className="button button--secondary"
-                disabled={isSaving}
-                type="button"
-                onClick={() => {
-                  setForm(buildFormState(currentUser));
-                  setProfileImageFile(null);
-                  setProfileImagePreview(currentUser.profileImage);
-                  setDisplayNameError("");
-                  setMessage("");
-                  setIsEditing(false);
-                }}
-              >
-                Cancel
-              </button>
-              <button className="button" disabled={isSaving} type="submit">
-                {isSaving ? "Saving…" : "Save profile"}
-              </button>
-            </div>
-          </form>
+            </form>
+          )}
+        </div>
+        {!isEditing && message && (
+          <p className={`form-message form-message--${tone}`} role="status">
+            {message}
+          </p>
         )}
 
         <section
@@ -524,14 +529,14 @@ export function ProfilePage(): React.JSX.Element {
           <div className="saved-song-list">
             {favorites.map((song) => (
               <div className="saved-song-item" key={song._id}>
-                <Link
+                <PageLink
                   className="search-result-card"
                   to={buildSongPath(song._id)}
                   state={{ returnTo: "/profile" }}
                 >
                   <h3>{song["Song Title"] || "Untitled song"}</h3>
                   <p>{song.Artist}</p>
-                </Link>
+                </PageLink>
                 <button
                   className="button button--secondary"
                   disabled={isRemovingFavorite}

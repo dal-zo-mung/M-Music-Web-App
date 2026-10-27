@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import type { AuthMutationResponse, ApiErrorResponse } from "@shared/types";
 
+import { PageLink } from "../components/PageLink";
 import { useAuth } from "../context/AuthContext";
 import {
   getReturnToParam,
@@ -10,6 +11,7 @@ import {
   validatePassword,
 } from "../lib/auth";
 import { ApiError, apiUrl, getErrorMessage, postJson } from "../lib/api";
+import { supportsViewTransitions } from "../lib/motion";
 
 export function RegisterPage(): React.JSX.Element {
   const [firstName, setFirstName] = useState("");
@@ -85,7 +87,10 @@ export function RegisterPage(): React.JSX.Element {
       setMessageTone("success");
 
       window.setTimeout(() => {
-        navigate(returnTo, { replace: true });
+        navigate(returnTo, {
+          replace: true,
+          viewTransition: supportsViewTransitions(),
+        });
       }, 600);
     } catch (error) {
       const normalizedError =
@@ -103,7 +108,7 @@ export function RegisterPage(): React.JSX.Element {
   return (
     <main className="auth-page auth-page--register" id="main-content">
       <section className="auth-card auth-card--register">
-        <Link
+        <PageLink
           className="auth-card__brand"
           to="/"
           aria-label="Back to M-Music home"
@@ -117,7 +122,7 @@ export function RegisterPage(): React.JSX.Element {
             M
           </span>
           <span>M-Music</span>
-        </Link>
+        </PageLink>
 
         <header className="auth-card__heading">
           <p className="auth-card__eyebrow">Join the library</p>
@@ -312,9 +317,9 @@ export function RegisterPage(): React.JSX.Element {
 
         <p className="auth-card__switch">
           Already have an account?{" "}
-          <Link to={`/login?returnTo=${encodeURIComponent(returnTo)}`}>
+          <PageLink to={`/login?returnTo=${encodeURIComponent(returnTo)}`}>
             Login here
-          </Link>
+          </PageLink>
         </p>
       </section>
     </main>

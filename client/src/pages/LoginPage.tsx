@@ -1,13 +1,9 @@
 import { useMemo, useState } from "react";
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 import type { AuthMutationResponse, ApiErrorResponse } from "@shared/types";
 
+import { PageLink } from "../components/PageLink";
 import { useAuth } from "../context/AuthContext";
 import {
   getReturnToParam,
@@ -15,6 +11,7 @@ import {
   validatePassword,
 } from "../lib/auth";
 import { ApiError, apiUrl, getErrorMessage, postJson } from "../lib/api";
+import { supportsViewTransitions } from "../lib/motion";
 
 export function LoginPage(): React.JSX.Element {
   const [username, setUsername] = useState("");
@@ -86,7 +83,10 @@ export function LoginPage(): React.JSX.Element {
       setMessageTone("success");
 
       window.setTimeout(() => {
-        navigate(returnTo, { replace: true });
+        navigate(returnTo, {
+          replace: true,
+          viewTransition: supportsViewTransitions(),
+        });
       }, 400);
     } catch (error) {
       const normalizedError =
@@ -104,7 +104,7 @@ export function LoginPage(): React.JSX.Element {
   return (
     <main className="auth-page" id="main-content">
       <section className="auth-card auth-card--login">
-        <Link
+        <PageLink
           className="auth-card__brand"
           to="/"
           aria-label="Back to M-Music home"
@@ -118,7 +118,7 @@ export function LoginPage(): React.JSX.Element {
             M
           </span>
           <span>M-Music</span>
-        </Link>
+        </PageLink>
 
         <header className="auth-card__heading">
           <p className="auth-card__eyebrow">Member access</p>
@@ -207,9 +207,9 @@ export function LoginPage(): React.JSX.Element {
 
         <p className="auth-card__switch">
           New here?{" "}
-          <Link to={`/register?returnTo=${encodeURIComponent(returnTo)}`}>
+          <PageLink to={`/register?returnTo=${encodeURIComponent(returnTo)}`}>
             Create an account
-          </Link>
+          </PageLink>
         </p>
       </section>
     </main>

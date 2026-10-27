@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { PageLink } from "./PageLink";
 
 /**
  * Lightweight reassurance that a server-side session exists for signed-in users.
@@ -13,13 +13,13 @@ export function SessionStatusChip(): React.JSX.Element | null {
   }
 
   return (
-    <Link
+    <PageLink
       className="session-status-chip"
       title="Go to your profile."
       to="/profile"
     >
       <span aria-hidden="true" className="session-status-chip__dot" />
       <span>Session active</span>
-    </Link>
+    </PageLink>
   );
 }

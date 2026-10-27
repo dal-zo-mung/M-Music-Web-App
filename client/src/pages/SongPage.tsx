@@ -1,23 +1,27 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { createPortal } from "react-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import useSWR from "swr";
 
 import type { FavoriteResponse, SongRecord } from "@shared/types";
 
+import { PageLink } from "../components/PageLink";
 import { useAuth } from "../context/AuthContext";
 import { usePreferences } from "../context/PreferencesContext";
 import { MenuPanel } from "../components/MenuPanel";
 import { ReaderIcon } from "../components/ReaderIcon";
 import { LyricsSongSearch } from "../components/LyricsSongSearch";
-import { formatLyrics } from "../lib/auth";
+import { ChordControlsAndLyrics } from "../components/ChordReader";
 import {
   getRandomSongDetailColorIndex,
   getSongDetailCardColor,
 } from "../lib/songDetailCard";
 import { startLyricsAutoScroll } from "../lib/lyricsAutoScroll";
 import { useSongNavigation } from "../lib/useSongNavigation";
+import { LIBRARY_CATEGORIES } from "../lib/library";
 import { deleteJson, fetchJson, postJson } from "../lib/api";
+import { supportsViewTransitions } from "../lib/motion";
 import "../styles/song-page.css";
 
 const DEFAULT_COVER = "/images/music-logo.jpg";
@@ -61,6 +65,22 @@ function SongReader(): React.JSX.Element {
       fetchJson,
     );
   const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
+  const [transportHost, setTransportHost] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const mobile = window.matchMedia("(max-width: 720px)");
+    const updateHost = () => {
+      // Keep fixed controls outside the transformed page transition container.
+      setTransportHost(
+        mobile.matches
+          ? document.getElementById("reader-transport-root")
+          : null,
+      );
+    };
+    updateHost();
+    mobile.addEventListener("change", updateHost);
+    return () => mobile.removeEventListener("change", updateHost);
+  }, []);
 
   useEffect(() => {
     lyricsRef.current?.scrollTo({ top: 0, behavior: "instant" });
@@ -115,7 +135,9 @@ function SongReader(): React.JSX.Element {
     }
 
     if (!currentUser) {
-      navigate(`/login?returnTo=${encodeURIComponent(navigation.songPath)}`);
+      navigate(`/login?returnTo=${encodeURIComponent(navigation.songPath)}`, {
+        viewTransition: supportsViewTransitions(),
+      });
       return;
     }
 
@@ -140,7 +162,7 @@ function SongReader(): React.JSX.Element {
     return (
       <main className="song-page">
         <div className="song-library-back">
-          <Link to={navigation.backPath}>← Back to songs</Link>
+          <PageLink to={navigation.backPath}>← Back to songs</PageLink>
         </div>
         <div className="library-message" role="alert">
           <h1>Couldn’t open this song</h1>
@@ -157,10 +179,59 @@ function SongReader(): React.JSX.Element {
     );
   }
 
+  const transport = (
+    <div
+      className="lyrics-card__transport"
+      role="group"
+      aria-label="Song playback controls"
+    >
+      <button
+        className="icon-button icon-button--ghost"
+        type="button"
+        aria-label="Previous song"
+        disabled={!navigation.canNavigate}
+        onClick={() => void navigation.navigateRelative(-1)}
+      >
+        <ReaderIcon name="previous" />
+      </button>
+      <button
+        className="button button--secondary"
+        aria-pressed={isAutoScrollEnabled}
+        aria-controls="lyrics-container"
+        disabled={isLoading || !song}
+        type="button"
+        onClick={() => {
+          if (!isAutoScrollEnabled && lyricsRef.current) {
+            const container = lyricsRef.current;
+            if (
+              container.scrollTop >=
+              container.scrollHeight - container.clientHeight - 1
+            ) {
+              container.scrollTo({ top: 0, behavior: "instant" });
+            }
+          }
+          setIsAutoScrollEnabled((currentValue) => !currentValue);
+        }}
+      >
+        <ReaderIcon name={isAutoScrollEnabled ? "pause" : "play"} />
+        {isAutoScrollEnabled ? "Pause scrolling" : "Auto-scroll"}
+      </button>
+      <button
+        className="icon-button icon-button--ghost"
+        type="button"
+        aria-label="Next song"
+        disabled={!navigation.canNavigate}
+        onClick={() => void navigation.navigateRelative(1)}
+      >
+        <ReaderIcon name="next" />
+      </button>
+    </div>
+  );
+
   return (
     <main className="song-page">
       <div className="song-library-back">
-        <Link to={navigation.backPath}>← Back to songs</Link>
+        <PageLink to={navigation.backPath}>← Back to songs</PageLink>
       </div>
       <LyricsSongSearch songId={songId} />
       <section className="song-page__stack">
@@ -192,6 +263,19 @@ function SongReader(): React.JSX.Element {
               {song?.Artist ? `Artist: ${song.Artist}` : "-"}
             </p>
             <p className="muted-copy">
+              Category:{" "}
+              {song?.category?.length
+                ? song.category
+                    .map(
+                      (category) =>
+                        LIBRARY_CATEGORIES.find(
+                          (item) => item.value === category,
+                        )?.label ?? category,
+                    )
+                    .join(", ")
+                : "-"}
+            </p>
+            <p className="muted-copy">
               {song?.["Released Date"]
                 ? `Released: ${song["Released Date"]}`
                 : "-"}
@@ -208,127 +292,104 @@ function SongReader(): React.JSX.Element {
           </div>
         </article>
 
-        <article className="lyrics-card">
-          <div className="lyrics-card__header">
-            <p className="section-eyebrow">Lyrics</p>
-            <div
-              className="library-display-settings lyrics-card__settings"
-              ref={settingsRef}
-            >
-              <button
-                ref={settingsButton}
-                type="button"
-                className="library-settings-button"
-                aria-expanded={settingsOpen}
-                aria-haspopup="dialog"
-                aria-label="Lyrics display settings"
-                onClick={() => setSettingsOpen(!settingsOpen)}
-              >
-                <ReaderIcon name="text" />
-                <span>Reading settings</span>
-              </button>
-              <MenuPanel
-                {...preferences}
-                isOpen={settingsOpen}
-                showSongControls
-                showThemeControls={false}
-              />
-            </div>
-          </div>
-
-          <div className="lyrics-card__actions">
-            <button
-              className="button button--secondary"
-              aria-pressed={favoriteState?.isFavorited ?? false}
-              disabled={isLoading || authLoading || isTogglingFavorite}
-              type="button"
-              onClick={toggleFavorite}
-            >
-              <ReaderIcon name="bookmark" />
-              {favoriteState?.isFavorited ? "Saved" : "Save song"}
-            </button>
-            <div className="lyrics-card__transport">
-              <button
-                className="icon-button icon-button--ghost"
-                type="button"
-                aria-label="Previous song"
-                disabled={!navigation.canNavigate}
-                onClick={() => void navigation.navigateRelative(-1)}
-              >
-                <ReaderIcon name="previous" />
-              </button>
-              <button
-                className="button button--secondary"
-                aria-pressed={isAutoScrollEnabled}
-                aria-controls="lyrics-container"
-                disabled={isLoading || !song}
-                type="button"
-                onClick={() => {
-                  if (!isAutoScrollEnabled && lyricsRef.current) {
-                    const container = lyricsRef.current;
-                    if (
-                      container.scrollTop >=
-                      container.scrollHeight - container.clientHeight - 1
-                    ) {
-                      container.scrollTo({ top: 0, behavior: "instant" });
-                    }
+        <ChordControlsAndLyrics
+          songId={songId}
+          value={song?.chordChart}
+          lyrics={song?.Lyric ?? []}
+          container={lyricsRef}
+          onInteract={() => setIsAutoScrollEnabled(false)}
+        >
+          {(chordControls, chordLyrics) => (
+            <article className="lyrics-card">
+              <div className="lyrics-card__toolbar">
+                {chordControls}
+                <button
+                  className="button button--secondary lyrics-card__save"
+                  aria-label="Save song"
+                  title={
+                    favoriteState?.isFavorited
+                      ? "Remove saved song"
+                      : "Save song"
                   }
-                  setIsAutoScrollEnabled((currentValue) => !currentValue);
+                  aria-pressed={favoriteState?.isFavorited ?? false}
+                  disabled={isLoading || authLoading || isTogglingFavorite}
+                  type="button"
+                  onClick={toggleFavorite}
+                >
+                  <ReaderIcon name="bookmark" />
+                  <span>
+                    {favoriteState?.isFavorited ? "Saved" : "Save song"}
+                  </span>
+                </button>
+                <div
+                  className="library-display-settings lyrics-card__settings"
+                  ref={settingsRef}
+                >
+                  <button
+                    ref={settingsButton}
+                    type="button"
+                    className="library-settings-button"
+                    aria-expanded={settingsOpen}
+                    aria-haspopup="dialog"
+                    aria-label="Reading settings"
+                    title="Reading settings"
+                    onClick={() => setSettingsOpen(!settingsOpen)}
+                  >
+                    <ReaderIcon name="text" />
+                    <span>Reading settings</span>
+                  </button>
+                  <MenuPanel
+                    {...preferences}
+                    isOpen={settingsOpen}
+                    showSongControls
+                    showThemeControls={false}
+                  />
+                </div>
+                {transportHost
+                  ? createPortal(transport, transportHost)
+                  : transport}
+              </div>
+
+              {navigation.navigationError && (
+                <p className="song-navigation-error" role="status">
+                  {navigation.navigationError}{" "}
+                  <button type="button" onClick={navigation.retryNavigation}>
+                    Retry
+                  </button>
+                </p>
+              )}
+              <div
+                className="lyrics-card__body"
+                id="lyrics-container"
+                ref={lyricsRef}
+                tabIndex={0}
+                role="region"
+                aria-label="Song lyrics"
+                onWheel={() => setIsAutoScrollEnabled(false)}
+                onTouchStart={() => setIsAutoScrollEnabled(false)}
+                onPointerDown={() => setIsAutoScrollEnabled(false)}
+                onKeyDown={(event) => {
+                  if (
+                    [
+                      "ArrowUp",
+                      "ArrowDown",
+                      "PageUp",
+                      "PageDown",
+                      "Home",
+                      "End",
+                      " ",
+                    ].includes(event.key)
+                  )
+                    setIsAutoScrollEnabled(false);
                 }}
               >
-                <ReaderIcon name={isAutoScrollEnabled ? "pause" : "play"} />
-                {isAutoScrollEnabled ? "Pause scrolling" : "Auto-scroll"}
-              </button>
-              <button
-                className="icon-button icon-button--ghost"
-                type="button"
-                aria-label="Next song"
-                disabled={!navigation.canNavigate}
-                onClick={() => void navigation.navigateRelative(1)}
-              >
-                <ReaderIcon name="next" />
-              </button>
-            </div>
-          </div>
-
-          {navigation.navigationError && (
-            <p className="song-navigation-error" role="status">
-              {navigation.navigationError}{" "}
-              <button type="button" onClick={navigation.retryNavigation}>
-                Retry
-              </button>
-            </p>
+                <div className="lyrics-card__text">
+                  {song ? chordLyrics : "Loading lyrics..."}
+                </div>
+              </div>
+            </article>
           )}
-          <div
-            className="lyrics-card__body"
-            id="lyrics-container"
-            ref={lyricsRef}
-            tabIndex={0}
-            role="region"
-            aria-label="Song lyrics"
-            onWheel={() => setIsAutoScrollEnabled(false)}
-            onTouchStart={() => setIsAutoScrollEnabled(false)}
-            onPointerDown={() => setIsAutoScrollEnabled(false)}
-            onKeyDown={(event) => {
-              if (
-                [
-                  "ArrowUp",
-                  "ArrowDown",
-                  "PageUp",
-                  "PageDown",
-                  "Home",
-                  "End",
-                  " ",
-                ].includes(event.key)
-              )
-                setIsAutoScrollEnabled(false);
-            }}
-          >
-            <pre className="lyrics-card__text">
-              {song ? formatLyrics(song.Lyric) : "Loading lyrics..."}
-            </pre>
-          </div>
-        </article>
+        </ChordControlsAndLyrics>
       </section>
     </main>
   );

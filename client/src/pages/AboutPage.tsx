@@ -13,6 +13,16 @@ export function AboutPage(): React.JSX.Element {
         auto-scroll. Sign in to save your favorites and find them again on your
         profile.
       </p>
+      <section
+        className="library-about__release"
+        aria-labelledby="about-release-heading"
+      >
+        <h2 id="about-release-heading">Released data</h2>
+        <p>
+          M-Music Web App was first released on{" "}
+          <time dateTime="2026-10-08">8 October 2026</time>.
+        </p>
+      </section>
     </main>
   );
 }

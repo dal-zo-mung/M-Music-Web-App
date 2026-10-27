@@ -5,6 +5,7 @@
     "": {
       "name": "m-music",
       "dependencies": {
+        "@m-music/chord-core": "file:vendor/m-music-chord-core-0.1.2.tgz",
         "axios": "^1.19.0",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
@@ -124,6 +125,8 @@
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.5", "", {}, "sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og=="],
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
+
+    "@m-music/chord-core": ["@m-music/chord-core@vendor/m-music-chord-core-0.1.2.tgz", {}, "sha512-vbBBfWQPVuF27SFPyqn7Tfe1Zfql3vQJH9fCLn2PEjO1GVtXuZbJOoHF3eZlGQ6AcnkC+GsoKur7V7VcZLv3qQ=="],
 
     "@napi-rs/lzma-linux-x64-gnu": ["@napi-rs/lzma-linux-x64-gnu@1.5.1", "", { "os": "linux", "cpu": "x64" }, "sha512-oTXEIha4SsuXdTA4Iyskj0kpdx2yVXdhd75c2v3xGrHFfVMsbhTPZU/nMPL4sWKo4pBHm3aucLaqGlF696dTyQ=="],
 

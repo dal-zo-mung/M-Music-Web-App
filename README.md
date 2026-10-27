@@ -10,7 +10,7 @@ Songs without supported charts keep their plain lyrics.
 Chords are authored in the Admin Dashboard; see the family
 [authoring guide](../docs/CHORD_AUTHORING_GUIDE.md). The shared music rules are
 installed from this project's committed `vendor/` archive, so standalone builds
-do not depend on a parent-folder checkout. Verify with `bun test ./tests`,
+do not depend on a parent-folder checkout. Verify with `bun run test`,
 `bun run typecheck` and `bun run build`.
 
 ### Prerequisites
@@ -100,6 +100,7 @@ this repository; it contains no Node/Express production server.
 |---|---|---|
 | `bun run dev` | `vite --configLoader runner` | Start the Vite frontend |
 | `bun run build` | `vite build --configLoader runner` | Build React app to `dist/client/` |
+| `bun run test` | `bun test ./tests` | Run all app tests |
 | `bun run typecheck` | `tsc -p tsconfig.client.json --noEmit` | Client type check |
 | `bun run format` | `prettier --write ...` | Format all source files |
 | `bun run format:check` | `prettier --check ...` | Check formatting without writing |

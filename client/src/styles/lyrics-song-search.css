@@ -91,13 +91,6 @@
   background: color-mix(in srgb, var(--library-ink) 7%, transparent);
 }
 
-.lyrics-song-search__hint {
-  margin: 7px 0 0;
-  color: var(--library-muted);
-  font-size: 0.8125rem;
-  line-height: 1.5;
-}
-
 .lyrics-song-search__dropdown {
   position: absolute;
   top: calc(100% + 8px);

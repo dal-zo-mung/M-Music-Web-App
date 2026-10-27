@@ -8,18 +8,18 @@
   "scripts": {
     "dev": "vite --configLoader runner",
     "build": "vite build --configLoader runner",
+    "test": "bun test ./tests",
     "typecheck": "tsc -p tsconfig.client.json --noEmit",
     "format": "prettier --write \"client/**/*.{ts,tsx,css,json}\" \"shared/**/*.ts\" \"*.json\" \"*.mjs\"",
     "format:check": "prettier --check \"client/**/*.{ts,tsx,css,json}\" \"shared/**/*.ts\" \"*.json\" \"*.mjs\""
   },
   "dependencies": {
+    "@m-music/chord-core": "file:vendor/m-music-chord-core-0.1.2.tgz",
     "axios": "^1.19.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.9.6",
-    "swr": "^2.3.6",
-    "zod": "^4.4.3",
-    "@m-music/chord-core": "file:vendor/m-music-chord-core-0.1.2.tgz"
+    "swr": "^2.3.6"
   },
   "devDependencies": {
     "@types/bun": "^1.4.2",

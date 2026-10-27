@@ -557,20 +557,6 @@ body.dark-mode .library-song-artist {
 .library-about__release p {
   margin: 0;
 }
-.library-about__actions {
-  display: flex;
-  gap: 16px;
-  margin-top: 32px;
-  flex-wrap: wrap;
-}
-.library-about__actions a {
-  padding: 10px 20px;
-  border-radius: 8px;
-  background: var(--library-button);
-  color: #092d23;
-  text-decoration: none;
-  font-weight: 750;
-}
 
 .library-community {
   flex: 1;
@@ -1059,13 +1045,6 @@ body.dark-mode .community-link {
     font-size: clamp(1.5rem, 6vw, 1.9rem);
     line-height: 1.2;
   }
-  .library-about__actions {
-    gap: 10px;
-  }
-  .library-about__actions a {
-    min-height: 44px;
-    padding: 10px 14px;
-  }
   .library-community {
     padding: 28px var(--phone-gutter) 40px;
   }
@@ -1104,10 +1083,6 @@ body.dark-mode .community-link {
     min-height: 44px;
     font-size: 0.9375rem;
   }
-  .library-app .song-page__grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
-  }
   .library-app .song-card,
   .library-app .lyrics-card {
     min-width: 0;
@@ -1140,25 +1115,6 @@ body.dark-mode .community-link {
   .library-app .lyrics-card {
     gap: 14px;
   }
-  .library-app .lyrics-card__header h2 {
-    font-size: 1.25rem;
-    line-height: 1.5;
-    margin-bottom: 0;
-  }
-  .library-app .lyrics-card__header > .muted-copy {
-    display: none;
-  }
-  .library-app .lyrics-card__actions {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 8px;
-  }
-  .library-app .lyrics-card__actions .button {
-    min-height: 44px;
-    padding: 10px 8px;
-    font-size: 0.875rem;
-    border-radius: 8px;
-  }
   .library-app .lyrics-card__transport {
     grid-column: 1 / -1;
     display: grid;
@@ -1180,9 +1136,6 @@ body.dark-mode .community-link {
     font-family: inherit;
     line-height: 1.9;
     overflow-wrap: anywhere;
-  }
-  .library-display-settings .menu-panel__slider input {
-    min-height: 44px;
   }
 }
 @keyframes library-mobile-menu-enter {

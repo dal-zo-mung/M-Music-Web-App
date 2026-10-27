@@ -46,16 +46,6 @@ export function validatePassword(password: string): PasswordValidationResult {
   };
 }
 
-export function buildSearchPath(query: string): string {
-  const trimmedQuery = query.trim();
-
-  if (!trimmedQuery) {
-    return "/search";
-  }
-
-  return `/search?q=${encodeURIComponent(trimmedQuery)}`;
-}
-
 export function buildSongPath(songId: string, query?: string): string {
   const params = new URLSearchParams();
   const trimmedQuery = query?.trim() ?? "";
@@ -85,8 +75,4 @@ export function safeRedirectPath(pathname: string): string {
   }
 
   return pathname;
-}
-
-export function formatLyrics(lines: string[]): string {
-  return Array.isArray(lines) ? lines.join("\n") : "";
 }

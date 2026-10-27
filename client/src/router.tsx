@@ -11,8 +11,8 @@ import { pageRegistry } from "./registry-page";
 // This file is auto-driven — do NOT add routes here directly.
 //
 // TO ADD A NEW PAGE:
-//   1. Create  client/src/zpages/MyNewPage.tsx
-//   2. Add an entry in client/src/pages/registry.ts
+//   1. Create client/src/pages/MyNewPage.tsx
+//   2. Add an entry in client/src/registry-page.ts
 //   3. Done. This file never needs to be opened again.
 // ─────────────────────────────────────────────────────────────────────────────
 

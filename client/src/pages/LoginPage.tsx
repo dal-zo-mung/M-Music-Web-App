@@ -1,26 +1,24 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
-import type { AuthMutationResponse, ApiErrorResponse } from "@shared/types";
+import type { AuthMutationResponse } from "@shared/types";
 
 import { PageLink } from "../components/PageLink";
 import { useAuth } from "../context/AuthContext";
-import {
-  getReturnToParam,
-  safeRedirectPath,
-  validatePassword,
-} from "../lib/auth";
+import { getReturnToParam, safeRedirectPath } from "../lib/auth";
 import { ApiError, apiUrl, getErrorMessage, postJson } from "../lib/api";
 import { supportsViewTransitions } from "../lib/motion";
+import { formatLoginWait } from "../lib/login-cooldown";
+import { useLoginCooldown } from "../lib/useLoginCooldown";
 
 export function LoginPage(): React.JSX.Element {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [message, setMessage] = useState<string>("");
-  const [messageTone, setMessageTone] = useState<
-    "error" | "info" | "success" | "warning"
-  >("info");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitting = useRef(false);
+  const { remainingSeconds, isLocked, startCooldown } = useLoginCooldown();
   const { refreshAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -53,51 +51,44 @@ export function LoginPage(): React.JSX.Element {
     event: React.FormEvent<HTMLFormElement>,
   ): Promise<void> {
     event.preventDefault();
+    if (submitting.current || isLocked) return;
 
     if (!username.trim() || !password) {
       setMessage("Please enter both username/email and password.");
-      setMessageTone("error");
       return;
     }
 
-    const passwordValidation = validatePassword(password);
-
-    if (!passwordValidation.valid) {
-      setMessage(
-        `Password format is weak: ${passwordValidation.errors.join("; ")}`,
-      );
-      setMessageTone("warning");
-    } else {
-      setMessage("Signing you in...");
-      setMessageTone("info");
-    }
-
+    setMessage("");
+    submitting.current = true;
+    setIsSubmitting(true);
     try {
-      await postJson<AuthMutationResponse>("/api/login", {
+      const response = await postJson<AuthMutationResponse>("/api/login", {
         password,
         username,
       });
 
-      await refreshAuth();
-      setMessage("Login successful. Redirecting...");
-      setMessageTone("success");
-
-      window.setTimeout(() => {
-        navigate(returnTo, {
-          replace: true,
-          viewTransition: supportsViewTransitions(),
-        });
-      }, 400);
+      await refreshAuth(response.user);
+      navigate(returnTo, {
+        replace: true,
+        viewTransition: supportsViewTransitions(),
+      });
     } catch (error) {
       const normalizedError =
         error instanceof ApiError
-          ? (error as ApiError<ApiErrorResponse>)
+          ? error
           : new ApiError("Login failed.", 500, null);
 
+      if (normalizedError.status === 429) {
+        setMessage("");
+        startCooldown(normalizedError.payload);
+        return;
+      }
       setMessage(
         getErrorMessage(normalizedError.payload, normalizedError.message),
       );
-      setMessageTone("error");
+    } finally {
+      submitting.current = false;
+      setIsSubmitting(false);
     }
   }
 
@@ -173,9 +164,23 @@ export function LoginPage(): React.JSX.Element {
             </div>
           </label>
 
-          <p className={`form-message form-message--${messageTone}`}>
-            {message}
-          </p>
+          {isLocked ? (
+            <p className="form-message form-message--error" role="status">
+              Too many attempts. Please wait{" "}
+              <span
+                role="timer"
+                aria-live="off"
+                style={{ fontVariantNumeric: "tabular-nums" }}
+              >
+                {formatLoginWait(remainingSeconds)}
+              </span>
+              .
+            </p>
+          ) : (
+            <p className="form-message form-message--error" role="status">
+              {message}
+            </p>
+          )}
 
           <div className="auth-form__actions">
             <button
@@ -185,8 +190,12 @@ export function LoginPage(): React.JSX.Element {
             >
               Reset
             </button>
-            <button className="button" type="submit">
-              Sign in
+            <button
+              className="button"
+              type="submit"
+              disabled={isSubmitting || isLocked}
+            >
+              {isSubmitting ? "Signing in…" : "Sign in"}
             </button>
           </div>
 

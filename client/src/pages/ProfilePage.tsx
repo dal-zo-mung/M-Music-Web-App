@@ -153,7 +153,7 @@ export function ProfilePage(): React.JSX.Element {
         await deleteJson("/api/me/profile-image");
       }
 
-      await patchJson<ProfileSaveResponse>("/api/me/profile", {
+      const response = await patchJson<ProfileSaveResponse>("/api/me/profile", {
         about: form.about,
         accentKey: form.accentKey,
         displayName,
@@ -162,7 +162,7 @@ export function ProfilePage(): React.JSX.Element {
         tagline: form.tagline,
       });
 
-      await refreshAuth();
+      await refreshAuth(response.user);
       setProfileImageFile(null);
       setRemoveProfileImage(false);
       setMessage("Profile updated.");

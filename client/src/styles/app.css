@@ -800,7 +800,13 @@ body.dark-mode .auth-page {
   box-shadow: none;
 }
 
-.auth-page .button:hover,
+.auth-page .button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  box-shadow: none;
+}
+
+.auth-page .button:hover:not(:disabled),
 .auth-page .oauth-link:hover {
   transform: translate(2px, -1px);
   box-shadow: 4px 5px 0 rgb(26 65 79 / 11%);

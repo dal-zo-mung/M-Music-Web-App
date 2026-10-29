@@ -74,7 +74,7 @@ export function RegisterPage(): React.JSX.Element {
     setMessageTone("info");
 
     try {
-      await postJson<AuthMutationResponse>("/api/register", {
+      const response = await postJson<AuthMutationResponse>("/api/register", {
         email,
         firstName,
         lastName,
@@ -82,7 +82,7 @@ export function RegisterPage(): React.JSX.Element {
         username,
       });
 
-      await refreshAuth();
+      await refreshAuth(response.user);
       setMessage("Account created. Redirecting...");
       setMessageTone("success");
 

@@ -142,9 +142,7 @@ function AppMark(): React.JSX.Element {
 
 export function DownloadPage(): React.JSX.Element {
   const { data, error, isLoading, isValidating, mutate } =
-    useSWR<PlatformReleases>(RELEASES_CACHE_KEY, fetchPlatformReleases, {
-      refreshInterval: 60_000,
-    });
+    useSWR<PlatformReleases>(RELEASES_CACHE_KEY, fetchPlatformReleases);
   const [detectedPlatform] = useState<DesktopPlatform | null>(() =>
     detectDesktopPlatform(),
   );

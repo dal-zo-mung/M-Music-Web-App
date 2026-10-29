@@ -1,10 +1,9 @@
+import { DEFAULT_CATEGORIES, normalizeCategory } from "./categories";
+
 export const LIBRARY_PAGE_SIZE = 20;
 export const LIBRARY_CATEGORIES = [
   { value: "", label: "All songs" },
-  { value: "christmas", label: "Christmas songs" },
-  { value: "worship", label: "Worship songs" },
-  { value: "gospel", label: "Gospel songs" },
-  { value: "hymns", label: "Hymns" },
+  ...DEFAULT_CATEGORIES.map((name) => ({ value: name, label: name })),
 ];
 export const LIBRARY_LANGUAGES = [
   { value: "", label: "All song" },
@@ -29,7 +28,7 @@ export function readLibraryState(params: URLSearchParams): LibraryState {
     : ["en", "english"].includes(rawLanguage)
       ? "en"
       : "";
-  const legacy = /^(myanmar|english)-(christmas|worship|gospel|hymns)$/.exec(
+  const legacy = /^(myanmar|english)-(christmas|worship|gospel|hymns?)$/.exec(
     category,
   );
   if (legacy) {
@@ -37,6 +36,7 @@ export function readLibraryState(params: URLSearchParams): LibraryState {
     category = legacy[2];
   }
   if (category === "all") category = "";
+  category = normalizeCategory(category);
   const page = Number(params.get("page") || "1");
   return {
     q: (params.get("q") ?? "").trim(),
@@ -50,7 +50,7 @@ export function libraryParams(state: LibraryState): URLSearchParams {
   const params = new URLSearchParams();
   if (state.q) params.set("q", state.q);
   if (state.language) params.set("language", state.language);
-  if (state.category) params.set("category", state.category);
+  if (state.category) params.set("category", normalizeCategory(state.category));
   if (state.page > 1) params.set("page", String(state.page));
   return params;
 }

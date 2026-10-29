@@ -15,7 +15,7 @@ describe("library links", () => {
     ).toEqual({ q: "grace", category: "worship", language: "my", page: 2 });
     expect(
       readLibraryState(new URLSearchParams("category=english-hymns")),
-    ).toEqual({ q: "", category: "hymns", language: "en", page: 1 });
+    ).toEqual({ q: "", category: "hymn", language: "en", page: 1 });
   });
   test("an explicit language overrides the legacy language", () => {
     expect(

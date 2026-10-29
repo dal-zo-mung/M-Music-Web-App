@@ -14,7 +14,7 @@ interface AuthContextValue {
   currentUser: PublicUser | null;
   isLoading: boolean;
   logout: () => Promise<void>;
-  refreshAuth: () => Promise<void>;
+  refreshAuth: (user?: PublicUser) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -33,8 +33,12 @@ export function AuthProvider({
 
   const currentUser = data?.authenticated ? (data.user ?? null) : null;
 
-  async function refreshAuth(): Promise<void> {
-    await mutate();
+  async function refreshAuth(user?: PublicUser): Promise<void> {
+    if (user) {
+      await mutate({ authenticated: true, user }, { revalidate: false });
+    } else {
+      await mutate();
+    }
   }
 
   async function logout(): Promise<void> {

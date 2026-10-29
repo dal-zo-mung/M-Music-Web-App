@@ -18,9 +18,7 @@ const releaseDateFormatter = new Intl.DateTimeFormat("en-GB", {
 
 export function DesktopReleaseHistory(): React.JSX.Element {
   const { data, error, isLoading, isValidating, mutate } =
-    useSWR<DesktopReleaseHistoryResponse>("/api/desktop/releases", fetchJson, {
-      refreshInterval: 60_000,
-    });
+    useSWR<DesktopReleaseHistoryResponse>("/api/desktop/releases", fetchJson);
   const releases = data?.releases ?? [];
 
   return (

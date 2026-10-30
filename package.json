@@ -7,11 +7,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite --configLoader runner",
-    "build": "vite build --configLoader runner",
+    "build": "bun run typecheck && vite build --configLoader runner",
     "test": "bun test ./tests",
     "typecheck": "tsc -p tsconfig.client.json --noEmit",
-    "format": "prettier --write \"client/**/*.{ts,tsx,css,json}\" \"shared/**/*.ts\" \"*.json\" \"*.mjs\"",
-    "format:check": "prettier --check \"client/**/*.{ts,tsx,css,json}\" \"shared/**/*.ts\" \"*.json\" \"*.mjs\""
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint:check": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@m-music/chord-core": "file:vendor/m-music-chord-core-0.1.2.tgz",
@@ -22,11 +24,17 @@
     "swr": "^2.3.6"
   },
   "devDependencies": {
+    "@eslint/js": "9.39.5",
     "@types/bun": "^1.4.2",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
+    "@typescript-eslint/eslint-plugin": "8.71.0",
+    "@typescript-eslint/parser": "8.71.0",
     "@vitejs/plugin-react": "^5.1.0",
+    "eslint": "9.39.5",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "16.5.0",
     "jsdom": "^29.1.1",
     "prettier": "^3.9.6",
     "typescript": "^5.9.3",

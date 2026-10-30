@@ -12,10 +12,7 @@ const original = parseChartText(
 
 test("renders transposed chords with lyric anchors and escapes lyric markup", () => {
   const markup = renderToStaticMarkup(
-    <ChordLyrics
-      chart={transposeChart(original, { tonic: "D", mode: "major" })}
-      showChords
-    />,
+    <ChordLyrics chart={transposeChart(original, { tonic: "D", mode: "major" })} showChords />,
   );
   expect(markup).toContain('aria-label="Chord D/F#"');
   expect(markup).toContain('aria-label="Chord A7"');
@@ -25,15 +22,13 @@ test("renders transposed chords with lyric anchors and escapes lyric markup", ()
     tonic: "C",
     mode: "major",
   });
-  expect(
-    renderToStaticMarkup(<ChordLyrics chart={literal} showChords />),
-  ).toContain("&lt;script&gt;");
+  expect(renderToStaticMarkup(<ChordLyrics chart={literal} showChords />)).toContain(
+    "&lt;script&gt;",
+  );
 });
 
 test("hiding chords retains lyrics, verse headings and blank rows but removes instrumentals", () => {
-  const markup = renderToStaticMarkup(
-    <ChordLyrics chart={original} showChords={false} />,
-  );
+  const markup = renderToStaticMarkup(<ChordLyrics chart={original} showChords={false} />);
   expect(markup).toContain("First phrase ending");
   expect(markup).toContain("ကျေးဇူးတော်");
   expect(markup).toContain("Verse");

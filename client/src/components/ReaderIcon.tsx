@@ -1,19 +1,7 @@
 type ReaderIconName =
-  | "text"
-  | "speed"
-  | "minus"
-  | "plus"
-  | "play"
-  | "pause"
-  | "previous"
-  | "next"
-  | "bookmark";
+  "text" | "speed" | "minus" | "plus" | "play" | "pause" | "previous" | "next" | "bookmark";
 
-export function ReaderIcon({
-  name,
-}: {
-  name: ReaderIconName;
-}): React.JSX.Element {
+export function ReaderIcon({ name }: { name: ReaderIconName }): React.JSX.Element {
   return (
     <svg
       className="reader-icon"

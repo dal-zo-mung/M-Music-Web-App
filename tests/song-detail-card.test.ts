@@ -16,15 +16,9 @@ describe("song detail card colors", () => {
 
   test("keeps the chosen color index paired across themes", () => {
     for (let index = 0; index < 10; index += 1) {
-      expect(getSongDetailCardColor(index, false)).toBe(
-        LIGHT_SONG_DETAIL_COLORS[index],
-      );
-      expect(getSongDetailCardColor(index, true)).toBe(
-        DARK_SONG_DETAIL_COLORS[index],
-      );
-      expect(getSongDetailCardColor(index, false)).toBe(
-        LIGHT_SONG_DETAIL_COLORS[index],
-      );
+      expect(getSongDetailCardColor(index, false)).toBe(LIGHT_SONG_DETAIL_COLORS[index]);
+      expect(getSongDetailCardColor(index, true)).toBe(DARK_SONG_DETAIL_COLORS[index]);
+      expect(getSongDetailCardColor(index, false)).toBe(LIGHT_SONG_DETAIL_COLORS[index]);
     }
   });
 
@@ -43,9 +37,7 @@ describe("song detail card colors", () => {
         getRandomSongDetailColorIndex(previous, () => (index + 0.5) / 9),
       );
       expect(reached).toEqual(
-        Array.from({ length: 10 }, (_, index) => index).filter(
-          (index) => index !== previous,
-        ),
+        Array.from({ length: 10 }, (_, index) => index).filter((index) => index !== previous),
       );
     }
   });

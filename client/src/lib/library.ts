@@ -21,16 +21,12 @@ export interface LibraryState {
 export function readLibraryState(params: URLSearchParams): LibraryState {
   let category = (params.get("category") ?? "").trim().toLowerCase();
   const rawLanguage = (params.get("language") ?? "").toLowerCase();
-  let language: LibraryState["language"] = ["my", "myan", "myanmar"].includes(
-    rawLanguage,
-  )
+  let language: LibraryState["language"] = ["my", "myan", "myanmar"].includes(rawLanguage)
     ? "my"
     : ["en", "english"].includes(rawLanguage)
       ? "en"
       : "";
-  const legacy = /^(myanmar|english)-(christmas|worship|gospel|hymns?)$/.exec(
-    category,
-  );
+  const legacy = /^(myanmar|english)-(christmas|worship|gospel|hymns?)$/.exec(category);
   if (legacy) {
     language ||= legacy[1] === "myanmar" ? "my" : "en";
     category = legacy[2];
@@ -67,10 +63,7 @@ export function buildBrowseUrl(state: LibraryState, songId?: string): string {
   return `/api/songs/browse?${params}`;
 }
 
-export function buildLibrarySongPath(
-  songId: string,
-  state: LibraryState,
-): string {
+export function buildLibrarySongPath(songId: string, state: LibraryState): string {
   const query = libraryParams(state).toString();
   return `/songs/${encodeURIComponent(songId)}${query ? `?${query}` : ""}`;
 }

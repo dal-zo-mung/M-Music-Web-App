@@ -1,11 +1,4 @@
-import {
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-  type RefObject,
-} from "react";
+import { useLayoutEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
 import {
   hasChords,
   keyFingerprint,
@@ -51,8 +44,7 @@ export function ChordControlsAndLyrics({
   const target = useMemo(
     () =>
       chart
-        ? selected?.songId === songId &&
-          selected.fingerprint === keyFingerprint(chart.originalKey)
+        ? selected?.songId === songId && selected.fingerprint === keyFingerprint(chart.originalKey)
           ? selected.key
           : readSongKey(localStore(), songId, chart.originalKey)
         : null,
@@ -73,12 +65,8 @@ export function ChordControlsAndLyrics({
       return;
     }
     const top = scroller.getBoundingClientRect().top;
-    const rows = [
-      ...scroller.querySelectorAll<HTMLElement>("[data-chord-row]"),
-    ];
-    const index = rows.findIndex(
-      (el) => el.getBoundingClientRect().bottom > top,
-    );
+    const rows = [...scroller.querySelectorAll<HTMLElement>("[data-chord-row]")];
+    const index = rows.findIndex((el) => el.getBoundingClientRect().bottom > top);
     // If an instrumental disappears, prefer the next lyric, then the preceding row.
     anchor.current =
       index < 0
@@ -93,9 +81,7 @@ export function ChordControlsAndLyrics({
   const restore = () => {
     const scroller = container.current;
     if (!scroller || !anchor.current) return;
-    const rows = [
-      ...scroller.querySelectorAll<HTMLElement>("[data-chord-row]"),
-    ];
+    const rows = [...scroller.querySelectorAll<HTMLElement>("[data-chord-row]")];
     const id = anchor.current.ids.find((candidate) =>
       rows.some((row) => row.dataset.chordRow === candidate),
     );
@@ -155,11 +141,7 @@ export function ChordControlsAndLyrics({
   const controls =
     chart && hasChords(chart) && target ? (
       <div className="chord-controls">
-        <SongKeySelect
-          value={target}
-          originalTonic={chart.originalKey.tonic}
-          onChange={change}
-        />
+        <SongKeySelect value={target} originalTonic={chart.originalKey.tonic} onChange={change} />
         <button
           className="button button--secondary"
           type="button"

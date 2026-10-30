@@ -34,9 +34,7 @@ export function startLyricsAutoScroll(
       position = surface.scrollTop;
     }
     const elapsed =
-      previousTime === undefined
-        ? 0
-        : Math.min(64, Math.max(0, timestamp - previousTime));
+      previousTime === undefined ? 0 : Math.min(64, Math.max(0, timestamp - previousTime));
     previousTime = timestamp;
     position = Math.min(maximum, position + (pixelsPerSecond * elapsed) / 1000);
     surface.scrollTop = position;

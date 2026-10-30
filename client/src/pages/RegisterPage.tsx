@@ -5,11 +5,7 @@ import type { AuthMutationResponse, ApiErrorResponse } from "@shared/types";
 
 import { PageLink } from "../components/PageLink";
 import { useAuth } from "../context/AuthContext";
-import {
-  getReturnToParam,
-  safeRedirectPath,
-  validatePassword,
-} from "../lib/auth";
+import { getReturnToParam, safeRedirectPath, validatePassword } from "../lib/auth";
 import { ApiError, apiUrl, getErrorMessage, postJson } from "../lib/api";
 import { supportsViewTransitions } from "../lib/motion";
 
@@ -24,18 +20,14 @@ export function RegisterPage(): React.JSX.Element {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [message, setMessage] = useState("");
-  const [messageTone, setMessageTone] = useState<"error" | "info" | "success">(
-    "info",
-  );
+  const [messageTone, setMessageTone] = useState<"error" | "info" | "success">("info");
   const passwordValidation = validatePassword(password);
   const { refreshAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const returnTo = safeRedirectPath(getReturnToParam(location.search));
 
-  async function handleSubmit(
-    event: React.FormEvent<HTMLFormElement>,
-  ): Promise<void> {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
 
     if (
@@ -51,9 +43,7 @@ export function RegisterPage(): React.JSX.Element {
     }
 
     if (!passwordValidation.valid) {
-      setMessage(
-        `Password validation failed: ${passwordValidation.errors.join(", ")}`,
-      );
+      setMessage(`Password validation failed: ${passwordValidation.errors.join(", ")}`);
       setMessageTone("error");
       return;
     }
@@ -98,9 +88,7 @@ export function RegisterPage(): React.JSX.Element {
           ? (error as ApiError<ApiErrorResponse>)
           : new ApiError("Registration failed.", 500, null);
 
-      setMessage(
-        getErrorMessage(normalizedError.payload, normalizedError.message),
-      );
+      setMessage(getErrorMessage(normalizedError.payload, normalizedError.message));
       setMessageTone("error");
     }
   }
@@ -108,11 +96,7 @@ export function RegisterPage(): React.JSX.Element {
   return (
     <main className="auth-page auth-page--register" id="main-content">
       <section className="auth-card auth-card--register">
-        <PageLink
-          className="auth-card__brand"
-          to="/"
-          aria-label="Back to M-Music home"
-        >
+        <PageLink className="auth-card__brand" to="/" aria-label="Back to M-Music home">
           <span className="auth-card__back-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24">
               <path d="m10 5-7 7 7 7M3 12h18" />
@@ -190,22 +174,14 @@ export function RegisterPage(): React.JSX.Element {
                   onChange={(event) => setPassword(event.currentTarget.value)}
                 />
                 <button
-                  aria-label={
-                    showPassword ? "Hide new password" : "Show new password"
-                  }
+                  aria-label={showPassword ? "Hide new password" : "Show new password"}
                   className="field__toggle"
                   type="button"
-                  onClick={() =>
-                    setShowPassword((currentValue) => !currentValue)
-                  }
+                  onClick={() => setShowPassword((currentValue) => !currentValue)}
                 >
                   <img
                     alt=""
-                    src={
-                      showPassword
-                        ? "/icons/visibility_off.svg"
-                        : "/icons/visibility.svg"
-                    }
+                    src={showPassword ? "/icons/visibility_off.svg" : "/icons/visibility.svg"}
                   />
                 </button>
               </div>
@@ -219,28 +195,20 @@ export function RegisterPage(): React.JSX.Element {
                   placeholder="Confirm your password"
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
-                  onChange={(event) =>
-                    setConfirmPassword(event.currentTarget.value)
-                  }
+                  onChange={(event) => setConfirmPassword(event.currentTarget.value)}
                 />
                 <button
                   aria-label={
-                    showConfirmPassword
-                      ? "Hide confirm password"
-                      : "Show confirm password"
+                    showConfirmPassword ? "Hide confirm password" : "Show confirm password"
                   }
                   className="field__toggle"
                   type="button"
-                  onClick={() =>
-                    setShowConfirmPassword((currentValue) => !currentValue)
-                  }
+                  onClick={() => setShowConfirmPassword((currentValue) => !currentValue)}
                 >
                   <img
                     alt=""
                     src={
-                      showConfirmPassword
-                        ? "/icons/visibility_off.svg"
-                        : "/icons/visibility.svg"
+                      showConfirmPassword ? "/icons/visibility_off.svg" : "/icons/visibility.svg"
                     }
                   />
                 </button>
@@ -269,21 +237,16 @@ export function RegisterPage(): React.JSX.Element {
             ))}
           </ul>
 
-          <p className={`form-message form-message--${messageTone}`}>
-            {message}
-          </p>
+          <p className={`form-message form-message--${messageTone}`}>{message}</p>
 
           <label className="terms-row">
             <input
               checked={acceptedTerms}
               type="checkbox"
-              onChange={(event) =>
-                setAcceptedTerms(event.currentTarget.checked)
-              }
+              onChange={(event) => setAcceptedTerms(event.currentTarget.checked)}
             />
             <span>
-              I agree to the <a href="#">Terms of Service</a> and{" "}
-              <a href="#">Privacy Policy</a>.
+              I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
             </span>
           </label>
 
@@ -306,9 +269,7 @@ export function RegisterPage(): React.JSX.Element {
 
           <a
             className="oauth-link"
-            href={apiUrl(
-              `/auth/google?returnTo=${encodeURIComponent(returnTo)}`,
-            )}
+            href={apiUrl(`/auth/google?returnTo=${encodeURIComponent(returnTo)}`)}
           >
             <img alt="" src="/images/Google1.png" />
             <span>Continue with Google</span>
@@ -317,9 +278,7 @@ export function RegisterPage(): React.JSX.Element {
 
         <p className="auth-card__switch">
           Already have an account?{" "}
-          <PageLink to={`/login?returnTo=${encodeURIComponent(returnTo)}`}>
-            Login here
-          </PageLink>
+          <PageLink to={`/login?returnTo=${encodeURIComponent(returnTo)}`}>Login here</PageLink>
         </p>
       </section>
     </main>

@@ -1,9 +1,7 @@
 import axios, { isAxiosError } from "axios";
 import type { ApiErrorResponse } from "@shared/types";
 
-const API_ORIGIN = (import.meta.env.VITE_API_URL ?? "")
-  .trim()
-  .replace(/\/+$/, "");
+const API_ORIGIN = (import.meta.env.VITE_API_URL ?? "").trim().replace(/\/+$/, "");
 let responseCsrfToken = "";
 let csrfBootstrap: Promise<string> | null = null;
 
@@ -83,11 +81,7 @@ async function ensureCsrfToken(refresh = false): Promise<string> {
       .then((response) => {
         const token = response.headers["x-csrf-token"];
         if (typeof token !== "string" || !token) {
-          throw new ApiError(
-            "Could not initialize the security token. Please try again.",
-            0,
-            null,
-          );
+          throw new ApiError("Could not initialize the security token. Please try again.", 0, null);
         }
         return token;
       })
@@ -98,9 +92,7 @@ async function ensureCsrfToken(refresh = false): Promise<string> {
   return csrfBootstrap;
 }
 
-async function buildHeaders(
-  options: RequestJsonOptions,
-): Promise<Record<string, string>> {
+async function buildHeaders(options: RequestJsonOptions): Promise<Record<string, string>> {
   const headers: Record<string, string> = {
     "X-M-Music-Client": "M-Music-Web-App",
     ...(options.headers ?? {}),
@@ -124,10 +116,7 @@ async function buildHeaders(
   return headers;
 }
 
-export function getErrorMessage(
-  payload: unknown,
-  fallback = "Request failed.",
-): string {
+export function getErrorMessage(payload: unknown, fallback = "Request failed."): string {
   if (!payload || typeof payload !== "object") {
     return fallback;
   }
@@ -181,9 +170,7 @@ export async function requestJson<TResponse>(
         !isAxiosError(error) ||
         error.response?.status !== 403 ||
         error.response.data?.error !== "CSRF validation failed." ||
-        !["DELETE", "PATCH", "POST", "PUT"].includes(
-          config.method.toUpperCase(),
-        ) ||
+        !["DELETE", "PATCH", "POST", "PUT"].includes(config.method.toUpperCase()) ||
         options.signal?.aborted
       ) {
         throw error;
@@ -197,18 +184,13 @@ export async function requestJson<TResponse>(
   } catch (error) {
     if (!isAxiosError(error)) throw error;
 
-    const payload = (error.response?.data ?? null) as
-      TResponse | ApiErrorResponse | null;
+    const payload = (error.response?.data ?? null) as TResponse | ApiErrorResponse | null;
 
     const fallback = error.response
       ? friendlyErrorMessage(error.response.status)
       : "The server is currently unavailable. Please try again in a moment.";
 
-    throw new ApiError(
-      getErrorMessage(payload, fallback),
-      error.response?.status ?? 0,
-      payload,
-    );
+    throw new ApiError(getErrorMessage(payload, fallback), error.response?.status ?? 0, payload);
   }
 }
 
@@ -216,30 +198,21 @@ export function fetchJson<TResponse>(url: string): Promise<TResponse> {
   return requestJson<TResponse>(url);
 }
 
-export function postJson<TResponse>(
-  url: string,
-  body?: unknown,
-): Promise<TResponse> {
+export function postJson<TResponse>(url: string, body?: unknown): Promise<TResponse> {
   return requestJson<TResponse>(url, {
     body,
     method: "POST",
   });
 }
 
-export function deleteJson<TResponse>(
-  url: string,
-  body?: unknown,
-): Promise<TResponse> {
+export function deleteJson<TResponse>(url: string, body?: unknown): Promise<TResponse> {
   return requestJson<TResponse>(url, {
     body,
     method: "DELETE",
   });
 }
 
-export function patchJson<TResponse>(
-  url: string,
-  body?: unknown,
-): Promise<TResponse> {
+export function patchJson<TResponse>(url: string, body?: unknown): Promise<TResponse> {
   return requestJson<TResponse>(url, {
     body,
     method: "PATCH",

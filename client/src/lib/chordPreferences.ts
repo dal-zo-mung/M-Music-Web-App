@@ -1,10 +1,6 @@
 import { keyFingerprint, validateKey, type SongKey } from "@m-music/chord-core";
 type StorageLike = Pick<Storage, "getItem" | "setItem" | "removeItem">;
-export function readSongKey(
-  storage: StorageLike | null,
-  id: string,
-  original: SongKey,
-): SongKey {
+export function readSongKey(storage: StorageLike | null, id: string, original: SongKey): SongKey {
   try {
     const value = JSON.parse(storage?.getItem(`mMusic.key.${id}`) ?? "null");
     const key = value && validateKey(value.targetKey);

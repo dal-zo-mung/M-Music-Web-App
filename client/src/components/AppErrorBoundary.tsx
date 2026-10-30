@@ -1,10 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { ErrorScreen } from "./ErrorScreen";
 
-export class AppErrorBoundary extends Component<
-  { children: ReactNode },
-  { error: Error | null }
-> {
+export class AppErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
   state: { error: Error | null } = { error: null };
 
   static getDerivedStateFromError(error: Error) {

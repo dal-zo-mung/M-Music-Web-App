@@ -1,9 +1,4 @@
-export const DEFAULT_CATEGORIES = [
-  "worship",
-  "christmas",
-  "gospel",
-  "hymn",
-] as const;
+export const DEFAULT_CATEGORIES = ["worship", "christmas", "gospel", "hymn"] as const;
 
 export function normalizeCategory(value: unknown): string {
   if (typeof value !== "string") return "";
@@ -15,7 +10,5 @@ export function normalizeCategory(value: unknown): string {
 }
 
 export function isDefaultCategory(value: unknown): boolean {
-  return (DEFAULT_CATEGORIES as readonly string[]).includes(
-    normalizeCategory(value),
-  );
+  return (DEFAULT_CATEGORIES as readonly string[]).includes(normalizeCategory(value));
 }

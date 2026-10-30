@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 export type ThemeMode = "dark" | "light";
 
@@ -40,12 +34,7 @@ function writeStoredValue(key: string, value: string): void {
   }
 }
 
-function readStoredNumber(
-  key: string,
-  fallback: number,
-  min: number,
-  max: number,
-): number {
+function readStoredNumber(key: string, fallback: number, min: number, max: number): number {
   const rawValue = readStoredValue(key);
   const parsedValue = Number.parseInt(rawValue ?? "", 10);
 
@@ -65,9 +54,7 @@ interface PreferencesProviderProps {
   children: React.ReactNode;
 }
 
-export function PreferencesProvider({
-  children,
-}: PreferencesProviderProps): React.JSX.Element {
+export function PreferencesProvider({ children }: PreferencesProviderProps): React.JSX.Element {
   const [showChords, setShowChordsState] = useState(() => {
     try {
       return window.localStorage.getItem("mMusic.showChords") === "true";
@@ -91,12 +78,10 @@ export function PreferencesProvider({
     readStoredNumber(SCROLL_SPEED_STORAGE_KEY, 18, 1, 40),
   );
   const setFontSize = useCallback((value: number) => {
-    if (Number.isFinite(value))
-      setFontSizeState(Math.max(10, Math.min(40, Math.round(value))));
+    if (Number.isFinite(value)) setFontSizeState(Math.max(10, Math.min(40, Math.round(value))));
   }, []);
   const setScrollSpeed = useCallback((value: number) => {
-    if (Number.isFinite(value))
-      setScrollSpeedState(Math.max(1, Math.min(40, Math.round(value))));
+    if (Number.isFinite(value)) setScrollSpeedState(Math.max(1, Math.min(40, Math.round(value))));
   }, []);
 
   const setTheme = useCallback(
@@ -107,9 +92,7 @@ export function PreferencesProvider({
         document.body.classList.toggle("dark-mode", value === "dark");
         setThemeState(value);
       };
-      const reduceMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       if (typeof document.startViewTransition !== "function" || reduceMotion) {
         updateTheme();
@@ -127,10 +110,7 @@ export function PreferencesProvider({
   }, [theme]);
 
   useEffect(() => {
-    document.documentElement.style.setProperty(
-      "--lyrics-font-size",
-      `${fontSize}px`,
-    );
+    document.documentElement.style.setProperty("--lyrics-font-size", `${fontSize}px`);
     writeStoredValue(FONT_SIZE_STORAGE_KEY, String(fontSize));
   }, [fontSize]);
 
@@ -160,9 +140,7 @@ export function usePreferences(): PreferencesContextValue {
   const context = useContext(PreferencesContext);
 
   if (!context) {
-    throw new Error(
-      "usePreferences must be used within a PreferencesProvider.",
-    );
+    throw new Error("usePreferences must be used within a PreferencesProvider.");
   }
 
   return context;

@@ -29,10 +29,7 @@ export function ThemeIcon({ mode }: { mode: ThemeMode }): React.JSX.Element {
             className="theme-icon__moon"
             d="M21.9 17.35A9.4 9.4 0 0 1 10.65 4.1a9.75 9.75 0 1 0 11.25 13.25Z"
           />
-          <path
-            className="theme-icon__sparkle"
-            d="M20.5 4.25v3.5m-1.75-1.75h3.5"
-          />
+          <path className="theme-icon__sparkle" d="M20.5 4.25v3.5m-1.75-1.75h3.5" />
           <circle className="theme-icon__star" cx="23" cy="11" r="1" />
         </>
       )}

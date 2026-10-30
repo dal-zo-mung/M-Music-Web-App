@@ -23,11 +23,7 @@ export function SiteLayout(): React.JSX.Element {
           </footer>
         )}
       </div>
-      <div
-        id="reader-transport-root"
-        className="song-page"
-        style={{ display: "contents" }}
-      />
+      <div id="reader-transport-root" className="song-page" style={{ display: "contents" }} />
       <ScrollRestoration
         getKey={(location) =>
           location.pathname === "/" || location.pathname === "/search"

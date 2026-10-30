@@ -1,9 +1,6 @@
 export const LOGIN_COOLDOWN_KEY = "m-music:login-cooldown-until";
 
-export function getLoginRetryDeadline(
-  payload: unknown,
-  now = Date.now(),
-): number {
+export function getLoginRetryDeadline(payload: unknown, now = Date.now()): number {
   if (!payload || typeof payload !== "object") return now + 60_000;
   const data = payload as {
     retryAfterSeconds?: unknown;

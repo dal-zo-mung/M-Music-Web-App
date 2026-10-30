@@ -2,11 +2,7 @@ import { createContext, useContext } from "react";
 
 import useSWR from "swr";
 
-import type {
-  AuthMutationResponse,
-  AuthStatusResponse,
-  PublicUser,
-} from "@shared/types";
+import type { AuthMutationResponse, AuthStatusResponse, PublicUser } from "@shared/types";
 
 import { clearCsrfToken, fetchJson, postJson } from "../lib/api";
 
@@ -23,13 +19,8 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-export function AuthProvider({
-  children,
-}: AuthProviderProps): React.JSX.Element {
-  const { data, isLoading, mutate } = useSWR<AuthStatusResponse>(
-    "/api/me",
-    fetchJson,
-  );
+export function AuthProvider({ children }: AuthProviderProps): React.JSX.Element {
+  const { data, isLoading, mutate } = useSWR<AuthStatusResponse>("/api/me", fetchJson);
 
   const currentUser = data?.authenticated ? (data.user ?? null) : null;
 

@@ -19,10 +19,7 @@ export function Header(): React.JSX.Element {
   }, [location.key]);
   useEffect(() => {
     function outside(event: PointerEvent): void {
-      if (
-        event.target instanceof Node &&
-        !headerRef.current?.contains(event.target)
-      ) {
+      if (event.target instanceof Node && !headerRef.current?.contains(event.target)) {
         setMenuOpen(false);
       }
     }
@@ -42,11 +39,7 @@ export function Header(): React.JSX.Element {
 
   return (
     <header className="library-header" ref={headerRef}>
-      <PageLink
-        className="library-brand"
-        to="/"
-        aria-label="M-Music song library"
-      >
+      <PageLink className="library-brand" to="/" aria-label="M-Music song library">
         M-Music
       </PageLink>
       <button
@@ -86,9 +79,7 @@ export function Header(): React.JSX.Element {
         type="button"
         aria-label={`Switch to ${preferences.theme === "dark" ? "light" : "dark"} mode`}
         title={`Switch to ${preferences.theme === "dark" ? "light" : "dark"} mode`}
-        onClick={() =>
-          preferences.setTheme(preferences.theme === "dark" ? "light" : "dark")
-        }
+        onClick={() => preferences.setTheme(preferences.theme === "dark" ? "light" : "dark")}
       >
         <ThemeIcon mode={preferences.theme === "dark" ? "light" : "dark"} />
       </button>

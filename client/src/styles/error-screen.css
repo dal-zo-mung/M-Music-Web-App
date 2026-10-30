@@ -12,8 +12,7 @@
   width: 100%;
   padding: clamp(32px, 6vw, 72px) 24px;
   color: var(--error-ink);
-  font-family:
-    Inter, ui-sans-serif, system-ui, "Segoe UI", "Myanmar Text", sans-serif;
+  font-family: Inter, ui-sans-serif, system-ui, "Segoe UI", "Myanmar Text", sans-serif;
 }
 body.dark-mode .error-screen {
   --error-accent: #8cddbf;
@@ -60,8 +59,7 @@ body.dark-mode .error-screen {
   border: 7px solid #1d3540;
   border-radius: 50%;
   background: repeating-radial-gradient(circle, #223e49 0 4px, #1a303a 5px 6px);
-  box-shadow: 8px 12px 0
-    color-mix(in srgb, var(--error-accent) 12%, transparent);
+  box-shadow: 8px 12px 0 color-mix(in srgb, var(--error-accent) 12%, transparent);
   transform: rotate(-15deg);
 }
 .error-art__label {

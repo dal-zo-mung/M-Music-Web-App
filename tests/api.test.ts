@@ -1,9 +1,5 @@
 import { afterAll, beforeEach, describe, expect, spyOn, test } from "bun:test";
-import axios, {
-  AxiosError,
-  type AxiosResponse,
-  type InternalAxiosRequestConfig,
-} from "axios";
+import axios, { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from "axios";
 
 const requests: InternalAxiosRequestConfig[] = [];
 let respond: (config: InternalAxiosRequestConfig) => {
@@ -23,34 +19,23 @@ instance.defaults.adapter = async (config) => {
     config,
   };
   if (response.status >= 400)
-    throw new AxiosError(
-      "Request failed",
-      "ERR_BAD_REQUEST",
-      config,
-      undefined,
-      response,
-    );
+    throw new AxiosError("Request failed", "ERR_BAD_REQUEST", config, undefined, response);
   return response;
 };
 const createSpy = spyOn(axios, "create").mockImplementation((config) => {
   instance.defaults.withCredentials = config?.withCredentials;
   return instance;
 });
-const { ApiError, clearCsrfToken, fetchJson, postJson } =
-  await import("../client/src/lib/api.ts");
+const { ApiError, clearCsrfToken, fetchJson, postJson } = await import("../client/src/lib/api.ts");
 createSpy.mockRestore();
 
-const documentDescriptor = Object.getOwnPropertyDescriptor(
-  globalThis,
-  "document",
-);
+const documentDescriptor = Object.getOwnPropertyDescriptor(globalThis, "document");
 Object.defineProperty(globalThis, "document", {
   configurable: true,
   value: { cookie: "m_music.csrf=orphan-token" },
 });
 afterAll(() => {
-  if (documentDescriptor)
-    Object.defineProperty(globalThis, "document", documentDescriptor);
+  if (documentDescriptor) Object.defineProperty(globalThis, "document", documentDescriptor);
   else Reflect.deleteProperty(globalThis, "document");
 });
 beforeEach(() => {
@@ -64,10 +49,7 @@ describe("API session and CSRF bootstrap", () => {
       token: config.method === "get" ? "session-token" : undefined,
     });
     await postJson("/api/register", { username: "new_user" });
-    expect(requests.map((config) => config.url)).toEqual([
-      "/api/me",
-      "/api/register",
-    ]);
+    expect(requests.map((config) => config.url)).toEqual(["/api/me", "/api/register"]);
     expect(requests[1]!.headers.get("X-CSRF-Token")).toBe("session-token");
     expect(requests.every((config) => config.withCredentials)).toBe(true);
   });
@@ -75,15 +57,11 @@ describe("API session and CSRF bootstrap", () => {
   test("shares bootstrap across concurrent mutations", async () => {
     respond = () => ({ token: "shared-token" });
     await Promise.all([postJson("/api/register"), postJson("/api/login")]);
-    expect(requests.filter((config) => config.url === "/api/me")).toHaveLength(
-      1,
-    );
+    expect(requests.filter((config) => config.url === "/api/me")).toHaveLength(1);
     expect(
       requests
         .filter((config) => config.method === "post")
-        .every(
-          (config) => config.headers.get("X-CSRF-Token") === "shared-token",
-        ),
+        .every((config) => config.headers.get("X-CSRF-Token") === "shared-token"),
     ).toBe(true);
   });
 
@@ -112,9 +90,7 @@ describe("API session and CSRF bootstrap", () => {
         ? { token: "token" }
         : { status: 403, data: { error: "CSRF validation failed." } };
     await expect(postJson("/api/register")).rejects.toBeInstanceOf(ApiError);
-    expect(requests.filter((config) => config.method === "post")).toHaveLength(
-      2,
-    );
+    expect(requests.filter((config) => config.method === "post")).toHaveLength(2);
   });
 
   test("does not retry permission failures or other registration errors", async () => {
@@ -122,13 +98,9 @@ describe("API session and CSRF bootstrap", () => {
       clearCsrfToken();
       requests.length = 0;
       respond = (config) =>
-        config.method === "get"
-          ? { token: "token" }
-          : { status, data: { error: "Other error" } };
+        config.method === "get" ? { token: "token" } : { status, data: { error: "Other error" } };
       await expect(postJson("/api/register")).rejects.toMatchObject({ status });
-      expect(
-        requests.filter((config) => config.method === "post"),
-      ).toHaveLength(1);
+      expect(requests.filter((config) => config.method === "post")).toHaveLength(1);
     }
   });
 

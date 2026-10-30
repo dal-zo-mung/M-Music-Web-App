@@ -47,9 +47,7 @@ export function LoginPage(): React.JSX.Element {
     return "Sign-in hit an unexpected problem. Please try again or use email login.";
   }, [oauthError]);
 
-  async function handleSubmit(
-    event: React.FormEvent<HTMLFormElement>,
-  ): Promise<void> {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     if (submitting.current || isLocked) return;
 
@@ -74,18 +72,14 @@ export function LoginPage(): React.JSX.Element {
       });
     } catch (error) {
       const normalizedError =
-        error instanceof ApiError
-          ? error
-          : new ApiError("Login failed.", 500, null);
+        error instanceof ApiError ? error : new ApiError("Login failed.", 500, null);
 
       if (normalizedError.status === 429) {
         setMessage("");
         startCooldown(normalizedError.payload);
         return;
       }
-      setMessage(
-        getErrorMessage(normalizedError.payload, normalizedError.message),
-      );
+      setMessage(getErrorMessage(normalizedError.payload, normalizedError.message));
     } finally {
       submitting.current = false;
       setIsSubmitting(false);
@@ -95,11 +89,7 @@ export function LoginPage(): React.JSX.Element {
   return (
     <main className="auth-page" id="main-content">
       <section className="auth-card auth-card--login">
-        <PageLink
-          className="auth-card__brand"
-          to="/"
-          aria-label="Back to M-Music home"
-        >
+        <PageLink className="auth-card__brand" to="/" aria-label="Back to M-Music home">
           <span className="auth-card__back-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24">
               <path d="m10 5-7 7 7 7M3 12h18" />
@@ -116,9 +106,7 @@ export function LoginPage(): React.JSX.Element {
           <h1>Welcome back.</h1>
         </header>
 
-        {oauthNotice ? (
-          <p className="form-message form-message--error">{oauthNotice}</p>
-        ) : null}
+        {oauthNotice ? <p className="form-message form-message--error">{oauthNotice}</p> : null}
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <label className="field">
@@ -143,22 +131,14 @@ export function LoginPage(): React.JSX.Element {
                 onChange={(event) => setPassword(event.currentTarget.value)}
               />
               <button
-                aria-label={
-                  isPasswordVisible ? "Hide password" : "Show password"
-                }
+                aria-label={isPasswordVisible ? "Hide password" : "Show password"}
                 className="field__toggle"
                 type="button"
-                onClick={() =>
-                  setIsPasswordVisible((currentValue) => !currentValue)
-                }
+                onClick={() => setIsPasswordVisible((currentValue) => !currentValue)}
               >
                 <img
                   alt=""
-                  src={
-                    isPasswordVisible
-                      ? "/icons/visibility.svg"
-                      : "/icons/visibility_off.svg"
-                  }
+                  src={isPasswordVisible ? "/icons/visibility.svg" : "/icons/visibility_off.svg"}
                 />
               </button>
             </div>
@@ -167,11 +147,7 @@ export function LoginPage(): React.JSX.Element {
           {isLocked ? (
             <p className="form-message form-message--error" role="status">
               Too many attempts. Please wait{" "}
-              <span
-                role="timer"
-                aria-live="off"
-                style={{ fontVariantNumeric: "tabular-nums" }}
-              >
+              <span role="timer" aria-live="off" style={{ fontVariantNumeric: "tabular-nums" }}>
                 {formatLoginWait(remainingSeconds)}
               </span>
               .
@@ -190,11 +166,7 @@ export function LoginPage(): React.JSX.Element {
             >
               Reset
             </button>
-            <button
-              className="button"
-              type="submit"
-              disabled={isSubmitting || isLocked}
-            >
+            <button className="button" type="submit" disabled={isSubmitting || isLocked}>
               {isSubmitting ? "Signing in…" : "Sign in"}
             </button>
           </div>
@@ -205,9 +177,7 @@ export function LoginPage(): React.JSX.Element {
 
           <a
             className="oauth-link"
-            href={apiUrl(
-              `/auth/google?returnTo=${encodeURIComponent(returnTo)}`,
-            )}
+            href={apiUrl(`/auth/google?returnTo=${encodeURIComponent(returnTo)}`)}
           >
             <img alt="" src="/images/Google1.png" />
             <span>Continue with Google</span>

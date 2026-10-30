@@ -32,8 +32,7 @@ export function SongKeySelect({
   useEffect(() => {
     if (!open) return;
     function outside(event: PointerEvent) {
-      if (event.target instanceof Node && !root.current?.contains(event.target))
-        setOpen(false);
+      if (event.target instanceof Node && !root.current?.contains(event.target)) setOpen(false);
     }
     document.addEventListener("pointerdown", outside);
     return () => document.removeEventListener("pointerdown", outside);
@@ -44,14 +43,9 @@ export function SongKeySelect({
     const option = list.current.children[active] as HTMLElement | undefined;
     if (!option) return;
     const scroller = list.current;
-    if (option.offsetTop < scroller.scrollTop)
-      scroller.scrollTop = option.offsetTop;
-    else if (
-      option.offsetTop + option.offsetHeight >
-      scroller.scrollTop + scroller.clientHeight
-    )
-      scroller.scrollTop =
-        option.offsetTop + option.offsetHeight - scroller.clientHeight;
+    if (option.offsetTop < scroller.scrollTop) scroller.scrollTop = option.offsetTop;
+    else if (option.offsetTop + option.offsetHeight > scroller.scrollTop + scroller.clientHeight)
+      scroller.scrollTop = option.offsetTop + option.offsetHeight - scroller.clientHeight;
   }, [open, active]);
 
   return (
@@ -81,9 +75,7 @@ export function SongKeySelect({
             setOpen(false);
           } else if (event.key === "Tab") {
             setOpen(false);
-          } else if (
-            ["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)
-          ) {
+          } else if (["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
             event.preventDefault();
             if (!open) {
               show();
@@ -95,9 +87,7 @@ export function SongKeySelect({
                   ? 0
                   : event.key === "End"
                     ? tonics.length - 1
-                    : (index +
-                        (event.key === "ArrowDown" ? 1 : -1) +
-                        tonics.length) %
+                    : (index + (event.key === "ArrowDown" ? 1 : -1) + tonics.length) %
                       tonics.length,
               );
           } else if (event.key === "Enter" || event.key === " ") {
@@ -143,12 +133,7 @@ export function SongKeySelect({
           <path d="m5 7.5 5 5 5-5" />
         </svg>
       </button>
-      <div
-        className="song-key-select__menu"
-        data-open={open}
-        aria-hidden={!open}
-        inert={!open}
-      >
+      <div className="song-key-select__menu" data-open={open} aria-hidden={!open} inert={!open}>
         <div
           id={`${id}-list`}
           role="listbox"

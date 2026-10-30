@@ -6,10 +6,7 @@ interface ErrorScreenProps {
   standalone?: boolean;
 }
 
-export function ErrorScreen({
-  error,
-  standalone = false,
-}: ErrorScreenProps): React.JSX.Element {
+export function ErrorScreen({ error, standalone = false }: ErrorScreenProps): React.JSX.Element {
   const [online, setOnline] = useState(
     () => typeof navigator === "undefined" || navigator.onLine !== false,
   );
@@ -36,11 +33,7 @@ export function ErrorScreen({
       aria-labelledby="error-title"
     >
       {standalone && (
-        <a
-          className="error-screen__brand"
-          href="/"
-          aria-label="M-Music song library"
-        >
+        <a className="error-screen__brand" href="/" aria-label="M-Music song library">
           M-Music
         </a>
       )}
@@ -128,11 +121,7 @@ export function ErrorScreen({
         </div>
         <p className="error-card__hint">{content.hint}</p>
       </section>
-      {standalone && (
-        <p className="error-screen__footer">
-          M-Music · Find your next favorite.
-        </p>
-      )}
+      {standalone && <p className="error-screen__footer">M-Music · Find your next favorite.</p>}
     </main>
   );
 }

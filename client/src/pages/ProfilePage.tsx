@@ -1,12 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import useSWR from "swr";
-import type {
-  ApiErrorResponse,
-  ProfileAccent,
-  PublicUser,
-  SongRecord,
-} from "@shared/types";
+import type { ApiErrorResponse, ProfileAccent, PublicUser, SongRecord } from "@shared/types";
 import { PROFILE_ACCENTS } from "@shared/types";
 
 import { PageLink } from "../components/PageLink";
@@ -84,10 +79,7 @@ export function ProfilePage(): React.JSX.Element {
     data: favorites = [],
     mutate: refreshFavorites,
     isLoading: favoritesLoading,
-  } = useSWR<SongRecord[]>(
-    currentUser ? "/api/songs/favorites" : null,
-    fetchJson,
-  );
+  } = useSWR<SongRecord[]>(currentUser ? "/api/songs/favorites" : null, fetchJson);
 
   useEffect(() => {
     if (currentUser && !isEditing) {
@@ -106,9 +98,7 @@ export function ProfilePage(): React.JSX.Element {
     if (isEditing) displayNameInputRef.current?.focus({ preventScroll: true });
   }, [isEditing]);
 
-  const previewAccent = isEditing
-    ? form.accentKey
-    : (currentUser?.accentKey ?? "default");
+  const previewAccent = isEditing ? form.accentKey : (currentUser?.accentKey ?? "default");
 
   const returnToLogin = useMemo(
     () =>
@@ -116,9 +106,7 @@ export function ProfilePage(): React.JSX.Element {
     [],
   );
 
-  async function handleSubmit(
-    event: React.FormEvent<HTMLFormElement>,
-  ): Promise<void> {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
 
     if (!currentUser) {
@@ -246,11 +234,7 @@ export function ProfilePage(): React.JSX.Element {
 
   return (
     <main className={`profile-page profile-page--accent-${previewAccent}`}>
-      <div
-        className={
-          isEditing ? "profile-shell profile-shell--editing" : "profile-shell"
-        }
-      >
+      <div className={isEditing ? "profile-shell profile-shell--editing" : "profile-shell"}>
         <header className="profile-hero">
           <p className="section-eyebrow">Account</p>
           <h1>Your profile</h1>
@@ -258,9 +242,7 @@ export function ProfilePage(): React.JSX.Element {
 
         <div
           className={
-            isEditing
-              ? "profile-workspace profile-workspace--editing"
-              : "profile-workspace"
+            isEditing ? "profile-workspace profile-workspace--editing" : "profile-workspace"
           }
         >
           <div className="profile-workspace__preview">
@@ -306,11 +288,7 @@ export function ProfilePage(): React.JSX.Element {
                       <img alt="" src={profileImagePreview} />
                     ) : (
                       <span>
-                        {(
-                          currentUser.username ||
-                          currentUser.displayName ||
-                          "U"
-                        )
+                        {(currentUser.username || currentUser.displayName || "U")
                           .charAt(0)
                           .toUpperCase()}
                       </span>
@@ -339,9 +317,7 @@ export function ProfilePage(): React.JSX.Element {
                       onClick={() => {
                         setProfileImageFile(null);
                         setProfileImagePreview(null);
-                        setRemoveProfileImage(
-                          Boolean(currentUser.profileImage),
-                        );
+                        setRemoveProfileImage(Boolean(currentUser.profileImage));
                       }}
                     >
                       Remove image
@@ -355,9 +331,7 @@ export function ProfilePage(): React.JSX.Element {
                 <span>Display name (required)</span>
                 <input
                   ref={displayNameInputRef}
-                  aria-describedby={
-                    displayNameError ? "profile-display-name-error" : undefined
-                  }
+                  aria-describedby={displayNameError ? "profile-display-name-error" : undefined}
                   aria-invalid={Boolean(displayNameError)}
                   autoComplete="nickname"
                   maxLength={50}
@@ -375,11 +349,7 @@ export function ProfilePage(): React.JSX.Element {
                   }}
                 />
                 {displayNameError ? (
-                  <small
-                    id="profile-display-name-error"
-                    className="field-error"
-                    role="alert"
-                  >
+                  <small id="profile-display-name-error" className="field-error" role="alert">
                     {displayNameError}
                   </small>
                 ) : null}
@@ -509,10 +479,7 @@ export function ProfilePage(): React.JSX.Element {
           </p>
         )}
 
-        <section
-          className="profile-card profile-card--saved"
-          aria-label="Saved songs"
-        >
+        <section className="profile-card profile-card--saved" aria-label="Saved songs">
           <div className="profile-card__header">
             <p className="section-eyebrow">Favorites</p>
             <h2>Saved songs</h2>

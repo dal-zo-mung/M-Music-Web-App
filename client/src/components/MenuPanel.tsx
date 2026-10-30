@@ -112,9 +112,7 @@ function ReadingSlider({
           step={1}
           value={value}
           aria-valuetext={valueText}
-          onChange={(event) =>
-            onChange(Number.parseInt(event.currentTarget.value, 10))
-          }
+          onChange={(event) => onChange(Number.parseInt(event.currentTarget.value, 10))}
         />
         <span className="reader-setting__ticks" aria-hidden="true">
           {Array.from({ length: 12 }, (_, index) => (

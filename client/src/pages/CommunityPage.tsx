@@ -5,14 +5,14 @@ const COMMUNITY_LINKS = [
     description:
       "Song updates, announcements, new releases, and a place to share ideas with the community.",
     url:
-      import.meta.env.VITE_FACEBOOK_URL?.trim() || "https://www.facebook.com/profile.php?id=61550508762078",
+      import.meta.env.VITE_FACEBOOK_URL?.trim() ||
+      "https://www.facebook.com/profile.php?id=61550508762078",
     icon: "facebook",
   },
   {
     name: "Telegram",
     label: "Join the channel",
-    description:
-      "Get the latest M-Music announcements, song updates, and new releases.",
+    description: "Get the latest M-Music announcements, song updates, and new releases.",
     url: import.meta.env.VITE_TELEGRAM_URL?.trim() || "https://t.me/+r6Fc1yMBkQ44MjQ9",
     icon: "telegram",
   },
@@ -42,7 +42,8 @@ export function CommunityPage(): React.JSX.Element {
           <p className="community-heading__eyebrow">M-MUSIC COMMUNITY</p>
           <h1>Stay connected with M-Music.</h1>
           <p>
-              Follow the community for song updates, announcements, new releases, communication with each other, and suggestions.         
+            Follow the community for song updates, announcements, new releases, communication with
+            each other, and suggestions.
           </p>
         </header>
 

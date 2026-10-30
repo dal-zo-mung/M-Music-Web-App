@@ -15,9 +15,7 @@ test("keys are per song and invalidated by a changed original key", () => {
   storeSongKey(storage, "one", original, { ...original, tonic: "D" });
   expect(readSongKey(storage, "one", original).tonic).toBe("D");
   expect(readSongKey(storage, "two", original).tonic).toBe("C");
-  expect(readSongKey(storage, "one", { ...original, tonic: "F" }).tonic).toBe(
-    "F",
-  );
+  expect(readSongKey(storage, "one", { ...original, tonic: "F" }).tonic).toBe("F");
   storeSongKey(storage, "one", original, original);
   expect(data.size).toBe(0);
   expect(readSongKey(null, "one", original)).toEqual(original);

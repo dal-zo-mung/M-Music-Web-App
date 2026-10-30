@@ -13,10 +13,7 @@ import { MenuPanel } from "../components/MenuPanel";
 import { ReaderIcon } from "../components/ReaderIcon";
 import { LyricsSongSearch } from "../components/LyricsSongSearch";
 import { ChordControlsAndLyrics } from "../components/ChordReader";
-import {
-  getRandomSongDetailColorIndex,
-  getSongDetailCardColor,
-} from "../lib/songDetailCard";
+import { getRandomSongDetailColorIndex, getSongDetailCardColor } from "../lib/songDetailCard";
 import { startLyricsAutoScroll } from "../lib/lyricsAutoScroll";
 import { useSongNavigation } from "../lib/useSongNavigation";
 import { LIBRARY_CATEGORIES } from "../lib/library";
@@ -28,11 +25,8 @@ const DEFAULT_COVER = "/images/music-logo.jpg";
 
 function normalizeCoverPath(value: string): string {
   const cover = value.trim().replace(/\\/g, "/");
-  if (!cover || /^\/?images\/(default|music-logo)\.jpg$/i.test(cover))
-    return DEFAULT_COVER;
-  return /^[a-z][a-z\d+.-]*:/i.test(cover) || cover.startsWith("/")
-    ? cover
-    : `/${cover}`;
+  if (!cover || /^\/?images\/(default|music-logo)\.jpg$/i.test(cover)) return DEFAULT_COVER;
+  return /^[a-z][a-z\d+.-]*:/i.test(cover) || cover.startsWith("/") ? cover : `/${cover}`;
 }
 
 export function SongPage(): React.JSX.Element {
@@ -59,11 +53,10 @@ function SongReader(): React.JSX.Element {
     error: songError,
     mutate: reloadSong,
   } = useSWR<SongRecord>(songId ? `/api/songs/${songId}` : null, fetchJson);
-  const { data: favoriteState, mutate: mutateFavorite } =
-    useSWR<FavoriteResponse>(
-      currentUser && songId ? `/api/songs/${songId}/favorite` : null,
-      fetchJson,
-    );
+  const { data: favoriteState, mutate: mutateFavorite } = useSWR<FavoriteResponse>(
+    currentUser && songId ? `/api/songs/${songId}/favorite` : null,
+    fetchJson,
+  );
   const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
   const [transportHost, setTransportHost] = useState<HTMLElement | null>(null);
 
@@ -71,11 +64,7 @@ function SongReader(): React.JSX.Element {
     const mobile = window.matchMedia("(max-width: 720px)");
     const updateHost = () => {
       // Keep fixed controls outside the transformed page transition container.
-      setTransportHost(
-        mobile.matches
-          ? document.getElementById("reader-transport-root")
-          : null,
-      );
+      setTransportHost(mobile.matches ? document.getElementById("reader-transport-root") : null);
     };
     updateHost();
     mobile.addEventListener("change", updateHost);
@@ -92,10 +81,7 @@ function SongReader(): React.JSX.Element {
     if (!settingsOpen) return undefined;
 
     function outside(event: PointerEvent): void {
-      if (
-        event.target instanceof Node &&
-        !settingsRef.current?.contains(event.target)
-      ) {
+      if (event.target instanceof Node && !settingsRef.current?.contains(event.target)) {
         setSettingsOpen(false);
       }
     }
@@ -124,9 +110,7 @@ function SongReader(): React.JSX.Element {
     if (!lyricsContainer || !song) {
       return undefined;
     }
-    return startLyricsAutoScroll(lyricsContainer, scrollSpeed, () =>
-      setIsAutoScrollEnabled(false),
-    );
+    return startLyricsAutoScroll(lyricsContainer, scrollSpeed, () => setIsAutoScrollEnabled(false));
   }, [isAutoScrollEnabled, scrollSpeed, song]);
 
   async function toggleFavorite(): Promise<void> {
@@ -167,9 +151,7 @@ function SongReader(): React.JSX.Element {
         <div className="library-message" role="alert">
           <h1>Couldn’t open this song</h1>
           <p>
-            {songError instanceof Error
-              ? songError.message
-              : "This song is no longer available."}
+            {songError instanceof Error ? songError.message : "This song is no longer available."}
           </p>
           <button type="button" onClick={() => void reloadSong()}>
             Try again
@@ -180,11 +162,7 @@ function SongReader(): React.JSX.Element {
   }
 
   const transport = (
-    <div
-      className="lyrics-card__transport"
-      role="group"
-      aria-label="Song playback controls"
-    >
+    <div className="lyrics-card__transport" role="group" aria-label="Song playback controls">
       <button
         className="icon-button icon-button--ghost"
         type="button"
@@ -203,10 +181,7 @@ function SongReader(): React.JSX.Element {
         onClick={() => {
           if (!isAutoScrollEnabled && lyricsRef.current) {
             const container = lyricsRef.current;
-            if (
-              container.scrollTop >=
-              container.scrollHeight - container.clientHeight - 1
-            ) {
+            if (container.scrollTop >= container.scrollHeight - container.clientHeight - 1) {
               container.scrollTo({ top: 0, behavior: "instant" });
             }
           }
@@ -238,10 +213,7 @@ function SongReader(): React.JSX.Element {
         <article
           className="song-card"
           style={{
-            backgroundColor: getSongDetailCardColor(
-              detailColorIndex,
-              theme === "dark",
-            ),
+            backgroundColor: getSongDetailCardColor(detailColorIndex, theme === "dark"),
             color: theme === "dark" ? "#F4F7FA" : "#111827",
           }}
         >
@@ -259,26 +231,21 @@ function SongReader(): React.JSX.Element {
 
           <div className="song-card__meta">
             <h1>{song?.["Song Title"] ?? "Loading..."}</h1>
-            <p className="song-card__artist">
-              {song?.Artist ? `Artist: ${song.Artist}` : "-"}
-            </p>
+            <p className="song-card__artist">{song?.Artist ? `Artist: ${song.Artist}` : "-"}</p>
             <p className="muted-copy">
               Category:{" "}
               {song?.category?.length
                 ? song.category
                     .map(
                       (category) =>
-                        LIBRARY_CATEGORIES.find(
-                          (item) => item.value === category,
-                        )?.label ?? category,
+                        LIBRARY_CATEGORIES.find((item) => item.value === category)?.label ??
+                        category,
                     )
                     .join(", ")
                 : "-"}
             </p>
             <p className="muted-copy">
-              {song?.["Released Date"]
-                ? `Released: ${song["Released Date"]}`
-                : "-"}
+              {song?.["Released Date"] ? `Released: ${song["Released Date"]}` : "-"}
             </p>
             <p className="muted-copy">{song?.["About Song"] || "-"}</p>
             <a
@@ -306,25 +273,16 @@ function SongReader(): React.JSX.Element {
                 <button
                   className="button button--secondary lyrics-card__save"
                   aria-label="Save song"
-                  title={
-                    favoriteState?.isFavorited
-                      ? "Remove saved song"
-                      : "Save song"
-                  }
+                  title={favoriteState?.isFavorited ? "Remove saved song" : "Save song"}
                   aria-pressed={favoriteState?.isFavorited ?? false}
                   disabled={isLoading || authLoading || isTogglingFavorite}
                   type="button"
                   onClick={toggleFavorite}
                 >
                   <ReaderIcon name="bookmark" />
-                  <span>
-                    {favoriteState?.isFavorited ? "Saved" : "Save song"}
-                  </span>
+                  <span>{favoriteState?.isFavorited ? "Saved" : "Save song"}</span>
                 </button>
-                <div
-                  className="library-display-settings lyrics-card__settings"
-                  ref={settingsRef}
-                >
+                <div className="library-display-settings lyrics-card__settings" ref={settingsRef}>
                   <button
                     ref={settingsButton}
                     type="button"
@@ -345,9 +303,7 @@ function SongReader(): React.JSX.Element {
                     showThemeControls={false}
                   />
                 </div>
-                {transportHost
-                  ? createPortal(transport, transportHost)
-                  : transport}
+                {transportHost ? createPortal(transport, transportHost) : transport}
               </div>
 
               {navigation.navigationError && (
@@ -370,22 +326,14 @@ function SongReader(): React.JSX.Element {
                 onPointerDown={() => setIsAutoScrollEnabled(false)}
                 onKeyDown={(event) => {
                   if (
-                    [
-                      "ArrowUp",
-                      "ArrowDown",
-                      "PageUp",
-                      "PageDown",
-                      "Home",
-                      "End",
-                      " ",
-                    ].includes(event.key)
+                    ["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(
+                      event.key,
+                    )
                   )
                     setIsAutoScrollEnabled(false);
                 }}
               >
-                <div className="lyrics-card__text">
-                  {song ? chordLyrics : "Loading lyrics..."}
-                </div>
+                <div className="lyrics-card__text">{song ? chordLyrics : "Loading lyrics..."}</div>
               </div>
             </article>
           )}

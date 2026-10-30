@@ -55,8 +55,7 @@ export function detectDesktopPlatform(): DesktopPlatform | null {
     return null;
   }
 
-  const platform =
-    browser.userAgentData?.platform || browser.platform || userAgent;
+  const platform = browser.userAgentData?.platform || browser.platform || userAgent;
 
   if (/Windows|Win32|Win64/i.test(platform)) return "win";
   if (/macOS|MacIntel|Macintosh/i.test(platform)) return "mac";
@@ -124,14 +123,8 @@ function DownloadIcon(): React.JSX.Element {
 function AppMark(): React.JSX.Element {
   return (
     <svg aria-hidden="true" viewBox="0 0 96 96">
-      <path
-        className="download-app-mark__disc"
-        d="M48 18a30 30 0 1 0 0 60 30 30 0 0 0 0-60Z"
-      />
-      <path
-        className="download-app-mark__ring"
-        d="M48 30a18 18 0 1 0 0 36 18 18 0 0 0 0-36Z"
-      />
+      <path className="download-app-mark__disc" d="M48 18a30 30 0 1 0 0 60 30 30 0 0 0 0-60Z" />
+      <path className="download-app-mark__ring" d="M48 30a18 18 0 1 0 0 36 18 18 0 0 0 0-36Z" />
       <path
         className="download-app-mark__note"
         d="M56 35v22.5a7.5 7.5 0 1 1-4-6.65V39l14-3v16.5a7.5 7.5 0 1 1-4-6.65V33.5L56 35Z"
@@ -141,20 +134,17 @@ function AppMark(): React.JSX.Element {
 }
 
 export function DownloadPage(): React.JSX.Element {
-  const { data, error, isLoading, isValidating, mutate } =
-    useSWR<PlatformReleases>(RELEASES_CACHE_KEY, fetchPlatformReleases);
-  const [detectedPlatform] = useState<DesktopPlatform | null>(() =>
-    detectDesktopPlatform(),
+  const { data, error, isLoading, isValidating, mutate } = useSWR<PlatformReleases>(
+    RELEASES_CACHE_KEY,
+    fetchPlatformReleases,
   );
+  const [detectedPlatform] = useState<DesktopPlatform | null>(() => detectDesktopPlatform());
   const [selectedPlatform, setSelectedPlatform] = useState<DesktopPlatform>(
     () => detectDesktopPlatform() ?? "win",
   );
-  const [downloadingPlatform, setDownloadingPlatform] =
-    useState<DesktopPlatform | null>(null);
+  const [downloadingPlatform, setDownloadingPlatform] = useState<DesktopPlatform | null>(null);
   const [downloadError, setDownloadError] = useState("");
-  const selectedPlatformInfo = PLATFORMS.find(
-    ({ platform }) => platform === selectedPlatform,
-  )!;
+  const selectedPlatformInfo = PLATFORMS.find(({ platform }) => platform === selectedPlatform)!;
   const release = data?.[selectedPlatform] ?? null;
   const releaseStatus = isLoading
     ? "Checking latest release…"
@@ -164,8 +154,7 @@ export function DownloadPage(): React.JSX.Element {
         ? `Version ${release.version}`
         : `Not released for ${selectedPlatformInfo.label} yet`;
   const statusMessage =
-    downloadError ||
-    (error ? "Unable to load the latest release. Please try again." : "");
+    downloadError || (error ? "Unable to load the latest release. Please try again." : "");
 
   async function downloadLatest(platform: DesktopPlatform): Promise<void> {
     setSelectedPlatform(platform);
@@ -208,18 +197,13 @@ export function DownloadPage(): React.JSX.Element {
           </h1>
         </header>
 
-        <section
-          className="download-release"
-          aria-labelledby="download-heading"
-        >
+        <section className="download-release" aria-labelledby="download-heading">
           <div className="download-release__visual" aria-hidden="true">
             <span className="download-release__label">LYRICS PRESENTER</span>
             <div className="download-app-mark">
               <AppMark />
             </div>
-            <span className="download-release__version">
-              Windows · macOS · Linux
-            </span>
+            <span className="download-release__version">Windows · macOS · Linux</span>
           </div>
 
           <div className="download-release__content">
@@ -246,13 +230,9 @@ export function DownloadPage(): React.JSX.Element {
                       }}
                     >
                       <span className="download-platform-option__topline">
-                        <span className="download-platform-option__code">
-                          {code}
-                        </span>
+                        <span className="download-platform-option__code">{code}</span>
                         {isRecommended && (
-                          <span className="download-platform-option__recommended">
-                            Recommended
-                          </span>
+                          <span className="download-platform-option__recommended">Recommended</span>
                         )}
                       </span>
                       <strong>{label}</strong>
@@ -303,11 +283,7 @@ export function DownloadPage(): React.JSX.Element {
             </button>
 
             {statusMessage && (
-              <p
-                id="download-status"
-                className="download-release__fine-print"
-                role="status"
-              >
+              <p id="download-status" className="download-release__fine-print" role="status">
                 {statusMessage}
               </p>
             )}
@@ -327,8 +303,7 @@ export function DownloadPage(): React.JSX.Element {
             <br></br>
 
             <p className="download-release__fine-print">
-              Downloaded songs, setlists and settings are stored locally for
-              offline use.
+              Downloaded songs, setlists and settings are stored locally for offline use.
             </p>
           </div>
         </section>
@@ -346,9 +321,9 @@ export function DownloadPage(): React.JSX.Element {
               <span className="download-purpose__label">Its purpose</span>
               <h3>Prepare once. Present clearly.</h3>
               <p>
-                M Slide Show turns song lyrics into audience-ready slides. It
-                brings song preparation, slide design, service planning and live
-                presentation control into one offline-first workspace.
+                M Slide Show turns song lyrics into audience-ready slides. It brings song
+                preparation, slide design, service planning and live presentation control into one
+                offline-first workspace.
               </p>
             </article>
 
@@ -356,8 +331,8 @@ export function DownloadPage(): React.JSX.Element {
               <span className="download-purpose__label">Who it is for</span>
               <h3>Teams responsible for the screen</h3>
               <p>
-                Designed for people who prepare and operate projected lyrics
-                during worship services and lyric-led events.
+                Designed for people who prepare and operate projected lyrics during worship services
+                and lyric-led events.
               </p>
               <ul className="download-purpose__audience">
                 <li>Churches</li>
@@ -369,24 +344,16 @@ export function DownloadPage(): React.JSX.Element {
           </div>
         </section>
 
-        <section
-          className="download-features"
-          aria-labelledby="features-heading"
-        >
+        <section className="download-features" aria-labelledby="features-heading">
           <div className="download-section-heading">
             <p>Built for worship teams</p>
-            <h2 id="features-heading">
-              Everything You Need for Live Lyrics Presentation
-            </h2>
+            <h2 id="features-heading">Everything You Need for Live Lyrics Presentation</h2>
           </div>
 
           <ol className="download-feature-list">
             {FEATURES.map(({ number, title, body }) => (
               <li className="download-feature-item" key={number}>
-                <span
-                  className="download-feature-item__number"
-                  aria-hidden="true"
-                >
+                <span className="download-feature-item__number" aria-hidden="true">
                   {number}
                 </span>
                 <h3>{title}</h3>

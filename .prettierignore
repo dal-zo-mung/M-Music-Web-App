@@ -1,0 +1,7 @@
+node_modules/
+dist/
+coverage/
+vendor/
+public/fonts/
+*.tsbuildinfo
+bun.lock

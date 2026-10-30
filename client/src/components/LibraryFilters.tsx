@@ -1,9 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  LIBRARY_CATEGORIES,
-  LIBRARY_LANGUAGES,
-  type LibraryState,
-} from "../lib/library";
+import { LIBRARY_CATEGORIES, LIBRARY_LANGUAGES, type LibraryState } from "../lib/library";
 
 interface Props {
   state: LibraryState;
@@ -14,31 +10,23 @@ export function LibraryFilters({ state, onChange }: Props): React.JSX.Element {
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
-  const language = LIBRARY_LANGUAGES.find(
-    (item) => item.value === state.language,
-  )!;
-  const categories = LIBRARY_CATEGORIES.some(
-    (item) => item.value === state.category,
-  )
+  const language = LIBRARY_LANGUAGES.find((item) => item.value === state.language)!;
+  const categories = LIBRARY_CATEGORIES.some((item) => item.value === state.category)
     ? LIBRARY_CATEGORIES
     : [...LIBRARY_CATEGORIES, { value: state.category, label: state.category }];
 
   useEffect(() => {
     if (!open) return;
     function outside(event: PointerEvent): void {
-      if (event.target instanceof Node && !root.current?.contains(event.target))
-        setOpen(false);
+      if (event.target instanceof Node && !root.current?.contains(event.target)) setOpen(false);
     }
     document.addEventListener("pointerdown", outside);
     return () => document.removeEventListener("pointerdown", outside);
   }, [open]);
 
   function focusOption(index: number): void {
-    const options = root.current?.querySelectorAll<HTMLButtonElement>(
-      '[role="menuitemradio"]',
-    );
-    if (options?.length)
-      options[(index + options.length) % options.length].focus();
+    const options = root.current?.querySelectorAll<HTMLButtonElement>('[role="menuitemradio"]');
+    if (options?.length) options[(index + options.length) % options.length].focus();
   }
 
   return (
@@ -53,8 +41,7 @@ export function LibraryFilters({ state, onChange }: Props): React.JSX.Element {
           }
         }}
         onBlur={(event) => {
-          if (!event.currentTarget.contains(event.relatedTarget))
-            setOpen(false);
+          if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
         }}
       >
         <button
@@ -71,9 +58,7 @@ export function LibraryFilters({ state, onChange }: Props): React.JSX.Element {
             if (event.key === "ArrowDown" || event.key === "ArrowUp") {
               event.preventDefault();
               setOpen(true);
-              requestAnimationFrame(() =>
-                focusOption(event.key === "ArrowDown" ? 0 : 2),
-              );
+              requestAnimationFrame(() => focusOption(event.key === "ArrowDown" ? 0 : 2));
             }
           }}
         >
@@ -96,9 +81,7 @@ export function LibraryFilters({ state, onChange }: Props): React.JSX.Element {
                 role="menuitemradio"
                 aria-checked={item.value === state.language}
                 onKeyDown={(event) => {
-                  if (
-                    ["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)
-                  ) {
+                  if (["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
                     event.preventDefault();
                     focusOption(
                       event.key === "Home"
@@ -116,19 +99,13 @@ export function LibraryFilters({ state, onChange }: Props): React.JSX.Element {
                 }}
               >
                 {item.label}
-                <span aria-hidden="true">
-                  {item.value === state.language ? "✓" : ""}
-                </span>
+                <span aria-hidden="true">{item.value === state.language ? "✓" : ""}</span>
               </button>
             ))}
           </div>
         )}
       </div>
-      <div
-        className="library-categories"
-        role="group"
-        aria-label="Song categories"
-      >
+      <div className="library-categories" role="group" aria-label="Song categories">
         {categories.map((item) => (
           <button
             key={item.value}

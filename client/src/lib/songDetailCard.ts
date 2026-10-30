@@ -38,10 +38,7 @@ export function getRandomSongDetailColorIndex(
     previousIndex >= 0 &&
     previousIndex < count;
   const availableCount = hasPrevious ? count - 1 : count;
-  let index = Math.min(
-    availableCount - 1,
-    Math.max(0, Math.floor(random() * availableCount)),
-  );
+  let index = Math.min(availableCount - 1, Math.max(0, Math.floor(random() * availableCount)));
 
   // Choose uniformly from the other colors without retrying a random draw.
   if (hasPrevious && index >= previousIndex) index += 1;
@@ -49,13 +46,8 @@ export function getRandomSongDetailColorIndex(
   return index;
 }
 
-export function getSongDetailCardColor(
-  colorIndex: number,
-  isDarkMode: boolean,
-): string {
-  const palette = isDarkMode
-    ? DARK_SONG_DETAIL_COLORS
-    : LIGHT_SONG_DETAIL_COLORS;
+export function getSongDetailCardColor(colorIndex: number, isDarkMode: boolean): string {
+  const palette = isDarkMode ? DARK_SONG_DETAIL_COLORS : LIGHT_SONG_DETAIL_COLORS;
 
   return palette[colorIndex];
 }

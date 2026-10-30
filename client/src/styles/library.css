@@ -829,13 +829,8 @@ body.dark-mode .community-link {
     cursor: pointer;
   }
   .library-mobile-menu[aria-expanded="true"] {
-    background: color-mix(
-      in srgb,
-      var(--library-active) 35%,
-      var(--library-tab)
-    );
-    box-shadow: inset 0 -2px 0
-      color-mix(in srgb, var(--library-focus) 55%, transparent);
+    background: color-mix(in srgb, var(--library-active) 35%, var(--library-tab));
+    box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--library-focus) 55%, transparent);
   }
   .library-mobile-menu > [aria-hidden] {
     font-size: 1.125rem;
@@ -846,10 +841,7 @@ body.dark-mode .community-link {
     top: calc(100% + 6px);
     right: calc(max(var(--phone-gutter), env(safe-area-inset-right)) + 46px);
     display: none;
-    width: min(
-      145px,
-      calc(100vw - var(--phone-gutter) - var(--phone-gutter) - 46px)
-    );
+    width: min(145px, calc(100vw - var(--phone-gutter) - var(--phone-gutter) - 46px));
     max-width: none;
     max-height: calc(100svh - 90px);
     overflow-y: auto;
@@ -857,11 +849,7 @@ body.dark-mode .community-link {
     padding: 6px;
     border: 1px solid var(--library-line);
     border-radius: 14px;
-    background: color-mix(
-      in srgb,
-      var(--library-header) 92%,
-      var(--library-paper)
-    );
+    background: color-mix(in srgb, var(--library-header) 92%, var(--library-paper));
     box-shadow:
       0 18px 38px rgb(7 27 44 / 24%),
       0 2px 8px rgb(7 27 44 / 12%);

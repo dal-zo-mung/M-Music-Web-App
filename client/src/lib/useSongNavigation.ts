@@ -48,13 +48,7 @@ export function useSongNavigation(songId: string) {
 
   const navigateRelative = useCallback(
     async (offset: -1 | 1): Promise<void> => {
-      if (
-        !data ||
-        currentIndex < 0 ||
-        inFlight.current ||
-        data.counts.found < 2
-      )
-        return;
+      if (!data || currentIndex < 0 || inFlight.current || data.counts.found < 2) return;
       inFlight.current = true;
       setPending(true);
       setNavigationError("");
@@ -63,15 +57,10 @@ export function useSongNavigation(songId: string) {
         let nextSong = songs[currentIndex + offset];
         if (!nextSong) {
           page =
-            ((page - 1 + offset + data.pagination.totalPages) %
-              data.pagination.totalPages) +
-            1;
-          const next = await fetchJson<SongBrowseResponse>(
-            buildBrowseUrl({ ...state, page }),
-          );
+            ((page - 1 + offset + data.pagination.totalPages) % data.pagination.totalPages) + 1;
+          const next = await fetchJson<SongBrowseResponse>(buildBrowseUrl({ ...state, page }));
           page = next.pagination.page;
-          nextSong =
-            offset === 1 ? next.songs[0] : next.songs[next.songs.length - 1];
+          nextSong = offset === 1 ? next.songs[0] : next.songs[next.songs.length - 1];
         }
         if (activeSong.current !== songId) return;
         if (nextSong)
@@ -79,10 +68,7 @@ export function useSongNavigation(songId: string) {
             state: returnTo ? { returnTo } : null,
             viewTransition: supportsViewTransitions(),
           });
-        else
-          setNavigationError(
-            "The song list changed. Return to the library to refresh it.",
-          );
+        else setNavigationError("The song list changed. Return to the library to refresh it.");
       } catch {
         if (activeSong.current === songId)
           setNavigationError("Couldn’t open the next song. Please try again.");
@@ -118,9 +104,7 @@ export function useSongNavigation(songId: string) {
         return;
       if (
         event.target instanceof HTMLElement &&
-        event.target.closest(
-          "input, textarea, select, button, a, [contenteditable], [role='menu']",
-        )
+        event.target.closest("input, textarea, select, button, a, [contenteditable], [role='menu']")
       )
         return;
       if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
@@ -135,12 +119,9 @@ export function useSongNavigation(songId: string) {
   return {
     backPath: returnTo ?? buildLibraryPath(context),
     songPath: buildLibrarySongPath(songId, context),
-    canNavigate: Boolean(
-      data && data.counts.found > 1 && currentIndex >= 0 && !pending && !error,
-    ),
+    canNavigate: Boolean(data && data.counts.found > 1 && currentIndex >= 0 && !pending && !error),
     navigateRelative,
-    navigationError:
-      navigationError || (error ? "Couldn’t load song navigation." : ""),
+    navigationError: navigationError || (error ? "Couldn’t load song navigation." : ""),
     retryNavigation: () => {
       setNavigationError("");
       void mutate();

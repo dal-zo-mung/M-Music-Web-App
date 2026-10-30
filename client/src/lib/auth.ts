@@ -30,15 +30,12 @@ export function validatePassword(password: string): PasswordValidationResult {
       message: "At least one number",
     },
     {
-      test: (candidate: string) =>
-        /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?`~]/.test(candidate),
+      test: (candidate: string) => /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?`~]/.test(candidate),
       message: "At least one special character",
     },
   ];
 
-  const errors = rules
-    .filter((rule) => !rule.test(password))
-    .map((rule) => rule.message);
+  const errors = rules.filter((rule) => !rule.test(password)).map((rule) => rule.message);
 
   return {
     errors,
@@ -58,9 +55,7 @@ export function buildSongPath(songId: string, query?: string): string {
   return queryString ? `/songs/${songId}?${queryString}` : `/songs/${songId}`;
 }
 
-export function buildReturnTo(
-  location: Pick<Location, "pathname" | "search">,
-): string {
+export function buildReturnTo(location: Pick<Location, "pathname" | "search">): string {
   return `${location.pathname}${location.search}`;
 }
 

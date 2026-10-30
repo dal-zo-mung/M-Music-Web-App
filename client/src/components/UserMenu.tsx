@@ -11,17 +11,11 @@ interface UserMenuProps {
 }
 
 function getUserLabel(user: PublicUser): string {
-  const fullName = [user.firstName, user.lastName]
-    .filter(Boolean)
-    .join(" ")
-    .trim();
+  const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
   return user.username || user.displayName || fullName || "User";
 }
 
-export function UserMenu({
-  currentUser,
-  isLoading,
-}: UserMenuProps): React.JSX.Element {
+export function UserMenu({ currentUser, isLoading }: UserMenuProps): React.JSX.Element {
   const location = useLocation();
 
   if (!currentUser) {

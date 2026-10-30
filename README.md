@@ -1,5 +1,7 @@
 ## Getting Started
 
+[Run အဆင့်ဆင့် / Step-by-step commands](#run-steps)
+
 ### Chord reader
 
 Charted songs display a key selector, Show/Hide chords and Original key reset.
@@ -16,7 +18,8 @@ do not depend on a parent-folder checkout. Verify with `bun run test`,
 ### Prerequisites
 
 - **Node.js** ≥ 20.19.0
-- **MongoDB** — local instance or [MongoDB Atlas](https://www.mongodb.com/atlas) free tier
+- **Bun**
+- **Cloud Server** — configure MongoDB in the backend; see [its setup guide](../M-Music-Cloud-Server/README.md#run-steps).
 
 ### Installation
 
@@ -96,14 +99,14 @@ this repository; it contains no Node/Express production server.
 
 ## 📜 Scripts
 
-| Script | Command | Description |
-|---|---|---|
-| `bun run dev` | `vite --configLoader runner` | Start the Vite frontend |
-| `bun run build` | `vite build --configLoader runner` | Build React app to `dist/client/` |
-| `bun run test` | `bun test ./tests` | Run all app tests |
-| `bun run typecheck` | `tsc -p tsconfig.client.json --noEmit` | Client type check |
-| `bun run format` | `prettier --write ...` | Format all source files |
-| `bun run format:check` | `prettier --check ...` | Check formatting without writing |
+| Script                 | Command                                                 | Description                       |
+| ---------------------- | ------------------------------------------------------- | --------------------------------- |
+| `bun run dev`          | `vite --configLoader runner`                            | Start the Vite frontend           |
+| `bun run build`        | `bun run typecheck && vite build --configLoader runner` | Build React app to `dist/client/` |
+| `bun run test`         | `bun test ./tests`                                      | Run all app tests                 |
+| `bun run typecheck`    | `tsc -p tsconfig.client.json --noEmit`                  | Client type check                 |
+| `bun run format`       | `prettier --write .`                                    | Format all source files           |
+| `bun run format:check` | `prettier --check .`                                    | Check formatting without writing  |
 
 ---
 
@@ -113,9 +116,9 @@ this repository; it contains no Node/Express production server.
 
 ---
 
-The Song payload is 
+The Song payload is
 
-{ 
+{
 "Song Title": "",
 "Artist": "",
 "Released Date": "",
@@ -124,3 +127,84 @@ The Song payload is
 "Lyric": [
 ]
 }
+
+## Run steps
+
+အောက်ပါ commands တွေကို PowerShell မှာ တစ်ကြောင်းချင်း run ပါ။ Error တွေ့ရင် ပြင်ပြီးမှ နောက် command ကို ဆက် run ပါ။ ပထမ setup နဲ့ commit/release မတိုင်မီ checks အားလုံးကို စစ်ပါ။ နေ့စဉ် development အတွက် setup ရှိပြီးသားဆို အဆင့် 4 ကို သုံးနိုင်ပါတယ်။
+
+### 1. Project folder နဲ့ dependencies
+
+`M-family` folder ကနေ စပါ။ Project folder ထဲ ရောက်ပြီးသားဆို `cd` ကို ကျော်နိုင်ပါတယ်။
+
+```powershell
+cd .\M-Music-Web-App
+bun install --frozen-lockfile
+```
+
+### 2. Local environment ပြင်ဆင်ပါ
+
+[Cloud Server](../M-Music-Cloud-Server/README.md#run-steps) ကို သီးခြား terminal မှာ port `7000` နဲ့ အရင်ဖွင့်ထားပါ။ MongoDB ကို Cloud Server ဘက်မှာ သတ်မှတ်ရပါတယ်။
+
+Local development မှာ Vite က API requests တွေကို Cloud Server ဆီ proxy လုပ်ပေးပါတယ်။ `.env` လိုအပ်လျှင် မရှိသေးမှသာ example ကို ကူးပါ။
+
+```powershell
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
+```
+
+Local API ကို တိုက်ရိုက်သုံးလျှင် `VITE_API_URL=http://localhost:7000` သတ်မှတ်ပါ။
+
+### 3. Code checks နဲ့ build ကို အစဉ်လိုက် စစ်ပါ
+
+```powershell
+bun run format:check
+bun run typecheck
+bun run lint:check
+bun run test
+bun run build
+```
+
+`format:check` မှာ formatting ပြင်ဖို့ ပြလျှင် အောက်ပါအတိုင်း ပြင်ပြီး အဆင့် 3 ရဲ့ ကျန် commands တွေကို ဆက်ပါ။ `format` က ဖိုင်တွေကို ပြင်ရေးပေးပါတယ်။
+
+```powershell
+bun run format
+bun run format:check
+```
+
+Lint ပြဿနာတွေထဲက အလိုအလျောက် ပြင်နိုင်တာတွေကို ပြင်ရန် လိုမှသာ run ပါ။ ပြောင်းထားတဲ့ diff ကို ပြန်ကြည့်ပြီး ကျန် errors တွေကို ကိုယ်တိုင်ပြင်ပါ။
+
+```powershell
+bun run lint:fix
+bun run lint:check
+```
+
+Code ပြင်ပြီးလျှင် အဆင့် 3 ရဲ့ checks ကို ပြန်စစ်ပါ။ `build` ထဲမှာ typecheck ပါပြီးသားဖြစ်သော်လည်း သီးခြား `typecheck` က type errors ကို စောစော သိနိုင်ဖို့ ဖြစ်ပါတယ်။
+
+### 4. Development app ကို ဖွင့်ပါ
+
+Cloud Server terminal ကို ဖွင့်ထားပြီး Web App terminal မှာ run ပါ။
+
+```powershell
+bun run dev
+```
+
+Browser မှာ `http://localhost:7002` ကို ဖွင့်ပါ။
+
+`dev`/preview command က ဆက် run နေပါမယ်။ ရပ်ရန် `Ctrl+C` သုံးပါ။ Checks ထပ်စစ်ချင်လျှင် project folder တူတဲ့ terminal အသစ်မှာ စစ်ပါ။ Project test suite တွေကို တစ်ခုချင်း run လုပ်တာက computer ပေါ် load များလို့ ဖြစ်တဲ့ timeout တွေကို လျော့စေပါတယ်။
+
+### 5. Build output နဲ့ ဆက်လုပ်ရန်
+
+Production files တွေက `dist/client/` ထဲမှာ ရှိပါတယ်။ အဲဒီ directory ကို static hosting ပေါ် တင်နိုင်ပါတယ်။ အသေးစိတ်ကို [Render deployment](#deploy-separately-on-render) မှာ ကြည့်ပါ။
+
+### Command reference
+
+| Command                | Purpose                                        |
+| ---------------------- | ---------------------------------------------- |
+| `bun run format:check` | Check formatting without changing files.       |
+| `bun run format`       | Apply Prettier formatting.                     |
+| `bun run typecheck`    | Check TypeScript types.                        |
+| `bun run lint:check`   | Check code with ESLint without changing files. |
+| `bun run lint:fix`     | Apply supported ESLint fixes.                  |
+| `bun run test`         | Run automated tests.                           |
+| `bun run build`        | Type-check and create production build output. |
+
+Lint errors fail the command. Warnings remain visible but do not fail it.

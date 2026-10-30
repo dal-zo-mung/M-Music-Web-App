@@ -11,8 +11,7 @@ export function ProfileSummary({
     .map((name) => name?.trim())
     .filter(Boolean)
     .join(" ");
-  const displayName =
-    user.displayName?.trim() || fullName || user.username || "Your name";
+  const displayName = user.displayName?.trim() || fullName || user.username || "Your name";
   const about = user.about?.trim();
 
   return (
@@ -32,14 +31,8 @@ export function ProfileSummary({
         {fullName && fullName !== displayName && (
           <p className="profile-preview__name">{fullName}</p>
         )}
-        {user.tagline?.trim() && (
-          <p className="profile-preview__tagline">{user.tagline.trim()}</p>
-        )}
-        {user.username && (
-          <p className="muted-copy profile-preview__username">
-            @{user.username}
-          </p>
-        )}
+        {user.tagline?.trim() && <p className="profile-preview__tagline">{user.tagline.trim()}</p>}
+        {user.username && <p className="muted-copy profile-preview__username">@{user.username}</p>}
         <p className="profile-preview__provider">
           Signed in with {user.authProvider === "google" ? "Google" : "email"}
         </p>

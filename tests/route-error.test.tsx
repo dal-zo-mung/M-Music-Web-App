@@ -25,9 +25,7 @@ describe("friendly route error recovery", () => {
     const content = getRouteErrorContent(new Error("private details"), false);
     expect(content.kind).toBe("offline");
     expect(content.description).toContain("internet connection");
-    expect(getRouteErrorContent(new Error("private details"), true).kind).toBe(
-      "unexpected",
-    );
+    expect(getRouteErrorContent(new Error("private details"), true).kind).toBe("unexpected");
   });
 
   test("gives useful messages for missing pages and access failures", () => {

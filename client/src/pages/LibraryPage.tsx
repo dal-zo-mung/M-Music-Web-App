@@ -19,8 +19,10 @@ export function LibraryPage(): React.JSX.Element {
   const [draft, setDraft] = useState(state.q);
   const [composing, setComposing] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const { data, error, isLoading, isValidating, mutate } =
-    useSWR<SongBrowseResponse>(buildBrowseUrl(state), fetchJson);
+  const { data, error, isLoading, isValidating, mutate } = useSWR<SongBrowseResponse>(
+    buildBrowseUrl(state),
+    fetchJson,
+  );
 
   useEffect(() => {
     setDraft(state.q);
@@ -44,15 +46,7 @@ export function LibraryPage(): React.JSX.Element {
       });
     }, 300);
     return () => clearTimeout(timer.current);
-  }, [
-    draft,
-    composing,
-    state.q,
-    state.language,
-    state.category,
-    state.page,
-    setParams,
-  ]);
+  }, [draft, composing, state.q, state.language, state.category, state.page, setParams]);
 
   useEffect(() => {
     if (data && data.pagination.page !== state.page) {
@@ -79,12 +73,7 @@ export function LibraryPage(): React.JSX.Element {
             update({ q: draft.trim() });
           }}
         >
-          <div
-            className="library-count"
-            role="status"
-            aria-live="polite"
-            aria-atomic="true"
-          >
+          <div className="library-count" role="status" aria-live="polite" aria-atomic="true">
             <span>Found:</span>
             <strong
               aria-label={
@@ -124,9 +113,7 @@ export function LibraryPage(): React.JSX.Element {
           {error ? (
             <div className="library-message" role="alert">
               <h2>Couldn’t load songs</h2>
-              <p>
-                {error instanceof Error ? error.message : "Please try again."}
-              </p>
+              <p>{error instanceof Error ? error.message : "Please try again."}</p>
               <button type="button" onClick={() => void mutate()}>
                 Try again
               </button>
@@ -135,11 +122,7 @@ export function LibraryPage(): React.JSX.Element {
             <div className="library-loading" role="status">
               <span className="visually-hidden">Loading songs…</span>
               {Array.from({ length: 6 }, (_, index) => (
-                <div
-                  className="library-skeleton"
-                  key={index}
-                  aria-hidden="true"
-                />
+                <div className="library-skeleton" key={index} aria-hidden="true" />
               ))}
             </div>
           ) : !data?.songs.length ? (
@@ -154,9 +137,7 @@ export function LibraryPage(): React.JSX.Element {
               {data.songs.map((song, index) => (
                 <li className="library-song-row" key={song._id}>
                   <span className="library-song-number" aria-hidden="true">
-                    {(data.pagination.page - 1) * data.pagination.limit +
-                      index +
-                      1}
+                    {(data.pagination.page - 1) * data.pagination.limit + index + 1}
                   </span>
                   <PageLink
                     className="library-song-link"
@@ -165,15 +146,10 @@ export function LibraryPage(): React.JSX.Element {
                       page: data.pagination.page,
                     })}
                   >
-                    <span
-                      className="library-song-title"
-                      title={song["Song Title"]}
-                    >
+                    <span className="library-song-title" title={song["Song Title"]}>
                       {song["Song Title"] || "Untitled song"}
                     </span>
-                    {song.Artist && (
-                      <span className="library-song-artist">{song.Artist}</span>
-                    )}
+                    {song.Artist && <span className="library-song-artist">{song.Artist}</span>}
                   </PageLink>
                 </li>
               ))}

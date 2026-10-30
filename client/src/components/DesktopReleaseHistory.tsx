@@ -17,15 +17,14 @@ const releaseDateFormatter = new Intl.DateTimeFormat("en-GB", {
 });
 
 export function DesktopReleaseHistory(): React.JSX.Element {
-  const { data, error, isLoading, isValidating, mutate } =
-    useSWR<DesktopReleaseHistoryResponse>("/api/desktop/releases", fetchJson);
+  const { data, error, isLoading, isValidating, mutate } = useSWR<DesktopReleaseHistoryResponse>(
+    "/api/desktop/releases",
+    fetchJson,
+  );
   const releases = data?.releases ?? [];
 
   return (
-    <section
-      className="download-history"
-      aria-labelledby="release-history-heading"
-    >
+    <section className="download-history" aria-labelledby="release-history-heading">
       <header className="download-history__heading">
         <h2 id="release-history-heading">Released data</h2>
         <p>Desktop versions, release dates and what changed.</p>
@@ -64,9 +63,7 @@ export function DesktopReleaseHistory(): React.JSX.Element {
                       {PLATFORM_LABELS[release.platform]}
                     </span>
                     {release.is_active && (
-                      <span className="download-history__current">
-                        Current release
-                      </span>
+                      <span className="download-history__current">Current release</span>
                     )}
                   </div>
                   <p className="download-history__date">
@@ -82,9 +79,7 @@ export function DesktopReleaseHistory(): React.JSX.Element {
                     )}
                   </p>
                   {release.release_notes?.trim() && (
-                    <p className="download-history__notes">
-                      {release.release_notes}
-                    </p>
+                    <p className="download-history__notes">{release.release_notes}</p>
                   )}
                 </article>
               </li>

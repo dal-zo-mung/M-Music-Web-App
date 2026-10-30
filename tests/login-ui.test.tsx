@@ -24,10 +24,7 @@ const globals = {
   IS_REACT_ACT_ENVIRONMENT: true,
 };
 const original = new Map(
-  Object.keys(globals).map((key) => [
-    key,
-    Object.getOwnPropertyDescriptor(globalThis, key),
-  ]),
+  Object.keys(globals).map((key) => [key, Object.getOwnPropertyDescriptor(globalThis, key)]),
 );
 for (const [key, value] of Object.entries(globals))
   Object.defineProperty(globalThis, key, {
@@ -96,23 +93,20 @@ async function submit() {
       ['input[autocomplete="current-password"]', "WrongPassword77#"],
     ]) {
       const input = document.querySelector(selector!)!;
-      Object.getOwnPropertyDescriptor(
-        dom.window.HTMLInputElement.prototype,
-        "value",
-      )!.set!.call(input, value);
+      Object.getOwnPropertyDescriptor(dom.window.HTMLInputElement.prototype, "value")!.set!.call(
+        input,
+        value,
+      );
       input.dispatchEvent(new dom.window.Event("input", { bubbles: true }));
     }
   });
   await act(async () => {
     document
       .querySelector("form")!
-      .dispatchEvent(
-        new dom.window.Event("submit", { bubbles: true, cancelable: true }),
-      );
+      .dispatchEvent(new dom.window.Event("submit", { bubbles: true, cancelable: true }));
   });
 }
-const button = () =>
-  document.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+const button = () => document.querySelector<HTMLButtonElement>('button[type="submit"]')!;
 
 describe("login countdown UI", () => {
   test("uses the returned user and navigates immediately after a successful login", async () => {
@@ -121,9 +115,7 @@ describe("login countdown UI", () => {
     await renderLogin();
     await submit();
     expect(refreshAuth).toHaveBeenCalledWith(user);
-    expect(
-      document.querySelector('[data-testid="pathname"]')?.textContent,
-    ).toBe("/");
+    expect(document.querySelector('[data-testid="pathname"]')?.textContent).toBe("/");
     expect(post).toHaveBeenCalledTimes(1);
   });
 
@@ -140,20 +132,12 @@ describe("login countdown UI", () => {
     expect(button().disabled).toBe(true);
     await submit();
     expect(post).toHaveBeenCalledTimes(1);
-    await act(async () =>
-      reject(new api.ApiError("Incorrect password.", 401, null)),
-    );
+    await act(async () => reject(new api.ApiError("Incorrect password.", 401, null)));
     expect(button().disabled).toBe(false);
-    expect(document.querySelector('[role="status"]')?.textContent).toBe(
-      "Incorrect password.",
-    );
+    expect(document.querySelector('[role="status"]')?.textContent).toBe("Incorrect password.");
   });
 
-  for (const kind of [
-    "network",
-    "account",
-    "overlapping account and network",
-  ]) {
+  for (const kind of ["network", "account", "overlapping account and network"]) {
     test(`disables sign in until the ${kind} wait expires`, async () => {
       const now = Date.now();
       const payload =
@@ -165,14 +149,10 @@ describe("login countdown UI", () => {
                 retryAfterSeconds: 300,
                 lockoutUntil: new Date(now + 5 * 60_000).toISOString(),
               };
-      post.mockRejectedValue(
-        new api.ApiError("Too many attempts. Please wait.", 429, payload),
-      );
+      post.mockRejectedValue(new api.ApiError("Too many attempts. Please wait.", 429, payload));
       await renderLogin();
       await submit();
-      const deadline = Number(
-        sessionStorage.getItem("m-music:login-cooldown-until"),
-      );
+      const deadline = Number(sessionStorage.getItem("m-music:login-cooldown-until"));
       expect(document.querySelector('[role="timer"]')?.textContent).toBe(
         kind === "overlapping account and network" ? "05:00" : "01:05",
       );
@@ -181,36 +161,28 @@ describe("login countdown UI", () => {
         button().click();
         document
           .querySelector("form")!
-          .dispatchEvent(
-            new dom.window.Event("submit", { bubbles: true, cancelable: true }),
-          );
+          .dispatchEvent(new dom.window.Event("submit", { bubbles: true, cancelable: true }));
       });
       expect(post).toHaveBeenCalledTimes(1);
       await act(async () => {
         setSystemTime(deadline - 1000);
         await Bun.sleep(300);
       });
-      expect(document.querySelector('[role="timer"]')?.textContent).toBe(
-        "00:01",
-      );
+      expect(document.querySelector('[role="timer"]')?.textContent).toBe("00:01");
       await act(async () => {
         setSystemTime(deadline);
         await Bun.sleep(300);
       });
       expect(button().disabled).toBe(false);
       expect(document.querySelector('[role="timer"]')).toBeNull();
-      post.mockRejectedValue(
-        new api.ApiError("Incorrect password.", 401, null),
-      );
+      post.mockRejectedValue(new api.ApiError("Incorrect password.", 401, null));
       await submit();
       expect(post).toHaveBeenCalledTimes(2);
     });
   }
 
   test("keeps a lock through a page remount", async () => {
-    post.mockRejectedValue(
-      new api.ApiError("Too many attempts.", 429, { retryAfterSeconds: 65 }),
-    );
+    post.mockRejectedValue(new api.ApiError("Too many attempts.", 429, { retryAfterSeconds: 65 }));
     await renderLogin();
     await submit();
     await act(async () => root.unmount());

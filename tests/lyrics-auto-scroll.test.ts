@@ -1,8 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import {
-  startLyricsAutoScroll,
-  type AnimationClock,
-} from "../client/src/lib/lyricsAutoScroll";
+import { startLyricsAutoScroll, type AnimationClock } from "../client/src/lib/lyricsAutoScroll";
 
 function createClock() {
   let pending: ((time: number) => void) | undefined;
@@ -36,12 +33,7 @@ describe("lyrics auto-scroll", () => {
           scrollHeight: 10000,
           clientHeight: 500,
         };
-        const stop = startLyricsAutoScroll(
-          surface,
-          speed,
-          () => {},
-          frames.clock,
-        );
+        const stop = startLyricsAutoScroll(surface, speed, () => {}, frames.clock);
         frames.tick(0);
         for (let frame = 1; frame <= refreshRate; frame += 1) {
           const previous = surface.scrollTop;
@@ -69,8 +61,7 @@ describe("lyrics auto-scroll", () => {
       clientHeight: 500,
     };
     const stop = startLyricsAutoScroll(surface, 1, () => {}, frames.clock);
-    for (let frame = 0; frame <= 120; frame += 1)
-      frames.tick((frame * 1000) / 60);
+    for (let frame = 0; frame <= 120; frame += 1) frames.tick((frame * 1000) / 60);
     expect(offset).toBe(2);
     stop();
   });
@@ -103,12 +94,7 @@ describe("lyrics auto-scroll", () => {
     frames.tick(0);
     frames.tick(50);
     stop();
-    const stopFaster = startLyricsAutoScroll(
-      surface,
-      40,
-      () => {},
-      frames.clock,
-    );
+    const stopFaster = startLyricsAutoScroll(surface, 40, () => {}, frames.clock);
     frames.tick(100);
     frames.tick(150);
     expect(surface.scrollTop).toBeCloseTo(52.05);

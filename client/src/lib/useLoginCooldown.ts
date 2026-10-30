@@ -36,10 +36,7 @@ export function useLoginCooldown() {
 
   function startCooldown(payload: unknown) {
     const currentTime = Date.now();
-    const nextDeadline = Math.max(
-      deadline,
-      getLoginRetryDeadline(payload, currentTime),
-    );
+    const nextDeadline = Math.max(deadline, getLoginRetryDeadline(payload, currentTime));
     setNow(currentTime);
     setDeadline(nextDeadline);
     try {

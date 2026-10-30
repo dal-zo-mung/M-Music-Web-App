@@ -25,33 +25,23 @@ export const pageRegistry: PageManifest[] = [
   },
   {
     path: "/about",
-    component: lazy(() =>
-      import("./pages/AboutPage").then((m) => ({ default: m.AboutPage })),
-    ),
+    component: lazy(() => import("./pages/AboutPage").then((m) => ({ default: m.AboutPage }))),
   },
   {
     path: "/",
-    component: lazy(() =>
-      import("./pages/HomePage").then((m) => ({ default: m.HomePage })),
-    ),
+    component: lazy(() => import("./pages/HomePage").then((m) => ({ default: m.HomePage }))),
   },
   {
     path: "/search",
-    component: lazy(() =>
-      import("./pages/SearchPage").then((m) => ({ default: m.SearchPage })),
-    ),
+    component: lazy(() => import("./pages/SearchPage").then((m) => ({ default: m.SearchPage }))),
   },
   {
     path: "/songs/:songId",
-    component: lazy(() =>
-      import("./pages/SongPage").then((m) => ({ default: m.SongPage })),
-    ),
+    component: lazy(() => import("./pages/SongPage").then((m) => ({ default: m.SongPage }))),
   },
   {
     path: "/login",
-    component: lazy(() =>
-      import("./pages/LoginPage").then((m) => ({ default: m.LoginPage })),
-    ),
+    component: lazy(() => import("./pages/LoginPage").then((m) => ({ default: m.LoginPage }))),
   },
   {
     path: "/register",
@@ -61,9 +51,7 @@ export const pageRegistry: PageManifest[] = [
   },
   {
     path: "/profile",
-    component: lazy(() =>
-      import("./pages/ProfilePage").then((m) => ({ default: m.ProfilePage })),
-    ),
+    component: lazy(() => import("./pages/ProfilePage").then((m) => ({ default: m.ProfilePage }))),
   },
   {
     path: "/download",

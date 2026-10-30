@@ -26,11 +26,7 @@ function searchState(query: string, page = 1): LibraryState {
   return { q: query, category: "", language: "", page };
 }
 
-export function LyricsSongSearch({
-  songId,
-}: {
-  songId: string;
-}): React.JSX.Element {
+export function LyricsSongSearch({ songId }: { songId: string }): React.JSX.Element {
   const location = useLocation();
   // A new reader visit includes selecting the current song again.
   return <LyricsSongSearchInput key={`${songId}:${location.key}`} />;
@@ -79,8 +75,7 @@ function LyricsSongSearchInput(): React.JSX.Element {
       signal: controller.signal,
     })
       .then((response) => {
-        if (!controller.signal.aborted)
-          setResult({ query, data: response, loading: false });
+        if (!controller.signal.aborted) setResult({ query, data: response, loading: false });
       })
       .catch((error: unknown) => {
         if (!controller.signal.aborted)
@@ -96,8 +91,7 @@ function LyricsSongSearchInput(): React.JSX.Element {
   useEffect(() => {
     if (!showDropdown) return;
     function outside(event: PointerEvent): void {
-      if (event.target instanceof Node && !root.current?.contains(event.target))
-        setOpen(false);
+      if (event.target instanceof Node && !root.current?.contains(event.target)) setOpen(false);
     }
     document.addEventListener("pointerdown", outside);
     return () => document.removeEventListener("pointerdown", outside);
@@ -105,18 +99,13 @@ function LyricsSongSearchInput(): React.JSX.Element {
 
   useEffect(() => {
     if (activeIndex >= 0 && showDropdown)
-      document
-        .getElementById(`${id}-option-${activeIndex}`)
-        ?.scrollIntoView({ block: "nearest" });
+      document.getElementById(`${id}-option-${activeIndex}`)?.scrollIntoView({ block: "nearest" });
   }, [activeIndex, showDropdown, id]);
 
   function selectSong(song: SongRecord): void {
     setOpen(false);
     navigate(
-      buildLibrarySongPath(
-        song._id,
-        searchState(trimmedDraft, data?.pagination.page ?? 1),
-      ),
+      buildLibrarySongPath(song._id, searchState(trimmedDraft, data?.pagination.page ?? 1)),
       { viewTransition: supportsViewTransitions() },
     );
   }
@@ -177,9 +166,7 @@ function LyricsSongSearchInput(): React.JSX.Element {
             aria-controls={showDropdown ? listId : undefined}
             aria-describedby={`${id}-hint`}
             aria-activedescendant={
-              showDropdown && songs[activeIndex]
-                ? `${id}-option-${activeIndex}`
-                : undefined
+              showDropdown && songs[activeIndex] ? `${id}-option-${activeIndex}` : undefined
             }
             placeholder="Search by title, artist or lyrics ..."
             autoComplete="off"
@@ -213,17 +200,10 @@ function LyricsSongSearchInput(): React.JSX.Element {
                     if (!showDropdown || index < 0)
                       return event.key === "ArrowDown" ? 0 : songs.length - 1;
                     return (
-                      (index +
-                        (event.key === "ArrowDown" ? 1 : -1) +
-                        songs.length) %
-                      songs.length
+                      (index + (event.key === "ArrowDown" ? 1 : -1) + songs.length) % songs.length
                     );
                   });
-              } else if (
-                event.key === "Enter" &&
-                showDropdown &&
-                songs[activeIndex]
-              ) {
+              } else if (event.key === "Enter" && showDropdown && songs[activeIndex]) {
                 event.preventDefault();
                 selectSong(songs[activeIndex]);
               }
@@ -266,10 +246,7 @@ function LyricsSongSearchInput(): React.JSX.Element {
           {error && (
             <div className="lyrics-song-search__error">
               <p>{error}</p>
-              <button
-                type="button"
-                onClick={() => setAttempt((value) => value + 1)}
-              >
+              <button type="button" onClick={() => setAttempt((value) => value + 1)}>
                 Try again
               </button>
             </div>
@@ -309,11 +286,7 @@ function LyricsSongSearchInput(): React.JSX.Element {
                   <span className="lyrics-song-search__title">
                     {song["Song Title"] || "Untitled song"}
                   </span>
-                  {song.Artist && (
-                    <span className="lyrics-song-search__artist">
-                      {song.Artist}
-                    </span>
-                  )}
+                  {song.Artist && <span className="lyrics-song-search__artist">{song.Artist}</span>}
                 </span>
               </li>
             ))}

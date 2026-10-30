@@ -1,10 +1,4 @@
-export const PROFILE_ACCENTS = [
-  "default",
-  "aurora",
-  "ember",
-  "meadow",
-  "slate",
-] as const;
+export const PROFILE_ACCENTS = ["default", "aurora", "ember", "meadow", "slate"] as const;
 export type ProfileAccent = (typeof PROFILE_ACCENTS)[number];
 
 export interface PublicUser {
